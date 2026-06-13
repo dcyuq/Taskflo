@@ -1,0 +1,35 @@
+.Hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px;
+    
+}
+
+.Hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.Hero p {
+    font-size: 18px;
+    color: gray;
+    margin-bottom: 32px;
+}
+
+.Hero-button {
+    background: black;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.Hero-button:hover {
+    background: #333;
+}

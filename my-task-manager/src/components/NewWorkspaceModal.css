@@ -1,0 +1,120 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e8e6e0;
+    width: 100%;
+    max-width: 400px;
+    font-family: "Sora", sans-serif;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e8e6e0;
+}
+
+.modal-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0d0d0d;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: gray;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: #f9f8f5;
+}
+
+.modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #0d0d0d;
+}
+
+.modal-input {
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid #e8e6e0;
+    background: #f9f8f5;
+    font-family: "Sora", sans-serif;
+    font-size: 13px;
+    color: #0d0d0d;
+    outline: none;
+}
+
+.modal-input:focus {
+    border-color: #0d0d0d;
+    background: #ffffff;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 20px;
+    border-top: 1px solid #e8e6e0;
+}
+
+.modal-cancel {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid #e8e6e0;
+    background: transparent;
+    font-family: "Sora", sans-serif;
+    font-size: 13px;
+    color: #0d0d0d;
+    cursor: pointer;
+}
+
+.modal-cancel:hover {
+    background: #f9f8f5;
+}
+
+.modal-create {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    border: none;
+    background: #0d0d0d;
+    font-family: "Sora", sans-serif;
+    font-size: 13px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.modal-create:hover {
+    background: #333333;
+}

@@ -1,0 +1,138 @@
+.topnav {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-bottom: 1px solid #e8e6e0;
+    font-family: "Sora", sans-serif;
+    padding: 0 16px
+}
+
+.topnav-brand {
+  font-size: 30px;
+  font-weight: bold;
+  color: #0d0d0d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1; 
+}
+
+.topnav-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #0d0d0d;
+  color: #f9f8f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+
+.topnav-search {
+    flex: 0 0 380px;
+}
+
+.topnav-search input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid #e8e6e0;
+  background: #f9f8f5;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  color: #0d0d0d;
+}
+
+.topnav-search input:focus {
+  outline: none;
+  border-color: #0d0d0d;
+  background: #ffffff;
+}
+
+.topnav-actions {
+  flex: 1;                      
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;    
+  gap: 6px;
+}
+
+.topnav-iconbtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  font-size: 22px;
+  color: gray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;  
+}
+
+.topnav-iconbtn:hover {
+  background: #f9f8f5;
+}
+
+.topnav-profile {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 99px;
+  border: 1px solid #e8e6e0;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: "Sora", sans-serif;
+}
+
+.topnav-profile:hover {
+  background: #f9f8f5;
+}
+
+.topnav-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0d0d0d;
+  color: #f9f8f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.topnav-profile-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0d0d0d;
+}
+
+.drawer-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: transparent;
+  border: 1px solid #e8e6e0;
+  color: #0d0d0d;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.drawer-btn:hover {
+  background: #f9f8f5;
+  border-color: #c8c6c0;
+}

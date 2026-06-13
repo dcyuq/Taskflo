@@ -1,0 +1,92 @@
+.RegisterPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9f8f5;
+  font-family: 'Sora', sans-serif;
+}
+
+.RegisterBox {
+  background: white;
+  border: 1px solid #e8e6e0;
+  border-radius: 16px;
+  padding: 48px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.RegisterBox h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.RegisterBox > p {
+  font-size: 14px;
+  color: gray;
+  margin-bottom: 32px;
+}
+
+.RegisterBox label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: gray;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.RegisterBox input {
+  width: 100%;
+  height: 44px;
+  background: #f9f8f5;
+  border: 1px solid #e8e6e0;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-family: 'Sora', sans-serif;
+  outline: none;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.RegisterBox input:focus {
+  border-color: black;
+}
+
+.register-btn {
+  width: 100%;
+  height: 44px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Sora', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.register-btn:hover {
+  background: #333;
+}
+
+.register-login-link {
+  font-size: 13px;
+  color: gray;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.register-login-link a {
+  color: black;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-login-link a:hover {
+  text-decoration: underline;
+}
