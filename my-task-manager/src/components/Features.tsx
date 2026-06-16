@@ -17,7 +17,7 @@ function Features() {
 
                 <div className='feature-card'>
                     <h3>AI Assistant</h3>
-                    <p>Let AI suggest priorities and auto-assign based on workload</p>
+                    <p>Let AI suggest priorities and auto-assign based on workload waaaa</p>
                 </div>
             </div>
         </div>
