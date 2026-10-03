@@ -110,3 +110,16 @@ flex-direction: column;
   background: #f9f8f5;
   border-color: #0d0d0d;
 }
+a.sidebar-workspace-item {
+  display: block;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-workspace-item.active {
+  border-color: #0d0d0d;
+  background: #f9f8f5;
+  font-weight: 600;
+}

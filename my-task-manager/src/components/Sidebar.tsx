@@ -2,7 +2,7 @@ import './Sidebar.css';
 import { getWorkspaces } from '../services/workspace';
 import {useState, useEffect} from 'react';
 import NewWorkspaceModal from './NewWorkspaceModal';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 
 interface SidebarProps {
@@ -14,34 +14,39 @@ function Sidebar({ open, onClose }: SidebarProps) {
 
     const[showModal, setShowModal] = useState(false);
     const[workspaces, setWorkspaces] = useState<{id: string, name: string}[]>([]);
-    const navigate = useNavigate();
 
-    async function fetchWorkspaces() {
-      const { data } = await getWorkspaces();
-      if (data) setWorkspaces(data);
+    function fetchWorkspaces() {
+      getWorkspaces().then(({ data }) => {
+        if (data) setWorkspaces(data);
+      });
     }
 
     // Refetch on open so workspaces created or joined elsewhere (e.g. first run) show up.
+    useEffect(fetchWorkspaces, [open]);
+
     useEffect(() => {
-      fetchWorkspaces();
-    }, [open]);
+      if (!open) return;
+      const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+      window.addEventListener('keydown', onKey);
+      return () => window.removeEventListener('keydown', onKey);
+    }, [open, onClose]);
 
   return (
     <>
       <div className={`sidebar-overlay ${open ? 'visible' : ''}`} onClick={onClose} />
 
-      <div className={`sidebar ${open ? 'open' : ''}`}>
+      <nav className={`sidebar ${open ? 'open' : ''}`} aria-label="Workspaces" inert={!open}>
 
         <div className="sidebar-header">
           <span className="sidebar-title">Workspaces</span>
-          <button className="sidebar-close" onClick={onClose}>✕</button>
+          <button className="sidebar-close" aria-label="Close workspaces" onClick={onClose}>✕</button>
         </div>
 
         <div className="sidebar-content">
           {workspaces.map(workspace => (
-            <div key={workspace.id} className="sidebar-workspace-item" onClick={() => navigate(`/dashboard/workspace/${workspace.id}`)}>
+            <NavLink key={workspace.id} className="sidebar-workspace-item" to={`/dashboard/workspace/${workspace.id}`} onClick={onClose}>
               {workspace.name}
-            </div>
+            </NavLink>
           ))}
         </div>
 
@@ -51,7 +56,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
           </button>
         </div>
 
-      </div>
+      </nav>
 
       {showModal && <NewWorkspaceModal onClose={() => setShowModal(false)} onCreated={fetchWorkspaces} />}
     </>
