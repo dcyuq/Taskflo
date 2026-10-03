@@ -29,7 +29,7 @@ function LandingPage() {
                         <p>Short answers about workspaces, invites and who can see what.</p>
                     </div>
                     <div className="faq">
-                        <details>
+                        <details open>
                             <summary>Who is Taskflo for?</summary>
                             <p>Leads of small teams, roughly 3 to 20 people, who want one simple place to bring their team together.</p>
                         </details>
