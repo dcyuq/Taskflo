@@ -23,7 +23,7 @@ function WorkspaceDetail() {
 
 
     return (
-        <div>
+        <div className="workspace-detail">
             <h1>{workspaceName}</h1>
         </div>
     );
