@@ -16,8 +16,15 @@ export async function createWorkspace(name : string) {
     return {data,error};
 }
 
-// Workspaces the user owns or has joined. Invited-but-not-joined workspaces
-// are readable through RLS too, so filter on membership explicitly.
+export async function getWorkspace(id: string) {
+    const {data, error} = await supabase
+        .from('workspaces')
+        .select('id, name, owner_id')
+        .eq('id', id)
+        .maybeSingle();
+    return {data, error};
+}
+
 export async function getWorkspaces() {
     const {data : {session}} = await supabase.auth.getSession();
     if (!session) return {data: null, error: 'Not logged in'};
