@@ -4,6 +4,10 @@
   color: var(--ink);
 }
 
+.app.is-desktop {
+  --app-bar-h: 0px;
+}
+
 .app-body {
   display: flex;
   align-items: flex-start;

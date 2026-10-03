@@ -39,6 +39,17 @@
   border-color: var(--line-strong);
 }
 
+.topnav-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
 .topnav-actions {
   display: flex;
   align-items: center;
@@ -77,6 +88,14 @@
   background: var(--surface);
   color: var(--ink);
   box-shadow: var(--lift);
+}
+
+.profile-menu.is-up {
+  top: auto;
+  right: auto;
+  bottom: 76px;
+  left: 12px;
+  width: 240px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
