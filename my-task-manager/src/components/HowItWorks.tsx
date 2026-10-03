@@ -2,7 +2,8 @@ import './HowItWorks.css'
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion } from 'motion/react'
 import type { AnimationPlaybackControls, HTMLMotionProps } from 'motion/react'
 import { Fragment, useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import type { FocusEvent, HTMLAttributes, KeyboardEvent } from 'react'
+import type { FocusEvent, KeyboardEvent } from 'react'
+import { reveal, rise, staggered } from '../utils/motion'
 
 const steps = [
     { title: 'Create a workspace', text: 'Name it after your team. One workspace holds one team and its work.' },
@@ -126,14 +127,15 @@ function HowItWorks() {
         tabs.current[next]?.focus()
     }
 
-    const stepButton = (i: number, aria: HTMLAttributes<HTMLButtonElement>) => (
-        <button
+    const stepButton = (i: number, aria: HTMLMotionProps<'button'>) => (
+        <motion.button
             key={steps[i].title}
             ref={el => { tabs.current[i] = el }}
             type="button"
             id={`hiw-tab-${i}`}
             className={`hiw-tab${active === i ? ' is-active' : ''}`}
             onClick={() => setActive(i)}
+            variants={rise}
             {...aria}
         >
             {active === i && auto && (
@@ -144,18 +146,11 @@ function HowItWorks() {
                 <span className="hiw-title">{steps[i].title}</span>
                 <span className="hiw-text">{steps[i].text}</span>
             </span>
-        </button>
+        </motion.button>
     )
 
-    const slideIn = (x: number) => ({
-        initial: reduce ? false : { opacity: 0, x },
-        whileInView: { opacity: 1, x: 0 },
-        viewport: { once: true, amount: 0.3 },
-        transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
-    })
-
-    const panel = (aria: HTMLMotionProps<'div'>, x = 0) => (
-        <motion.div className="hiw-panel" id="hiw-panel" {...aria} {...(x ? slideIn(x) : {})}>
+    const panel = (aria: HTMLMotionProps<'div'>) => (
+        <motion.div className="hiw-panel" id="hiw-panel" variants={rise} {...aria}>
             <span className="hiw-preview">Preview</span>
             <AnimatePresence initial={false}>
                 <motion.div
@@ -182,13 +177,13 @@ function HowItWorks() {
             onFocus={() => setFocused(true)}
             onBlur={onBlur}
         >
-            <div className="section-head">
-                <h2>How it works</h2>
-                <p>Three steps from sign-up to a team that knows what to work on.</p>
-            </div>
-            <div className="hiw">
+            <motion.div className="section-head" {...reveal(reduce)}>
+                <motion.h2 variants={rise}>How it works</motion.h2>
+                <motion.p variants={rise}>Three steps from sign-up to a team that knows what to work on.</motion.p>
+            </motion.div>
+            <motion.div className="hiw" {...reveal(reduce)}>
                 {narrow ? (
-                    <motion.div className="hiw-tabs" onKeyDown={onKey} {...slideIn(-24)}>
+                    <motion.div className="hiw-tabs" onKeyDown={onKey} variants={staggered}>
                         {steps.map((s, i) => (
                             <Fragment key={s.title}>
                                 {stepButton(i, { 'aria-expanded': active === i, 'aria-controls': active === i ? 'hiw-panel' : undefined })}
@@ -198,13 +193,13 @@ function HowItWorks() {
                     </motion.div>
                 ) : (
                     <>
-                        <motion.div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey} {...slideIn(-32)}>
+                        <motion.div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey} variants={staggered}>
                             {steps.map((_, i) => stepButton(i, { role: 'tab', 'aria-selected': active === i, 'aria-controls': 'hiw-panel', tabIndex: active === i ? 0 : -1 }))}
                         </motion.div>
-                        {panel({ role: 'tabpanel', 'aria-labelledby': `hiw-tab-${active}` }, 32)}
+                        {panel({ role: 'tabpanel', 'aria-labelledby': `hiw-tab-${active}` })}
                     </>
                 )}
-            </div>
+            </motion.div>
         </section>
     )
 }

@@ -2,6 +2,7 @@ import './Features.css'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
+import { reveal, rise } from '../utils/motion'
 
 function useTick(active: boolean, length: number, ms: number) {
     const reduce = useReducedMotion()
@@ -133,17 +134,14 @@ function SuggestVisual({ active }: { active: boolean }) {
     )
 }
 
-function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolean, delay?: number, children: ReactNode }) {
+function Card({ ink, wide, children }: { ink?: boolean, wide?: boolean, children: ReactNode }) {
     const reduce = useReducedMotion()
     return (
         <motion.article
             className={`bento-card${ink ? ' is-ink' : ''}${wide ? ' is-wide' : ''}`}
-            initial={reduce ? false : { opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            variants={rise}
             whileHover={reduce ? undefined : { y: -4, transition: { duration: 0.2 } }}
             whileTap={reduce ? undefined : { scale: 0.99, transition: { duration: 0.1 } }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] }}
         >
             {children}
         </motion.article>
@@ -153,14 +151,15 @@ function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolea
 function Features() {
     const ref = useRef<HTMLElement>(null)
     const inView = useInView(ref, { amount: 0.4 })
+    const reduce = useReducedMotion()
 
     return(
         <section className="features" id="features" ref={ref}>
-            <div className="section-head">
-                <h2>Three things, done well</h2>
-                <p>Taskflo handles three jobs and leaves the rest out, so your team spends its time on the work instead of the tool.</p>
-            </div>
-            <div className="bento">
+            <motion.div className="section-head" {...reveal(reduce)}>
+                <motion.h2 variants={rise}>Three things, done well</motion.h2>
+                <motion.p variants={rise}>Taskflo handles three jobs and leaves the rest out, so your team spends its time on the work instead of the tool.</motion.p>
+            </motion.div>
+            <motion.div className="bento" {...reveal(reduce)}>
                 <Card ink wide>
                     <div className="bento-text">
                         <h3>Task assignment</h3>
@@ -169,7 +168,7 @@ function Features() {
                     <TaskVisual active={inView} />
                 </Card>
 
-                <Card delay={0.1}>
+                <Card>
                     <div className="bento-text">
                         <h3>Progress tracking</h3>
                         <p>See the status of every task across your team.</p>
@@ -177,7 +176,7 @@ function Features() {
                     <BoardVisual active={inView} />
                 </Card>
 
-                <Card delay={0.2}>
+                <Card>
                     <div className="bento-text">
                         <div className="bento-head">
                             <h3>AI assistant</h3>
@@ -187,7 +186,7 @@ function Features() {
                     </div>
                     <SuggestVisual active={inView} />
                 </Card>
-            </div>
+            </motion.div>
         </section>
     )
 }

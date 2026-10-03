@@ -7,7 +7,7 @@ import Footer from '../components/Footer'
 import './LandingPage.css'
 import { useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
-import { rise, staggered } from '../utils/motion'
+import { reveal, rise, staggered } from '../utils/motion'
 
 const spotQuery = '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
 
@@ -52,11 +52,11 @@ function LandingPage() {
                 <Features />
                 <HowItWorks />
                 <section className="features faq-section" id="faq">
-                    <div className="faq-intro">
-                        <h2>FAQ</h2>
-                        <p>Short answers about workspaces, invites and who can see what.</p>
-                    </div>
-                    <motion.div className="faq" initial={reduce ? false : 'hidden'} whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
+                    <motion.div className="faq-intro" {...reveal(reduce)}>
+                        <motion.h2 variants={rise}>FAQ</motion.h2>
+                        <motion.p variants={rise}>Short answers about workspaces, invites and who can see what.</motion.p>
+                    </motion.div>
+                    <motion.div className="faq" {...reveal(reduce)}>
                         <motion.details variants={rise} open>
                             <summary>Who is Taskflo for?</summary>
                             <p>Leads of small teams, roughly 3 to 20 people, who want one simple place to bring their team together.</p>
