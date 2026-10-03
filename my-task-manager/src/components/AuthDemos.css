@@ -1,0 +1,78 @@
+.auth-demo .demo-head {
+    align-items: center;
+    padding-bottom: 0;
+}
+
+.auth-demo-sub {
+    margin: -6px 4px 8px;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.ring {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+}
+
+.ring svg {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+}
+
+.ring-track,
+.ring-fill {
+    fill: none;
+    stroke-width: 4;
+}
+
+.ring-track {
+    stroke: var(--line);
+}
+
+.ring-fill {
+    stroke: var(--ink);
+    stroke-linecap: round;
+}
+
+.ring-label {
+    font-size: 10px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 184px;
+}
+
+.feed-text {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
+}
+
+.feed-text b {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.feed-time {
+    flex: none;
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.demo-avatar.is-icon {
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+}

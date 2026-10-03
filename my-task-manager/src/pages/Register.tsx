@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useEffect, useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
+import HeroDemo from '../components/HeroDemo'
 import { passwordRules } from '../utils/passwordRules'
 
 type Errors = { first?: string, last?: string, email?: string, password?: string, confirm?: string, code?: string, form?: string }
@@ -114,7 +115,7 @@ function Register() {
     }
 
     return (
-        <AuthLayout>
+        <AuthLayout preview={<HeroDemo />}>
             {!otpSent ? (
                 <form key="details" onSubmit={handleReg} noValidate>
                     <h1>Create your account</h1>

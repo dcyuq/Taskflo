@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient'
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
+import SignInDemo from '../components/SignInDemo'
 
 type Errors = { email?: string, password?: string, form?: string }
 
@@ -38,7 +39,7 @@ function Login() {
     }
 
     return (
-        <AuthLayout>
+        <AuthLayout preview={<SignInDemo />}>
             <form onSubmit={handleLogin} noValidate>
                 <h1>Welcome back</h1>
                 <p className="auth-lede">Sign in to see your team's work.</p>
