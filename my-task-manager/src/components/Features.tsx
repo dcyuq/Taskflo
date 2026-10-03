@@ -142,13 +142,16 @@ function SuggestVisual() {
     )
 }
 
-function Card({ ink, wide, children }: { ink?: boolean, wide?: boolean, children: ReactNode }) {
+function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolean, delay?: number, children: ReactNode }) {
     const reduce = useReducedMotion()
     return (
         <motion.article
             className={`bento-card${ink ? ' is-ink' : ''}${wide ? ' is-wide' : ''}`}
-            whileHover={reduce ? undefined : { y: -3 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            whileHover={reduce ? undefined : { y: -3, transition: { type: 'spring', stiffness: 500, damping: 32 } }}
+            transition={{ duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] }}
         >
             {children}
         </motion.article>
@@ -168,7 +171,7 @@ function Features() {
                     <TaskVisual />
                 </Card>
 
-                <Card>
+                <Card delay={0.08}>
                     <div className="bento-text">
                         <h3>Progress tracking</h3>
                         <p>See the status of every task across your team.</p>
@@ -176,7 +179,7 @@ function Features() {
                     <BoardVisual />
                 </Card>
 
-                <Card>
+                <Card delay={0.16}>
                     <div className="bento-text">
                         <h3>AI assistant <span className="feature-soon">Coming soon</span></h3>
                         <p>Suggested priorities and assignments based on each person's workload.</p>

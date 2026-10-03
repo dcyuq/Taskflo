@@ -124,7 +124,13 @@ function HowItWorks() {
             onBlur={onBlur}
         >
             <h2>How it works</h2>
-            <div className="hiw">
+            <motion.div
+                className="hiw"
+                initial={reduce ? false : { opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            >
                 <div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey}>
                     {steps.map((s, i) => (
                         <button
@@ -164,7 +170,7 @@ function HowItWorks() {
                         </motion.div>
                     </AnimatePresence>
                 </div>
-            </div>
+            </motion.div>
         </section>
     )
 }
