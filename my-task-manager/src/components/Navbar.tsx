@@ -68,8 +68,12 @@ function Navbar() {
                         </a>
                     </li>
                 ))}
+                <li className="navbar-menu-only">
+                    <Link to="/login">Sign in</Link>
+                </li>
             </ul>
-            <Link to="/login" className="navbar-button">Sign in</Link>
+            <Link to="/login" className="navbar-button navbar-signin">Sign in</Link>
+            <Link to="/register" className="navbar-button is-primary">Get started</Link>
         </nav>
     )
 }

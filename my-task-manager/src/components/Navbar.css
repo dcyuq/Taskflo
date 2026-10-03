@@ -51,6 +51,26 @@
     border-color: var(--ink);
 }
 
+.navbar-button.is-primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+    transition: background-color 160ms ease-out, transform 160ms ease-out;
+}
+
+.navbar-button.is-primary:hover {
+    background: var(--ink-hover);
+    border-color: var(--ink-hover);
+}
+
+.navbar-button:active {
+    transform: translateY(1px);
+}
+
+.navbar-menu-only {
+    display: none;
+}
+
 .navbar-links a.active {
     color: var(--ink);
     font-weight: 600;
@@ -95,6 +115,14 @@
 
     .navbar-links.open {
         display: flex;
+    }
+
+    .navbar-signin {
+        display: none;
+    }
+
+    .navbar-menu-only {
+        display: block;
     }
 
     .navbar-links a.active {
