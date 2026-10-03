@@ -1,6 +1,7 @@
 import './Navbar.css'
 import './TopNav.css'
 import { useEffect, useState } from 'react'
+import type { MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 import wordmark from '../assets/taskflo-wordmark.svg?raw'
 
@@ -42,9 +43,17 @@ function Navbar() {
         return () => window.removeEventListener('keydown', onKey)
     }, [menuOpen])
 
+    const toTop = (e: MouseEvent) => {
+        if (window.location.pathname !== '/') return
+        e.preventDefault()
+        setMenuOpen(false)
+        history.replaceState(null, '', '/')
+        window.scrollTo({ top: 0 })
+    }
+
     return(
         <nav className="navbar">
-            <Link to="/" className="topnav-brand" aria-label="Taskflo">
+            <Link to="/" className="topnav-brand" aria-label="Taskflo, back to top" onClick={toTop}>
                 <span className="brand-wordmark" aria-hidden="true" dangerouslySetInnerHTML={{ __html: wordmark }} />
             </Link>
             <button
