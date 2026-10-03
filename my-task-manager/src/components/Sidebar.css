@@ -3,7 +3,7 @@
   top: 54px;
   left: 0;
   height: calc(100vh - 54px);
-  width: 280px;
+  width: min(280px, 85vw);
   background: #ffffff;
   border-right: 1px solid #e8e6e0;
   font-family: "Sora", sans-serif;

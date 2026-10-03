@@ -118,3 +118,11 @@
 .modal .form-error {
     margin: 0;
 }
+
+@media (max-width: 640px) {
+    .modal-input,
+    .modal-create,
+    .modal-cancel {
+        height: 44px;
+    }
+}
