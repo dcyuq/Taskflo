@@ -164,7 +164,7 @@ function Register() {
                     <PasswordField id="reg-password" label="Password" autoComplete="new-password" value={password} onChange={setPassword} error={errors.password} checks={checks}>
                         <StrengthMeter score={score} />
                     </PasswordField>
-                    <PasswordField id="reg-confirm" label="Confirm password" autoComplete="new-password" value={confirmPassword} onChange={setConfirmPassword} error={errors.confirm} />
+                    <PasswordField id="reg-confirm" label="Confirm password" autoComplete="new-password" value={confirmPassword} onChange={setConfirmPassword} error={errors.confirm} checks={[{ label: 'Passwords match', met: confirmPassword.length > 0 && confirmPassword === password }]} />
 
                     {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
 
