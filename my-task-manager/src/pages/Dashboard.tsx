@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import TopNav from '../components/TopNav'
+import JumpDialog from '../components/JumpDialog'
 import Sidebar, { type ListState } from '../components/Sidebar'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { getWorkspaces } from '../services/workspace'
@@ -20,6 +21,7 @@ function Dashboard() {
     const [list, setList] = useState<ListState>({ status: 'loading' })
     const [openTasks, setOpenTasks] = useState<Task[]>([])
     const [me, setMe] = useState('')
+    const [searching, setSearching] = useState(false)
     const desktop = useMediaQuery('(min-width: 1024px)')
     const { pathname } = useLocation()
     const match = useMatch('/dashboard/workspace/:id/*')
@@ -36,6 +38,17 @@ function Dashboard() {
 
     useEffect(load, [load, pathname])
     useEffect(reloadOpen, [reloadOpen, pathname])
+
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault()
+                setSearching(s => !s)
+            }
+        }
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    }, [])
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setMe(session?.user.id ?? ''))
@@ -56,6 +69,7 @@ function Dashboard() {
                     list={list}
                     openTasks={openTasks}
                     me={me}
+                    onSearch={() => { setDrawerOpen(false); setSearching(true) }}
                     onRetry={() => { setList({ status: 'loading' }); load() }}
                     onCreated={load}
                     onClose={() => setDrawerOpen(false)}
@@ -64,6 +78,7 @@ function Dashboard() {
                     <Outlet context={context} />
                 </main>
             </div>
+            {searching && <JumpDialog workspaces={workspaces} tasks={openTasks} onClose={() => setSearching(false)} />}
         </div>
     )
 }

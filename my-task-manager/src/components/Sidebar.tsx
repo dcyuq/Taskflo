@@ -18,10 +18,13 @@ interface SidebarProps {
     list: ListState
     openTasks: Task[]
     me: string
+    onSearch: () => void
     onRetry: () => void
     onCreated: () => void
     onClose: () => void
 }
+
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent)
 
 function PlusIcon() {
     return (
@@ -31,7 +34,7 @@ function PlusIcon() {
     )
 }
 
-function Sidebar({ desktop, open, list, openTasks, me, onRetry, onCreated, onClose }: SidebarProps) {
+function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCreated, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
     const visible = desktop || open
     const closeOnMobile = desktop ? undefined : onClose
@@ -64,6 +67,16 @@ function Sidebar({ desktop, open, list, openTasks, me, onRetry, onCreated, onClo
                             </svg>
                         </button>
                     )}
+                </div>
+
+                <div className="sidebar-search-wrap">
+                    <button type="button" className="sidebar-search" onClick={onSearch} aria-keyshortcuts="Control+K Meta+K">
+                        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                            <circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" />
+                        </svg>
+                        <span className="sidebar-name">Search</span>
+                        <kbd className="sidebar-kbd" aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>
+                    </button>
                 </div>
 
                 <div className="sidebar-scroll">
