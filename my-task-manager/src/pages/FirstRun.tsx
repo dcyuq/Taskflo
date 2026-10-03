@@ -1,7 +1,9 @@
 import './FirstRun.css';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import EmailChipField from '../components/EmailChipField';
+import { useEmailChips } from '../hooks/useEmailChips';
 import {
     acceptInvite,
     createWorkspace,
@@ -10,7 +12,6 @@ import {
     type PendingInvite,
 } from '../services/workspace';
 
-const EMAIL_PATTERN = /^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+$/;
 
 interface FirstRunProps {
     invites: PendingInvite[];
@@ -190,13 +191,9 @@ function WorkspaceStep({
 
 function InviteStep({ workspace }: { workspace: { id: string; name: string } }) {
     const navigate = useNavigate();
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [draft, setDraft] = useState('');
-    const [emails, setEmails] = useState<string[]>([]);
     const [ownEmail, setOwnEmail] = useState('');
-    const [error, setError] = useState('');
-    const [notice, setNotice] = useState('');
     const [sending, setSending] = useState(false);
+    const chips = useEmailChips([ownEmail], "You're already in this workspace, so your own email was left out.");
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -208,81 +205,28 @@ function InviteStep({ workspace }: { workspace: { id: string; name: string } }) 
         navigate(`/dashboard/workspace/${workspace.id}`, { replace: true });
     }
 
-    // Turn whatever is in the field into chips. Returns false if something
-    // couldn't be added so the caller can keep the text for correction.
-    function commit(raw: string) {
-        const parts = raw.split(/[\s,;]+/).map((p) => p.trim().toLowerCase()).filter(Boolean);
-        if (parts.length === 0) return true;
-
-        const invalid = parts.filter((p) => !EMAIL_PATTERN.test(p));
-        const valid = parts.filter((p) => EMAIL_PATTERN.test(p) && p !== ownEmail);
-        const includedSelf = parts.includes(ownEmail);
-
-        setEmails((list) => [...list, ...valid.filter((v) => !list.includes(v))].filter((v, i, a) => a.indexOf(v) === i));
-
-        if (invalid.length > 0) {
-            setDraft(invalid.join(', '));
-            setError(
-                invalid.length === 1
-                    ? `"${invalid[0]}" doesn't look like an email address.`
-                    : `${invalid.length} entries don't look like email addresses.`
-            );
-            return false;
-        }
-        setDraft('');
-        setError('');
-        setNotice(includedSelf ? "You're already in this workspace, so your own email was left out." : '');
-        return true;
-    }
-
-    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key === 'Enter' || e.key === ',' || e.key === ';') {
-            if (draft.trim()) {
-                e.preventDefault();
-                commit(draft);
-            }
-        } else if (e.key === 'Backspace' && draft === '' && emails.length > 0) {
-            setEmails((list) => list.slice(0, -1));
-        }
-    }
-
-    function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
-        const text = e.clipboardData.getData('text');
-        if (/[\s,;]/.test(text.trim())) {
-            e.preventDefault();
-            commit(draft + ' ' + text);
-        }
-    }
-
     async function handleSend(e: React.SyntheticEvent) {
         e.preventDefault();
-        if (draft.trim() && !commit(draft)) return;
-
-        // commit() updates state asynchronously, so recompute the final list here.
-        const pending = draft
-            .split(/[\s,;]+/)
-            .map((p) => p.trim().toLowerCase())
-            .filter((p) => EMAIL_PATTERN.test(p) && p !== ownEmail);
-        const all = [...new Set([...emails, ...pending])];
-
+        const all = chips.collect();
+        if (!all) return;
         if (all.length === 0) {
-            setError('Add at least one email, or skip this step.');
-            inputRef.current?.focus();
+            chips.setError('Add at least one email, or skip this step.');
+            chips.inputRef.current?.focus();
             return;
         }
 
         setSending(true);
-        setError('');
+        chips.setError('');
         const { error: sendError } = await sendInvites(workspace.id, all);
         if (sendError) {
-            setError("Couldn't send the invites. Check your connection and try again.");
+            chips.setError("Couldn't send the invites. Check your connection and try again.");
             setSending(false);
             return;
         }
         goToWorkspace();
     }
 
-    const count = emails.length;
+    const count = chips.emails.length;
 
     return (
         <form className="firstrun-form" onSubmit={handleSend} noValidate>
@@ -297,57 +241,7 @@ function InviteStep({ workspace }: { workspace: { id: string; name: string } }) 
             </p>
 
             <label htmlFor="firstrun-emails" className="firstrun-label">Email addresses</label>
-            <div
-                className={`firstrun-chipfield${error ? ' is-invalid' : ''}`}
-                onClick={() => inputRef.current?.focus()}
-            >
-                <ul className="firstrun-chips" aria-label="Invites to send">
-                    {emails.map((email) => (
-                        <li key={email} className="firstrun-chip">
-                            <span>{email}</span>
-                            <button
-                                type="button"
-                                className="firstrun-chip-remove"
-                                aria-label={`Remove ${email}`}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setEmails((list) => list.filter((x) => x !== email));
-                                    inputRef.current?.focus();
-                                }}
-                            >
-                                <CrossIcon />
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-                <input
-                    ref={inputRef}
-                    id="firstrun-emails"
-                    className="firstrun-chip-input"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="off"
-                    autoFocus
-                    placeholder={count === 0 ? 'name@company.com' : ''}
-                    value={draft}
-                    onChange={(e) => {
-                        setDraft(e.target.value);
-                        if (error) setError('');
-                    }}
-                    onKeyDown={handleKeyDown}
-                    onPaste={handlePaste}
-                    onBlur={() => draft.trim() && commit(draft)}
-                    aria-invalid={error ? true : undefined}
-                    aria-describedby={error ? 'firstrun-emails-error' : 'firstrun-emails-hint'}
-                />
-            </div>
-            {error ? (
-                <p id="firstrun-emails-error" className="firstrun-error" role="alert">{error}</p>
-            ) : (
-                <p id="firstrun-emails-hint" className="firstrun-hint">
-                    {notice || 'Press Enter after each address, or paste a list.'}
-                </p>
-            )}
+            <EmailChipField id="firstrun-emails" chips={chips} autoFocus />
 
             <div className="firstrun-actions">
                 <button type="submit" className="firstrun-btn-primary" disabled={sending}>
@@ -366,14 +260,6 @@ function CheckIcon() {
     return (
         <svg className="firstrun-icon" viewBox="0 0 16 16" aria-hidden="true">
             <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-    );
-}
-
-function CrossIcon() {
-    return (
-        <svg className="firstrun-icon" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
         </svg>
     );
 }
