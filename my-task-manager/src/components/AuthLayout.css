@@ -205,6 +205,41 @@
     text-underline-offset: 3px;
 }
 
+.field .auth-code {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    font-variant-numeric: tabular-nums;
+}
+
+.auth-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 16px;
+    margin-top: 16px;
+}
+
+.auth-link {
+    min-height: 44px;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.auth-link:disabled {
+    color: var(--muted);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+    cursor: default;
+}
+
 @media (max-width: 899px) {
     .auth {
         grid-template-columns: minmax(0, 1fr);
