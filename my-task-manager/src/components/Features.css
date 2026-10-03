@@ -4,7 +4,10 @@
 }
 
 .features h2 {
-    font-size: 36px;
+    font-size: clamp(26px, 4vw, 36px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
     font-weight: 700;
     margin-bottom: 48px;
 }

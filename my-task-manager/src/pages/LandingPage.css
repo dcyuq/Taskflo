@@ -9,7 +9,10 @@
 }
 
 .Hero h1 {
-    font-size: 48px;
+    font-size: clamp(36px, 6vw, 64px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
     font-weight: 700;
     margin-bottom: 16px;
 }
