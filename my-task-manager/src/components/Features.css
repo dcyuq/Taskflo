@@ -475,3 +475,38 @@ main > .faq-section {
     line-height: 1.6;
     color: var(--muted);
 }
+
+@media (min-width: 721px) and (max-height: 860px) {
+    .features {
+        padding-block: 24px;
+    }
+
+    .section-head {
+        margin-bottom: 24px;
+    }
+
+    .bento {
+        gap: 12px;
+    }
+
+    .bento-card {
+        gap: 16px;
+        padding: 22px 26px;
+    }
+
+    .bento-visual {
+        min-height: 0;
+    }
+
+    .task-stack {
+        min-height: 96px;
+    }
+
+    .board-col {
+        min-height: 96px;
+    }
+
+    .board {
+        gap: 10px;
+    }
+}
