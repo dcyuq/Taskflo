@@ -95,11 +95,19 @@ main > .Hero {
     color: var(--paper);
 }
 
+main > .Cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-content: center;
+    align-items: end;
+    gap: 32px clamp(32px, 5vw, 80px);
+}
+
 .Cta h2 {
-    max-width: 16ch;
-    font-size: clamp(32px, 5.5vw, 64px);
-    line-height: 1.02;
-    letter-spacing: -0.035em;
+    max-width: 12ch;
+    font-size: clamp(44px, 8.5vw, 128px);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
     text-wrap: balance;
     font-weight: 700;
     margin-bottom: 20px;
@@ -111,7 +119,13 @@ main > .Hero {
     line-height: 1.5;
     color: var(--paper-dim);
     text-wrap: pretty;
-    margin-bottom: 32px;
+}
+
+@media (max-width: 720px) {
+    main > .Cta {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: start;
+    }
 }
 
 @media (max-width: 899px) {
