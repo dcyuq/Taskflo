@@ -5,12 +5,44 @@
 }
 
 .features h2 {
-    font-size: clamp(26px, 4vw, 36px);
+    font-size: clamp(30px, 4.4vw, 56px);
     line-height: 1.15;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     text-wrap: balance;
     font-weight: 700;
     margin-bottom: 32px;
+}
+
+.section-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 16px 48px;
+    margin-bottom: 40px;
+}
+
+.section-head h2 {
+    margin-bottom: 0;
+}
+
+.section-head p {
+    justify-self: end;
+    max-width: 44ch;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+}
+
+@media (max-width: 720px) {
+    .section-head {
+        grid-template-columns: minmax(0, 1fr);
+        margin-bottom: 28px;
+    }
+
+    .section-head p {
+        justify-self: start;
+    }
 }
 
 .bento {

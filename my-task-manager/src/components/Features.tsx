@@ -160,7 +160,10 @@ function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolea
 function Features() {
     return(
         <section className="features" id="features">
-            <h2>Three things, done well</h2>
+            <div className="section-head">
+                <h2>Three things, done well</h2>
+                <p>Taskflo handles three jobs and leaves the rest out, so your team spends its time on the work instead of the tool.</p>
+            </div>
             <div className="bento">
                 <Card ink wide>
                     <div className="bento-text">
