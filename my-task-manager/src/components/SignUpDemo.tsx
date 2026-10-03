@@ -13,8 +13,8 @@ const appear = {
     transition: { duration: 0.7, ease },
 }
 
-function SignUpDemo() {
-    const { ref, tick, reduce, hover } = useLoop(7, 1500)
+function SignUpDemo({ step = 1500 }: { step?: number }) {
+    const { ref, tick, reduce, hover } = useLoop(7, step)
     const stage = reduce ? 4 : tick
     const sent = stage >= 2
     const done = stage >= 4
@@ -27,7 +27,7 @@ function SignUpDemo() {
             n += 1
             setTyped(n)
             if (n >= invitee.length) clearInterval(id)
-        }, 55)
+        }, 40)
         return () => {
             clearInterval(id)
             setTyped(0)

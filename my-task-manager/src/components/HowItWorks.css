@@ -158,29 +158,6 @@
     font-weight: 600;
 }
 
-.mock-chips {
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 7px 8px;
-}
-
-.mock-chip {
-    display: inline-flex;
-    align-items: center;
-    height: 32px;
-    padding: 0 11px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: var(--paper);
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.mock-hint {
-    font-size: 13px;
-    color: var(--muted);
-}
-
 .mock-task {
     display: flex;
     align-items: center;
@@ -269,4 +246,9 @@
     .hiw-tab.is-active {
         border-bottom-color: transparent;
     }
+}
+
+.hiw-mock .demo {
+    max-width: none;
+    padding: 0;
 }

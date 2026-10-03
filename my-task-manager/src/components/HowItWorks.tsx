@@ -4,6 +4,7 @@ import type { AnimationPlaybackControls, HTMLMotionProps } from 'motion/react'
 import { Fragment, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { FocusEvent, KeyboardEvent } from 'react'
 import { reveal, rise, staggered } from '../utils/motion'
+import SignUpDemo from './SignUpDemo'
 
 const steps = [
     { title: 'Create a workspace', text: 'Name it after your team. One workspace holds one team and its work.' },
@@ -27,17 +28,7 @@ function WorkspaceMock() {
 }
 
 function InviteMock() {
-    return (
-        <>
-            <motion.span variants={item} className="mock-label">Invite by email</motion.span>
-            <motion.span variants={item} className="mock-input mock-chips">
-                {['ana@northlight.co', 'ben@northlight.co', 'priya@northlight.co'].map(email => (
-                    <motion.span variants={item} className="mock-chip" key={email}>{email}</motion.span>
-                ))}
-            </motion.span>
-            <motion.span variants={item} className="mock-hint">3 invites, valid for 7 days</motion.span>
-        </>
-    )
+    return <SignUpDemo step={800} />
 }
 
 function AssignMock() {
