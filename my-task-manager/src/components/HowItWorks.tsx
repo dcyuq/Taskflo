@@ -149,6 +149,7 @@ function HowItWorks() {
 
     const panel = (aria: HTMLAttributes<HTMLDivElement>) => (
         <div className="hiw-panel" id="hiw-panel" {...aria}>
+            <span className="hiw-preview">Preview</span>
             <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                     key={active}

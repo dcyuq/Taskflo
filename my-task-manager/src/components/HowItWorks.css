@@ -94,9 +94,26 @@
     border: 1px solid var(--line);
     border-radius: 16px;
     background: var(--surface);
+    position: relative;
+    cursor: default;
+    user-select: none;
+}
+
+.hiw-preview {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
 }
 
 .hiw-mock {
+    pointer-events: none;
     display: flex;
     flex-direction: column;
     gap: 10px;
