@@ -6,22 +6,18 @@ main > section {
     scroll-snap-align: start;
 }
 
-main > .Hero {
-    align-items: flex-start;
-    min-height: calc(100dvh - var(--nav-h) - 16px);
-}
-
 .Hero {
     position: relative;
     overflow: hidden;
-    margin: 8px var(--card-inset);
-    padding: clamp(56px, 10vw, 128px) clamp(24px, 6vw, 80px);
+    margin: 8px var(--card-inset) 0;
+    padding: clamp(32px, 6vw, 80px) clamp(24px, 5vw, 72px);
     border-radius: 28px;
     background: var(--ink);
     color: var(--paper);
 }
 
 main > .Hero {
+    min-height: auto;
     display: grid;
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     align-content: center;
@@ -32,7 +28,7 @@ main > .Hero {
 
 .Hero h1 {
     max-width: 12ch;
-    font-size: clamp(44px, 9vw, 104px);
+    font-size: clamp(44px, 7.5vw, 96px);
     line-height: 0.98;
     letter-spacing: -0.04em;
     text-wrap: balance;
