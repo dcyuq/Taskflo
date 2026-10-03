@@ -1,34 +1,35 @@
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useState } from 'react'
-import './Login.css'
+import AuthLayout from '../components/AuthLayout'
+
+type Errors = { email?: string, password?: string, form?: string }
 
 function Login() {
     const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
+    const [errors, setErrors] = useState<Errors>({})
 
     const handleLogin = async (e: React.SyntheticEvent) => {
         e.preventDefault()
-        if (email === '' || password === '') {
-            setError('Enter your email and password.')
-            return
-        }
+        if (loading) return
+        const next: Errors = {}
+        if (!email.trim()) next.email = 'Enter your email.'
+        else if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = 'That email doesn’t look right. Check it and try again.'
+        if (!password) next.password = 'Enter your password.'
+        setErrors(next)
+        if (next.email || next.password) return
 
         setLoading(true)
-        setError('')
-
-        const {error} = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        })
-
-        if (error){
-            setError(error.message === 'Invalid login credentials'
-                ? 'That email and password don’t match. Check them and try again.'
-                : 'Couldn’t sign in. Check your connection and try again.')
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
+        if (error) {
+            setErrors({
+                form: error.code === 'invalid_credentials'
+                    ? 'That email and password don’t match. Check them and try again.'
+                    : 'Couldn’t sign in. Check your connection and try again.',
+            })
             setLoading(false)
             return
         }
@@ -36,32 +37,49 @@ function Login() {
     }
 
     return (
-        <div className='login-page'>
-            <form className='login-box' onSubmit={handleLogin} noValidate>
+        <AuthLayout>
+            <form onSubmit={handleLogin} noValidate>
                 <h1>Welcome back</h1>
-                <p>Sign in to see your team's work.</p>
+                <p className="auth-lede">Sign in to see your team's work.</p>
 
-                <div>
-                    <label htmlFor='login-email'>Email</label>
-                    <input id='login-email' type='email' autoComplete='email' placeholder='you@company.com' value={email} onChange={(e) => setEmail(e.target.value)}></input>
+                <div className="field">
+                    <label htmlFor="login-email">Email</label>
+                    <input
+                        id="login-email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="you@company.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        aria-invalid={!!errors.email}
+                        aria-describedby={errors.email ? 'login-email-error' : undefined}
+                    />
+                    {errors.email && <p className="field-error" id="login-email-error">{errors.email}</p>}
                 </div>
 
-                <div>
-                    <label htmlFor='login-password'>Password</label>
-                    <input id='login-password' type='password' autoComplete='current-password' placeholder='Enter your password' value={password} onChange={(e) => setPassword(e.target.value)}></input>
+                <div className="field">
+                    <label htmlFor="login-password">Password</label>
+                    <input
+                        id="login-password"
+                        type="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        aria-invalid={!!errors.password}
+                        aria-describedby={errors.password ? 'login-password-error' : undefined}
+                    />
+                    {errors.password && <p className="field-error" id="login-password-error">{errors.password}</p>}
                 </div>
 
-                {error && <div className='form-error' role='alert'>{error}</div>}
+                {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
 
-                <div>
-                    <button type='submit' disabled={loading}> {loading ? 'Signing in…' : 'Sign in'}</button>
-                </div>
+                <button type="submit" className="auth-submit" disabled={loading} aria-busy={loading}>
+                    {loading ? 'Signing in…' : 'Sign in'}
+                </button>
 
-                <div>
-                    <p>New to Taskflo? <Link to="/register">Create an account</Link></p>
-                </div>
+                <p className="auth-switch">No account? <Link to="/register">Sign up</Link></p>
             </form>
-        </div>
+        </AuthLayout>
     )
 }
 
