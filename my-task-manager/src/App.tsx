@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import WorkspaceLayout from './pages/WorkspaceLayout'
 import TasksView from './pages/TasksView'
 import TeamView from './pages/TeamView'
+import OverviewView from './pages/OverviewView'
 import DashboardHome from './pages/DashboardHome'
 
 import {Routes, Route} from 'react-router-dom'
@@ -21,6 +22,7 @@ function App() {
           <Route index element={<DashboardHome />} />
           <Route path="workspace/:id" element={<WorkspaceLayout />}>
             <Route index element={<TasksView />} />
+            <Route path="overview" element={<OverviewView />} />
             <Route path="team" element={<TeamView />} />
           </Route>
         </Route>
