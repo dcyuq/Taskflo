@@ -6,29 +6,30 @@ main > section {
     scroll-snap-align: start;
 }
 
-.Hero {
-    position: relative;
-    overflow: hidden;
-    margin: 8px var(--card-inset) 0;
-    padding: clamp(32px, 6vw, 80px) clamp(24px, 5vw, 72px);
-    border-radius: 28px;
-    background: var(--ink);
-    color: var(--paper);
+main > .Hero {
+    display: grid;
+    place-items: center;
+    padding: 16px var(--gutter);
 }
 
-main > .Hero {
-    min-height: auto;
+.Hero-card {
     display: grid;
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
     align-content: center;
     align-items: center;
     gap: clamp(32px, 5vw, 80px);
+    width: min(85%, 1200px);
+    min-height: calc((100dvh - var(--nav-h)) * 0.7);
+    padding: clamp(32px, 5vw, 72px) clamp(24px, 5vw, 72px);
+    border-radius: 28px;
+    background: var(--ink);
+    color: var(--paper);
 }
 
 
 .Hero h1 {
     max-width: 12ch;
-    font-size: clamp(44px, 7.5vw, 96px);
+    font-size: clamp(44px, 5.6vw, 80px);
     line-height: 0.98;
     letter-spacing: -0.04em;
     text-wrap: balance;
@@ -74,7 +75,8 @@ main > .Hero {
 
 
 @media (max-width: 899px) {
-    main > .Hero {
+    .Hero-card {
         grid-template-columns: minmax(0, 1fr);
+        width: 100%;
     }
 }

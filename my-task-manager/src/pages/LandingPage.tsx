@@ -14,12 +14,14 @@ function LandingPage() {
             <Navbar />
             <main id="main" tabIndex={-1}>
                 <section className="Hero">
-                    <div className="Hero-copy">
-                        <h1>Assign. Track. Done.</h1>
-                        <p>A task manager for small teams that does less on purpose. Give work an owner and a deadline, see where it stands, and get on with it.</p>
-                        <Link className="Hero-button" to="/register">Get started</Link>
+                    <div className="Hero-card">
+                        <div className="Hero-copy">
+                            <h1>Assign. Track. Done.</h1>
+                            <p>A task manager for small teams that does less on purpose. Give work an owner and a deadline, see where it stands, and get on with it.</p>
+                            <Link className="Hero-button" to="/register">Get started</Link>
+                        </div>
+                        <HeroDemo />
                     </div>
-                    <HeroDemo />
                 </section>
                 <Features />
                 <HowItWorks />
