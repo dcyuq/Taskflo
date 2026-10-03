@@ -15,7 +15,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
                 <p className="auth-tagline">Assign. Track. Done.</p>
                 <HeroDemo />
             </aside>
-            <main className="auth-main">
+            <main className="auth-main dot-grid">
                 <Link to="/" className="auth-back">← Back to home</Link>
                 <div className="auth-body">
                     <div className="auth-card">{children}</div>

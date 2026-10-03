@@ -37,7 +37,7 @@ function LandingPage() {
     }, [])
 
     return (
-        <div className="landing" ref={landing}>
+        <div className="landing dot-grid" ref={landing}>
             <a className="skip-link" href="#main">Skip to content</a>
             <Navbar />
             <main id="main" tabIndex={-1}>
