@@ -6,8 +6,7 @@ main > section {
     scroll-snap-align: start;
 }
 
-main > .Hero,
-main > .Cta {
+main > .Hero {
     align-items: flex-start;
     min-height: calc(100dvh - var(--nav-h) - 16px);
 }
@@ -86,47 +85,6 @@ main > .Hero {
     outline-offset: 3px;
 }
 
-.Cta {
-    margin: 8px var(--card-inset);
-    scroll-margin-top: 8px;
-    padding: clamp(48px, 8vw, 96px) clamp(24px, 6vw, 80px);
-    border-radius: 28px;
-    background: var(--ink);
-    color: var(--paper);
-}
-
-main > .Cta {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-content: center;
-    align-items: end;
-    gap: 32px clamp(32px, 5vw, 80px);
-}
-
-.Cta h2 {
-    max-width: 12ch;
-    font-size: clamp(44px, 8.5vw, 128px);
-    line-height: 0.98;
-    letter-spacing: -0.04em;
-    text-wrap: balance;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-.Cta p {
-    max-width: 44ch;
-    font-size: clamp(16px, 1.8vw, 18px);
-    line-height: 1.5;
-    color: var(--paper-dim);
-    text-wrap: pretty;
-}
-
-@media (max-width: 720px) {
-    main > .Cta {
-        grid-template-columns: minmax(0, 1fr);
-        align-items: start;
-    }
-}
 
 @media (max-width: 899px) {
     main > .Hero {
