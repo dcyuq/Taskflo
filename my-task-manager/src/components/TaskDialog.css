@@ -1,0 +1,148 @@
+.task-dialog {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: clamp(20px, 4vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--lift);
+}
+
+.task-dialog::backdrop {
+  background: rgba(13, 13, 13, 0.32);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .task-dialog[open] {
+    animation: task-dialog-in 320ms var(--ease-soft);
+  }
+
+  .task-dialog[open]::backdrop {
+    animation: task-dialog-fade 320ms var(--ease-soft);
+  }
+}
+
+@keyframes task-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+@keyframes task-dialog-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.task-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.task-dialog-head h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.task-dialog-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.task-dialog-close:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.task-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
+.task-field label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.task-field input,
+.task-field select {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.task-field input:focus,
+.task-field select:focus {
+  border-color: var(--ink);
+  box-shadow: var(--ring);
+}
+
+.task-field input[aria-invalid='true'] {
+  border-color: var(--error);
+}
+
+.task-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.task-dialog .field-error {
+  margin: 0;
+}
+
+.task-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.task-dialog-save,
+.task-dialog-confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.task-dialog-confirm span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.task-dialog-delete {
+  color: var(--error);
+}
+
+@media (max-width: 480px) {
+  .task-field-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}

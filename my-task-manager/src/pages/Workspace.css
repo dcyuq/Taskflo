@@ -181,14 +181,29 @@
 }
 
 .task-check {
+  position: relative;
   display: grid;
   place-items: center;
   flex: none;
   width: 22px;
   height: 22px;
+  padding: 0;
   border: 1.5px solid var(--line-strong);
   border-radius: 50%;
+  background: var(--surface);
   color: var(--paper);
+  cursor: pointer;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out;
+}
+
+.task-check::before {
+  content: '';
+  position: absolute;
+  inset: -11px;
+}
+
+.task-check:hover {
+  border-color: var(--ink);
 }
 
 .task-row.is-done .task-check {
@@ -199,6 +214,13 @@
 .task-row-title {
   flex: 1;
   min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
   font-size: 15px;
   font-weight: 500;
   line-height: 1.35;
@@ -235,4 +257,88 @@
 .task-assignee {
   display: inline-flex;
   flex: none;
+}
+
+.task-row-title:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.task-row-title:focus-visible {
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.tasks-toolbar {
+  display: flex;
+  gap: 8px;
+}
+
+.quick-add {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  transition: border-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.quick-add:focus-within {
+  border-color: var(--ink);
+  box-shadow: var(--ring);
+}
+
+.quick-add input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  border: none;
+  background: none;
+  font-size: 15px;
+  color: var(--ink);
+  outline: none;
+}
+
+.tasks-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border: 1px solid var(--error);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 14px;
+  color: var(--error);
+}
+
+.tasks-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: clamp(24px, 4vw, 40px);
+  border: 1px dashed var(--line-strong);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.tasks-empty h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.tasks-empty p {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.task-group .task-group-empty + .task-list:empty {
+  display: none;
 }

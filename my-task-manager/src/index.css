@@ -74,6 +74,13 @@ textarea {
   color: var(--error);
 }
 
+.field-error {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--error);
+}
+
 .form-notice {
   margin: -4px 0 16px;
   font-size: 13px;
