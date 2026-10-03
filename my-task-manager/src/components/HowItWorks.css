@@ -3,6 +3,7 @@
     grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     gap: clamp(24px, 4vw, 72px);
     align-items: center;
+    overflow-x: clip;
 }
 
 .hiw-tabs {
@@ -113,6 +114,7 @@
 }
 
 .hiw-mock {
+    grid-area: 1 / 1;
     pointer-events: none;
     display: flex;
     flex-direction: column;

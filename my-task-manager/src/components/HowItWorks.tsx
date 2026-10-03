@@ -1,6 +1,6 @@
 import './HowItWorks.css'
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion } from 'motion/react'
-import type { AnimationPlaybackControls } from 'motion/react'
+import type { AnimationPlaybackControls, HTMLMotionProps } from 'motion/react'
 import { Fragment, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { FocusEvent, HTMLAttributes, KeyboardEvent } from 'react'
 
@@ -147,22 +147,29 @@ function HowItWorks() {
         </button>
     )
 
-    const panel = (aria: HTMLAttributes<HTMLDivElement>) => (
-        <div className="hiw-panel" id="hiw-panel" {...aria}>
+    const slideIn = (x: number) => ({
+        initial: reduce ? false : { opacity: 0, x },
+        whileInView: { opacity: 1, x: 0 },
+        viewport: { once: true, amount: 0.3 },
+        transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const },
+    })
+
+    const panel = (aria: HTMLMotionProps<'div'>, x = 0) => (
+        <motion.div className="hiw-panel" id="hiw-panel" {...aria} {...(x ? slideIn(x) : {})}>
             <span className="hiw-preview">Preview</span>
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence initial={false}>
                 <motion.div
                     key={active}
                     className="hiw-mock"
                     initial={reduce ? false : 'hidden'}
                     animate="show"
-                    exit={reduce ? undefined : { opacity: 0, y: -6, transition: { duration: 0.14 } }}
+                    exit={reduce ? undefined : { opacity: 0, transition: { duration: 0.2 } }}
                     variants={{ show: { transition: { staggerChildren: 0.05 } } }}
                 >
                     <Mock />
                 </motion.div>
             </AnimatePresence>
-        </div>
+        </motion.div>
     )
 
     return (
@@ -179,31 +186,25 @@ function HowItWorks() {
                 <h2>How it works</h2>
                 <p>Three steps from sign-up to a team that knows what to work on.</p>
             </div>
-            <motion.div
-                className="hiw"
-                initial={reduce ? false : { opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            >
+            <div className="hiw">
                 {narrow ? (
-                    <div className="hiw-tabs" onKeyDown={onKey}>
+                    <motion.div className="hiw-tabs" onKeyDown={onKey} {...slideIn(-24)}>
                         {steps.map((s, i) => (
                             <Fragment key={s.title}>
                                 {stepButton(i, { 'aria-expanded': active === i, 'aria-controls': active === i ? 'hiw-panel' : undefined })}
                                 {active === i && panel({ role: 'region', 'aria-labelledby': `hiw-tab-${i}` })}
                             </Fragment>
                         ))}
-                    </div>
+                    </motion.div>
                 ) : (
                     <>
-                        <div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey}>
+                        <motion.div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey} {...slideIn(-32)}>
                             {steps.map((_, i) => stepButton(i, { role: 'tab', 'aria-selected': active === i, 'aria-controls': 'hiw-panel', tabIndex: active === i ? 0 : -1 }))}
-                        </div>
-                        {panel({ role: 'tabpanel', 'aria-labelledby': `hiw-tab-${active}` })}
+                        </motion.div>
+                        {panel({ role: 'tabpanel', 'aria-labelledby': `hiw-tab-${active}` }, 32)}
                     </>
                 )}
-            </motion.div>
+            </div>
         </section>
     )
 }
