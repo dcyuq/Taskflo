@@ -92,7 +92,7 @@ function BoardCard({ task, who, onEdit }: { task: Task, who?: string, onEdit: ()
     )
 }
 
-function Column({ status, label, children, count, onAdd }: { status: TaskStatus, label: string, children: React.ReactNode, count: number, onAdd: () => void }) {
+function Column({ status, label, children, count, dragging, onAdd }: { status: TaskStatus, label: string, children: React.ReactNode, count: number, dragging: boolean, onAdd: () => void }) {
     const { setNodeRef, isOver } = useDroppable({ id: status })
     return (
         <motion.section ref={setNodeRef} className={`board-col${isOver ? ' is-over' : ''}`} aria-labelledby={`col-${status}`} variants={rise}>
@@ -104,7 +104,7 @@ function Column({ status, label, children, count, onAdd }: { status: TaskStatus,
             </header>
             <div className="board-col-body">
                 {children}
-                {count === 0 && <p className="board-col-empty">Drop tasks here</p>}
+                {count === 0 && <p className={`board-col-empty${dragging ? ' is-target' : ''}`}>{dragging ? 'Drop here' : 'No tasks'}</p>}
                 <button type="button" className="board-col-add" onClick={onAdd}>
                     <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                         <path d="M8 3v10M3 8h10" />
@@ -155,7 +155,7 @@ function TaskBoard({ tasks, nameOf, onEdit, onAdd, onPatch }: TaskBoardProps) {
                 {statuses.map(status => {
                     const column = tasks.filter(t => t.status === status.id)
                     return (
-                        <Column key={status.id} status={status.id} label={status.label} count={column.length} onAdd={() => onAdd(status.id)}>
+                        <Column key={status.id} status={status.id} label={status.label} count={column.length} dragging={!!activeId} onAdd={() => onAdd(status.id)}>
                             {column.map(task => (
                                 <BoardCard key={task.id} task={task} who={nameOf(task.assignee_id)} onEdit={() => onEdit(task)} />
                             ))}

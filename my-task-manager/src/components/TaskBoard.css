@@ -8,7 +8,6 @@
 .board-col {
   display: flex;
   flex-direction: column;
-  min-height: 320px;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -67,14 +66,17 @@
 }
 
 .board-col-empty {
+  padding: 4px 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.board-col-empty.is-target {
   display: grid;
   place-items: center;
-  flex: 1;
   min-height: 96px;
   border: 1px dashed var(--line-strong);
   border-radius: 12px;
-  font-size: 13px;
-  color: var(--muted);
 }
 
 .board-card {
