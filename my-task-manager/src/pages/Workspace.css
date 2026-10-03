@@ -1,0 +1,238 @@
+.ws {
+  display: flex;
+  flex-direction: column;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 40px) clamp(16px, 3vw, 40px) 64px;
+}
+
+.ws-head {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.ws-title {
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+
+.ws-tabs {
+  display: flex;
+  gap: 4px;
+  box-shadow: inset 0 -1px var(--line-strong);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.ws-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 160ms ease-out;
+}
+
+.ws-tab:hover,
+.ws-tab.active {
+  color: var(--ink);
+}
+
+.ws-tab.active {
+  font-weight: 600;
+}
+
+.ws-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  background: var(--ink);
+}
+
+.ws-tab:focus-visible {
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+.ws-skeleton-title {
+  width: min(320px, 70%);
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.ws-skeleton-tabs {
+  width: min(260px, 60%);
+  height: 28px;
+  margin-bottom: 32px;
+}
+
+.ws-skeleton-row {
+  height: 56px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+}
+
+.ws-state {
+  align-items: flex-start;
+  padding-top: clamp(48px, 10vh, 120px);
+}
+
+.ws-state-title {
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.ws-state-text {
+  max-width: 52ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.avatar.is-empty {
+  border: 1.5px dashed var(--line-strong);
+  background: transparent;
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.task-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.task-group-count {
+  min-width: 24px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--line);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.task-group-empty {
+  padding: 14px 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  transition: border-color 160ms ease-out;
+}
+
+.task-row:hover {
+  border-color: var(--line-strong);
+}
+
+.task-check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--paper);
+}
+
+.task-row.is-done .task-check {
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.task-row-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.task-row.is-done .task-row-title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+
+.due-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.due-chip.is-overdue {
+  border-color: var(--error);
+  background: var(--surface);
+  color: var(--error);
+}
+
+.task-assignee {
+  display: inline-flex;
+  flex: none;
+}

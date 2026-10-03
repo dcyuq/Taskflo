@@ -3,6 +3,8 @@ import { Navigate } from 'react-router-dom';
 import FirstRun from './FirstRun';
 import { getPendingInvites, getWorkspaces, type PendingInvite } from '../services/workspace';
 import './FirstRun.css';
+import { LAST_WORKSPACE_KEY } from '../hooks/useWorkspace';
+import { readStored } from '../utils/storage';
 
 type HomeState =
     | { status: 'loading' }
@@ -10,8 +12,6 @@ type HomeState =
     | { status: 'has-workspace'; workspaceId: string }
     | { status: 'first-run'; invites: PendingInvite[] };
 
-// /dashboard index: send returning users to their first workspace, and show
-// the first-run screen to anyone who isn't in a workspace yet.
 function DashboardHome() {
     const [state, setState] = useState<HomeState>({ status: 'loading' });
     const [attempt, setAttempt] = useState(0);
@@ -26,7 +26,9 @@ function DashboardHome() {
             if (workspaces.error || !workspaces.data) {
                 setState({ status: 'error' });
             } else if (workspaces.data.length > 0) {
-                setState({ status: 'has-workspace', workspaceId: workspaces.data[0].id });
+                const last = readStored(LAST_WORKSPACE_KEY);
+                const target = workspaces.data.find((w) => w.id === last) ?? workspaces.data[0];
+                setState({ status: 'has-workspace', workspaceId: target.id });
             } else {
                 setState({ status: 'first-run', invites: invites.data ?? [] });
             }
