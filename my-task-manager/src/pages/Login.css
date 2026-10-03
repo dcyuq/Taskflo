@@ -4,7 +4,7 @@
     margin-bottom: 8px;
 }
 
-.login-box p {
+.login-box > p {
     font-size: 14px;
     color: var(--muted);
     margin-bottom: 32px;
@@ -71,7 +71,7 @@
     background: #333;
 }
 
-.login-box p {
+.login-box div > p {
     font-size: 13px;
     color: var(--muted);
     margin-top: 16px;
