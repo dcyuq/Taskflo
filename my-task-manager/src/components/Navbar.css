@@ -51,6 +51,7 @@
     font-weight: 600;
     color: var(--ink);
     text-decoration: none;
+    transition: background-color 160ms ease-out, border-color 160ms ease-out, transform 160ms ease-out;
 }
 
 .navbar-button:hover {
@@ -62,7 +63,6 @@
     background: var(--ink);
     border-color: var(--ink);
     color: var(--paper);
-    transition: background-color 160ms ease-out, transform 160ms ease-out;
 }
 
 .navbar-button.is-primary:hover {
@@ -70,8 +70,14 @@
     border-color: var(--ink-hover);
 }
 
-.navbar-button:active {
-    transform: translateY(1px);
+@media (prefers-reduced-motion: no-preference) {
+    .navbar-button:hover {
+        transform: translateY(-1px);
+    }
+
+    .navbar-button:active {
+        transform: scale(0.97);
+    }
 }
 
 .navbar-menu-only {

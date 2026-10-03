@@ -74,8 +74,14 @@ main > .Hero {
     background: var(--surface);
 }
 
-.Hero-button:active {
-    transform: translateY(1px);
+@media (prefers-reduced-motion: no-preference) {
+    .Hero-button:hover {
+        transform: translateY(-2px);
+    }
+
+    .Hero-button:active {
+        transform: scale(0.97);
+    }
 }
 
 .Hero-button:focus-visible {
