@@ -181,7 +181,10 @@ function Features() {
 
                 <Card delay={0.16}>
                     <div className="bento-text">
-                        <h3>AI assistant <span className="feature-soon">Coming soon</span></h3>
+                        <div className="bento-head">
+                            <h3>AI assistant</h3>
+                            <span className="feature-soon">Coming soon</span>
+                        </div>
                         <p>Suggested priorities and assignments based on each person's workload.</p>
                     </div>
                     <SuggestVisual />

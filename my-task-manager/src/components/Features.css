@@ -353,8 +353,19 @@
     }
 }
 
+.bento-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-bottom: 8px;
+}
+
+.bento-head h3 {
+    margin-bottom: 0;
+}
+
 .feature-soon {
-    margin-left: 6px;
     padding: 2px 8px;
     border-radius: 99px;
     border: 1px solid var(--line-strong);
