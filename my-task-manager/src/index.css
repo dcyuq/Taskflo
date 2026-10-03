@@ -10,9 +10,11 @@
   --placeholder: #6b6861;
   --line-strong: #d6d3ca;
   --error: #a3261b;
+  --error-hover: #8a2017;
   --ok: #2f6b3a;
   --ring: 0 0 0 3px rgba(13, 13, 13, 0.14);
   --nav-h: 76px;
+  --app-bar-h: 60px;
   --footer-h: 56px;
   --headline: clamp(30px, 4.4vw, 56px);
   --container: 1440px;
@@ -31,6 +33,15 @@
 body {
   background-color: var(--paper);
   line-height: 1.5;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .dot-grid {

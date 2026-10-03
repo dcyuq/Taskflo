@@ -1,5 +1,5 @@
 .firstrun {
-    min-height: calc(100vh - 54px);
+    min-height: calc(100dvh - var(--app-bar-h));
     background: var(--paper);
     padding: clamp(40px, 12vh, 120px) 16px 64px;
     font-family: "Sora", sans-serif;
@@ -352,7 +352,7 @@
 }
 
 .firstrun-loading {
-    min-height: calc(100vh - 54px);
+    min-height: calc(100dvh - var(--app-bar-h));
     display: grid;
     place-items: center;
     font-family: "Sora", sans-serif;
