@@ -1,52 +1,70 @@
 import './NewWorkspaceModal.css';
 import { createWorkspace } from '../services/workspace';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface NewWorkspaceModalProps {
     onClose: () => void;
     onCreated: () => void;
 }
 
+// Native <dialog> + showModal() gives focus trapping, Esc to close and inert background.
 function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
 
+    const dialogRef = useRef<HTMLDialogElement>(null);
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    async function handleCreate() {
-        if (!name.trim()) return;
+    useEffect(() => {
+        dialogRef.current?.showModal();
+    }, []);
+
+    async function handleCreate(e: React.SyntheticEvent) {
+        e.preventDefault();
+        if (!name.trim()) {
+            setError('Give your workspace a name.');
+            return;
+        }
         setLoading(true);
+        setError('');
 
         const {error} = await createWorkspace(name.trim());
 
         if (error) {
-            alert('Something went wrong. Please try again.');
+            setError("Couldn't create the workspace. Check your connection and try again.");
             setLoading(false);
             return;
         }
-        
+
         onCreated();
         onClose();
     }
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <dialog
+            ref={dialogRef}
+            className="modal"
+            aria-labelledby="new-workspace-title"
+            onClose={onClose}
+            onClick={(e) => e.target === dialogRef.current && onClose()}
+        >
+            <form onSubmit={handleCreate} noValidate>
                 <div className="modal-header">
-                    <span className='modal-title'>New Workspace</span>
-                    <button className="modal-close" onClick={onClose}>✕</button>
+                    <h2 id="new-workspace-title" className='modal-title'>New Workspace</h2>
+                    <button type="button" className="modal-close" aria-label="Close" onClick={onClose}>✕</button>
                 </div>
 
                 <div className="modal-body">
-                    <label className="modal-label">Workspace Name</label>
-                    <input className='modal-input' type="text" placeholder="e.g. Marketing Team" autoComplete="off" value={name} onChange={(e) => setName(e.target.value)}/>
-
+                    <label className="modal-label" htmlFor="new-workspace-name">Workspace Name</label>
+                    <input id="new-workspace-name" className='modal-input' type="text" placeholder="e.g. Marketing Team" autoComplete="off" maxLength={80} value={name} onChange={(e) => setName(e.target.value)}/>
+                    {error && <div className="form-error" role="alert">{error}</div>}
                 </div>
 
                 <div className="modal-footer">
-                    <button className="modal-create" onClick={handleCreate} disabled={loading}>{loading ? 'Creating...' : 'Create'}</button>
-                    <button className="modal-cancel" onClick={onClose}>Cancel</button>
+                    <button type="submit" className="modal-create" disabled={loading}>{loading ? 'Creating...' : 'Create'}</button>
+                    <button type="button" className="modal-cancel" onClick={onClose}>Cancel</button>
                 </div>
-            </div>
-        </div>
+            </form>
+        </dialog>
 
     )
 }
