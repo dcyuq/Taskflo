@@ -62,3 +62,50 @@
     color: var(--muted);
     font-variant-numeric: tabular-nums;
 }
+
+.faq {
+    max-width: 760px;
+    border-bottom: 1px solid var(--line-strong);
+}
+
+.faq details {
+    border-top: 1px solid var(--line-strong);
+}
+
+.faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+    padding: 12px 0;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+}
+
+.faq summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq summary::after {
+    content: "+";
+    flex: none;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--muted);
+    transition: transform 160ms ease-out;
+}
+
+.faq details[open] summary::after {
+    transform: rotate(45deg);
+}
+
+.faq details p {
+    max-width: 62ch;
+    padding-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+}

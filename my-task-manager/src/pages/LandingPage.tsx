@@ -36,6 +36,31 @@ function LandingPage() {
                     </li>
                 </ol>
             </section>
+            <section className="features">
+                <h2>FAQ</h2>
+                <div className="faq">
+                    <details>
+                        <summary>Who is Taskflo for?</summary>
+                        <p>Leads of small teams, roughly 3 to 20 people, who want one simple place to bring their team together.</p>
+                    </details>
+                    <details>
+                        <summary>How do teammates join?</summary>
+                        <p>Add their email when you set up your workspace. When they sign in to Taskflo with that address, the invite is waiting for them to accept.</p>
+                    </details>
+                    <details>
+                        <summary>Do invites expire?</summary>
+                        <p>Yes. An invite lasts 7 days and can only be used once.</p>
+                    </details>
+                    <details>
+                        <summary>Who can see my workspace?</summary>
+                        <p>Only its members. Someone you've invited can see the workspace name until they accept or decline.</p>
+                    </details>
+                    <details>
+                        <summary>Can I have more than one workspace?</summary>
+                        <p>Yes. Create one per team and switch between them from the sidebar.</p>
+                    </details>
+                </div>
+            </section>
             <Footer />
         </div>
     )
