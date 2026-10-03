@@ -141,7 +141,7 @@ function HowItWorks() {
     )
 
     const panel = (aria: HTMLMotionProps<'div'>) => (
-        <motion.div className="hiw-panel" id="hiw-panel" variants={rise} {...aria}>
+        <motion.div className="hiw-panel" id="hiw-panel" variants={rise} {...(narrow && { initial: reduce ? false : 'hidden', animate: 'show' })} {...aria}>
             <span className="hiw-preview">Preview</span>
             <AnimatePresence initial={false}>
                 <motion.div
