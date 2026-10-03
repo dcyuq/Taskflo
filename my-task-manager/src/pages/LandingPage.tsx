@@ -5,15 +5,11 @@ import HowItWorks from '../components/HowItWorks'
 import HeroDemo from '../components/HeroDemo'
 import Footer from '../components/Footer'
 import './LandingPage.css'
-import { Fragment, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
+import { rise, staggered } from '../utils/motion'
 
 const spotQuery = '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
-
-const rise = {
-    hidden: { opacity: 0, y: 18 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const } },
-}
 
 function LandingPage() {
     const reduce = useReducedMotion()
@@ -43,14 +39,8 @@ function LandingPage() {
             <main id="main" tabIndex={-1}>
                 <section className="Hero">
                     <div className="Hero-card">
-                        <motion.div className="Hero-copy" initial={reduce ? false : 'hidden'} animate="show" variants={{ show: { transition: { staggerChildren: 0.09 } } }}>
-                            <h1>
-                                {['Assign.', 'Track.', 'Done.'].map(word => (
-                                    <Fragment key={word}>
-                                        <motion.span className="Hero-word" variants={rise}>{word}</motion.span>{' '}
-                                    </Fragment>
-                                ))}
-                            </h1>
+                        <motion.div className="Hero-copy" initial={reduce ? false : 'hidden'} animate="show" variants={staggered}>
+                            <motion.h1 variants={rise}>Assign. Track. Done.</motion.h1>
                             <motion.p variants={rise}>A task manager for small teams that does less on purpose. Give work an owner and a deadline, see where it stands, and get on with it.</motion.p>
                             <motion.div variants={rise}>
                                 <Link className="Hero-button" to="/register">Get started</Link>

@@ -66,10 +66,6 @@ main > .Hero {
     margin-bottom: 28px;
 }
 
-.Hero-word {
-    display: inline-block;
-}
-
 .Hero p {
     max-width: 40ch;
     text-wrap: pretty;

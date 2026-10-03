@@ -1,8 +1,8 @@
 import './HeroDemo.css'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
+import { duration, ease, stagger } from '../utils/motion'
 
-const ease = [0.16, 1, 0.3, 1] as const
 const pop = {
     initial: { opacity: 0, scale: 0.8 },
     animate: { opacity: 1, scale: 1 },
@@ -30,9 +30,9 @@ function HeroDemo() {
             className="demo"
             ref={ref}
             aria-hidden="true"
-            initial={reduce ? false : { opacity: 0, x: 32 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.45, ease }}
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration, delay: stagger * 3, ease }}
         >
             <div className="demo-head">
                 <span>Design team</span>
