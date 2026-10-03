@@ -179,6 +179,39 @@
     color: var(--ink);
 }
 
+.strength {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.strength-bar {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.strength-bar span {
+    height: 4px;
+    border-radius: 99px;
+    background: var(--line);
+    transition: background-color 600ms var(--ease-soft);
+}
+
+.strength-bar span.is-on {
+    background: var(--ink);
+}
+
+.strength-label {
+    flex: none;
+    min-width: 112px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+}
+
 .password-rules {
     display: flex;
     flex-wrap: wrap;

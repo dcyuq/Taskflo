@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
 import SignUpDemo from '../components/SignUpDemo'
+import StrengthMeter from '../components/StrengthMeter'
 import { includesPersonal, passwordRules, personalParts } from '../utils/passwordRules'
 
 type Errors = { first?: string, last?: string, email?: string, password?: string, confirm?: string, code?: string, form?: string }
@@ -32,6 +33,7 @@ function Register() {
     const [errors, setErrors] = useState<Errors>({})
     const [notice, setNotice] = useState('')
     const [cooldown, setCooldown] = useState(0)
+    const [rated, setRated] = useState<{ password: string, score: number } | null>(null)
 
     useEffect(() => {
         if (cooldown <= 0) return
@@ -40,6 +42,18 @@ function Register() {
     }, [cooldown])
 
     const personal = personalParts(firstName, lastName, email)
+    const score = password && rated?.password === password ? rated.score : null
+    const strongEnough = score !== null && score >= 3
+
+    useEffect(() => {
+        if (!password) return
+        let cancelled = false
+        const inputs = personalParts(firstName, lastName, email)
+        import('../utils/strength').then(({ scorePassword }) => {
+            if (!cancelled) setRated({ password, score: scorePassword(password, inputs) })
+        })
+        return () => { cancelled = true }
+    }, [password, firstName, lastName, email])
     const checks = [
         ...passwordRules.map(rule => ({ label: rule.label, met: rule.test(password) })),
         { label: 'Doesn’t include your name or email', met: password.length > 0 && !includesPersonal(password, personal) },
@@ -55,6 +69,7 @@ function Register() {
         else if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = 'That email doesn’t look right. Check it and try again.'
         if (!password) next.password = 'Choose a password.'
         else if (!checks.every(c => c.met)) next.password = 'Your password needs to meet every rule above.'
+        else if (!strongEnough) next.password = 'That password is too easy to guess. Try a longer phrase or a few unrelated words.'
         if (!confirmPassword) next.confirm = 'Type your password again.'
         else if (password !== confirmPassword) next.confirm = 'The passwords don’t match.'
         setErrors(next)
@@ -146,7 +161,9 @@ function Register() {
                         <FieldError id="reg-email-error" msg={errors.email} />
                     </div>
 
-                    <PasswordField id="reg-password" label="Password" autoComplete="new-password" value={password} onChange={setPassword} error={errors.password} checks={checks} />
+                    <PasswordField id="reg-password" label="Password" autoComplete="new-password" value={password} onChange={setPassword} error={errors.password} checks={checks}>
+                        <StrengthMeter score={score} />
+                    </PasswordField>
                     <PasswordField id="reg-confirm" label="Confirm password" autoComplete="new-password" value={confirmPassword} onChange={setConfirmPassword} error={errors.confirm} />
 
                     {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
