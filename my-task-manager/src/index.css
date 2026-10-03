@@ -5,6 +5,7 @@
   --paper: #f9f8f5;
   --surface: #ffffff;
   --line: #e8e6e0;
+  --placeholder: #6b6861;
   --line-strong: #d6d3ca;
   --error: #a3261b;
   --ok: #2f6b3a;
@@ -53,4 +54,9 @@ textarea {
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+::placeholder {
+  color: var(--placeholder);
+  opacity: 1;
 }
