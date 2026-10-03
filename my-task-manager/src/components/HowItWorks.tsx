@@ -175,7 +175,10 @@ function HowItWorks() {
             onFocus={() => setFocused(true)}
             onBlur={onBlur}
         >
-            <h2>How it works</h2>
+            <div className="section-head">
+                <h2>How it works</h2>
+                <p>Three steps from sign-up to a team that knows what to work on.</p>
+            </div>
             <motion.div
                 className="hiw"
                 initial={reduce ? false : { opacity: 0, y: 16 }}
