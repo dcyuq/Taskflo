@@ -73,7 +73,7 @@
 
 .drawer-btn:hover {
   background: var(--paper);
-  border-color: #c8c6c0;
+  border-color: var(--line-strong);
 }
 @media (max-width: 640px) {
   .topnav {
