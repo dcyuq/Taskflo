@@ -116,7 +116,7 @@ function Register() {
     return (
         <AuthLayout>
             {!otpSent ? (
-                <form onSubmit={handleReg} noValidate>
+                <form key="details" onSubmit={handleReg} noValidate>
                     <h1>Create your account</h1>
                     <p className="auth-lede">Set up Taskflo for you and your team.</p>
 
@@ -150,7 +150,7 @@ function Register() {
                     <p className="auth-switch">Already have an account? <Link to="/login">Sign in</Link></p>
                 </form>
             ) : (
-                <form onSubmit={handleVerify} noValidate>
+                <form key="code" onSubmit={handleVerify} noValidate>
                     <h1>Check your email</h1>
                     <p className="auth-lede">We sent a 6-digit code to <strong>{email.trim()}</strong>. Enter it below to finish creating your account.</p>
 
