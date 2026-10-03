@@ -26,6 +26,7 @@ main > .Hero {
     width: min(85%, 1200px);
     min-height: calc((100dvh - var(--nav-h)) * 0.7);
     padding: clamp(32px, 5vw, 72px) clamp(24px, 5vw, 72px);
+    overflow: hidden;
     border-radius: 28px;
     background: var(--ink);
     color: var(--paper);
@@ -40,6 +41,10 @@ main > .Hero {
     text-wrap: balance;
     font-weight: 700;
     margin-bottom: 28px;
+}
+
+.Hero-word {
+    display: inline-block;
 }
 
 .Hero p {

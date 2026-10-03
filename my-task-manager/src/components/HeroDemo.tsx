@@ -26,7 +26,14 @@ function HeroDemo() {
     const done = stage === 3
 
     return (
-        <div className="demo" ref={ref} aria-hidden="true">
+        <motion.div
+            className="demo"
+            ref={ref}
+            aria-hidden="true"
+            initial={reduce ? false : { opacity: 0, x: 32 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.45, ease }}
+        >
             <div className="demo-head">
                 <span>Design team</span>
                 <span className="demo-count">{done ? 2 : 1} of 3 done</span>
@@ -73,7 +80,7 @@ function HeroDemo() {
                     transition={{ duration: reduce ? 0 : 0.5, ease }}
                 />
             </div>
-        </div>
+        </motion.div>
     )
 }
 
