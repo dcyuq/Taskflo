@@ -14,6 +14,6 @@ export default function ProtectedRoute({children} : {children : React.ReactNode}
         });
     }, []);
 
-    if (checking) return null; 
+    if (checking) return <div className="firstrun-loading" role="status">Loading…</div>;
     return authenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
