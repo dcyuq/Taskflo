@@ -49,6 +49,51 @@ function TaskVisual() {
     )
 }
 
+const columns = [
+    { name: 'To do', cards: ['Plan sprint'] },
+    { name: 'Doing', cards: ['Pricing page'] },
+    { name: 'Done', cards: ['Invite team', 'Set up workspace'] },
+]
+
+function BoardVisual() {
+    const ref = useRef<HTMLDivElement>(null)
+    const stage = useTick(ref, columns.length, 1800)
+    const done = 2 + (stage === 2 ? 1 : 0)
+    const total = 5
+    return (
+        <div className="bento-visual board" ref={ref} aria-hidden="true">
+            <div className="board-cols">
+                {columns.map((col, c) => (
+                    <div className="board-col" key={col.name}>
+                        <span className="board-name">{col.name}</span>
+                        {c === stage && (
+                            <motion.span
+                                layoutId="moving-card"
+                                className="board-card is-moving"
+                                transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                            >
+                                Launch notes
+                            </motion.span>
+                        )}
+                        {col.cards.map(card => <span className="board-card" key={card}>{card}</span>)}
+                    </div>
+                ))}
+            </div>
+            <div className="board-progress">
+                <div className="board-bar">
+                    <motion.span
+                        className="board-fill"
+                        initial={false}
+                        animate={{ scaleX: done / total }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    />
+                </div>
+                <span className="board-count">{done} of {total} done</span>
+            </div>
+        </div>
+    )
+}
+
 function Card({ ink, wide, children }: { ink?: boolean, wide?: boolean, children: ReactNode }) {
     const reduce = useReducedMotion()
     return (
@@ -80,7 +125,7 @@ function Features() {
                         <h3>Progress tracking</h3>
                         <p>See the status of every task across your team.</p>
                     </div>
-                    <div className="bento-visual" aria-hidden="true"></div>
+                    <BoardVisual />
                 </Card>
 
                 <Card>
