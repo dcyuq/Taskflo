@@ -9,8 +9,10 @@
 }
 
 .topnav-brand {
-  font-size: 30px;
-  font-weight: bold;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  min-width: 0;
+  font-weight: 700;
   color: #0d0d0d;
   display: flex;
   align-items: center;
@@ -19,16 +21,16 @@
 }
 
 .topnav-mark {
-  width: 38px;
-  height: 38px;
-  border-radius: 9px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   background: #0d0d0d;
   color: #f9f8f5;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 
@@ -97,17 +99,6 @@
 
   .topnav-profile-name {
     display: none;
-  }
-
-  .topnav-brand {
-    font-size: 22px;
-    min-width: 0;
-  }
-
-  .topnav-mark {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
   }
 
   .topnav-profile {
