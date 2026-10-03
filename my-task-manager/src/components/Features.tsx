@@ -2,7 +2,7 @@ import './Features.css'
 
 function Features() {
     return(
-        <div className="features">
+        <section className="features" id="features">
             <h2>Everything your team needs</h2>
             <div className='features-grid'>
                 <div className='feature-card'>
@@ -20,7 +20,7 @@ function Features() {
                     <p>Suggested priorities and assignments based on each person's workload.</p>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }
 

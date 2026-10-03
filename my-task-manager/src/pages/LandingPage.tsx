@@ -16,7 +16,7 @@ function LandingPage() {
                 <Link className="Hero-button" to="/register">Get started</Link>
             </main>
             <Features />
-            <section className="features">
+            <section className="features" id="how-it-works">
                 <h2>How it works</h2>
                 <ol className="features-grid steps">
                     <li className="feature-card">
@@ -36,7 +36,7 @@ function LandingPage() {
                     </li>
                 </ol>
             </section>
-            <section className="features">
+            <section className="features" id="faq">
                 <h2>FAQ</h2>
                 <div className="faq">
                     <details>

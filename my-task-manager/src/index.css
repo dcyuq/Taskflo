@@ -76,3 +76,13 @@ input:focus-visible {
   border-color: var(--ink);
   box-shadow: var(--ring);
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
