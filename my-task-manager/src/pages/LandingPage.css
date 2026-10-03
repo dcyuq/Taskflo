@@ -19,7 +19,7 @@ main > .Hero {
     align-items: center;
     gap: clamp(32px, 5vw, 80px);
     width: min(85%, 1200px);
-    min-height: calc((100dvh - var(--nav-h)) * 0.7);
+    min-height: calc((100dvh - var(--nav-h)) * 0.75);
     padding: clamp(32px, 5vw, 72px) clamp(24px, 5vw, 72px);
     overflow: hidden;
     border-radius: 28px;
