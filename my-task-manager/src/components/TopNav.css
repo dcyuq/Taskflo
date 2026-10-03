@@ -10,6 +10,7 @@
 
 .topnav-brand {
   min-width: 0;
+  min-height: 44px;
   color: var(--ink);
   display: flex;
   align-items: center;
