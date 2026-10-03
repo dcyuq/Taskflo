@@ -22,7 +22,7 @@
   margin-bottom: 8px;
 }
 
-.RegisterBox > p {
+.RegisterBox form > p {
   font-size: 14px;
   color: gray;
   margin-bottom: 32px;
