@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import Avatar from './Avatar'
+import Assignee from './Assignee'
 import DueChip from './DueChip'
 import { statuses, type Task, type TaskPatch } from '../services/tasks'
 import { ease, rise } from '../utils/motion'
@@ -56,10 +56,7 @@ function TaskList({ tasks, nameOf, onEdit, onPatch }: TaskListProps) {
                                         {task.title}
                                     </button>
                                     <DueChip task={task} />
-                                    <span className="task-assignee" title={who ?? 'Unassigned'}>
-                                        <Avatar name={who} />
-                                        <span className="sr-only">{who ? `Assigned to ${who}` : 'Unassigned'}</span>
-                                    </span>
+                                    <Assignee name={who} />
                                 </motion.li>
                             )
                         })}

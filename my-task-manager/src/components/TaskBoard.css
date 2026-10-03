@@ -143,8 +143,8 @@
   min-height: 26px;
 }
 
-.board-card-meta .due-chip:only-child {
-  margin-right: auto;
+.board-card-meta .assignee {
+  margin-left: auto;
 }
 
 .board-card-grip {

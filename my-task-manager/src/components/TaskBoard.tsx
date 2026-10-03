@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Assignee from './Assignee'
 import {
     DndContext,
     DragOverlay,
@@ -14,7 +15,6 @@ import {
     type KeyboardCoordinateGetter,
 } from '@dnd-kit/core'
 import { motion, useReducedMotion } from 'motion/react'
-import Avatar from './Avatar'
 import DueChip from './DueChip'
 import { statuses, type Task, type TaskPatch, type TaskStatus } from '../services/tasks'
 import { ease, rise } from '../utils/motion'
@@ -59,10 +59,7 @@ function CardBody({ task, who, onEdit }: { task: Task, who?: string, onEdit?: ()
             <button type="button" className="board-card-title" onClick={onEdit} tabIndex={onEdit ? 0 : -1}>{task.title}</button>
             <div className="board-card-meta">
                 <DueChip task={task} />
-                <span className="task-assignee" title={who ?? 'Unassigned'}>
-                    <Avatar name={who} size={26} />
-                    <span className="sr-only">{who ? `Assigned to ${who}` : 'Unassigned'}</span>
-                </span>
+                <Assignee name={who} />
             </div>
         </>
     )

@@ -689,3 +689,38 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.assignee {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  max-width: 140px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.assignee-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assignee.is-none {
+  padding: 0 2px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+@media (max-width: 639px) {
+  .task-row .assignee-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

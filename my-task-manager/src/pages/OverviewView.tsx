@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Assignee from '../components/Assignee'
 import { motion, useReducedMotion } from 'motion/react'
 import Avatar from '../components/Avatar'
 import { useWorkspace } from '../hooks/useWorkspace'
@@ -105,10 +106,7 @@ function OverviewView() {
                                     <li key={task.id} className="today-row">
                                         <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => patch(task, { status: 'done' })} />
                                         <span className="today-title">{task.title}</span>
-                                        <span className="task-assignee" title={who ?? 'Unassigned'}>
-                                            <Avatar name={who} size={26} />
-                                            <span className="sr-only">{who ? `Assigned to ${who}` : 'Unassigned'}</span>
-                                        </span>
+                                        <Assignee name={who} />
                                     </li>
                                 )
                             })}
