@@ -151,16 +151,6 @@ function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolea
 function Features() {
     const ref = useRef<HTMLElement>(null)
     const inView = useInView(ref, { amount: 0.4 })
-    const reduce = useReducedMotion()
-    const [turn, setTurn] = useState(0)
-
-    useEffect(() => {
-        if (reduce || !inView) return
-        const id = setInterval(() => setTurn(t => (t + 1) % 3), 5400)
-        return () => clearInterval(id)
-    }, [reduce, inView])
-
-    const on = (k: number) => inView && turn === k
 
     return(
         <section className="features" id="features" ref={ref}>
@@ -174,18 +164,18 @@ function Features() {
                         <h3>Task assignment</h3>
                         <p>Give each task an owner, a deadline and a priority.</p>
                     </div>
-                    <TaskVisual active={on(0)} />
+                    <TaskVisual active={inView} />
                 </Card>
 
-                <Card delay={0.08}>
+                <Card delay={0.1}>
                     <div className="bento-text">
                         <h3>Progress tracking</h3>
                         <p>See the status of every task across your team.</p>
                     </div>
-                    <BoardVisual active={on(1)} />
+                    <BoardVisual active={inView} />
                 </Card>
 
-                <Card delay={0.16}>
+                <Card delay={0.2}>
                     <div className="bento-text">
                         <div className="bento-head">
                             <h3>AI assistant</h3>
@@ -193,7 +183,7 @@ function Features() {
                         </div>
                         <p>Suggested priorities and assignments based on each person's workload.</p>
                     </div>
-                    <SuggestVisual active={on(2)} />
+                    <SuggestVisual active={inView} />
                 </Card>
             </div>
         </section>
