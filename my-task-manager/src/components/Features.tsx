@@ -1,17 +1,16 @@
 import './Features.css'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
-import type { ReactNode, RefObject } from 'react'
+import type { ReactNode } from 'react'
 
-function useTick(ref: RefObject<Element | null>, length: number, ms: number) {
+function useTick(active: boolean, length: number, ms: number) {
     const reduce = useReducedMotion()
-    const inView = useInView(ref)
     const [i, setI] = useState(0)
     useEffect(() => {
-        if (reduce || !inView) return
+        if (reduce || !active) return
         const id = setInterval(() => setI(n => (n + 1) % length), ms)
         return () => clearInterval(id)
-    }, [reduce, inView, length, ms])
+    }, [reduce, active, length, ms])
     return i
 }
 
@@ -21,13 +20,12 @@ const tasks = [
     { title: 'Fix invite email layout', who: 'PS', due: 'Oct 17', priority: 'Low' },
 ]
 
-function TaskVisual() {
-    const ref = useRef<HTMLDivElement>(null)
-    const i = useTick(ref, tasks.length, 2600)
+function TaskVisual({ active }: { active: boolean }) {
+    const i = useTick(active, tasks.length, 2600)
     const reduce = useReducedMotion()
     const t = tasks[i]
     return (
-        <div className="bento-visual task-stack" ref={ref} aria-hidden="true">
+        <div className="bento-visual task-stack" aria-hidden="true">
             <span className="task-ghost"></span>
             <span className="task-ghost"></span>
             <AnimatePresence mode="popLayout" initial={false}>
@@ -55,13 +53,12 @@ const columns = [
     { name: 'Done', cards: ['Invite team', 'Set up workspace'] },
 ]
 
-function BoardVisual() {
-    const ref = useRef<HTMLDivElement>(null)
-    const stage = useTick(ref, columns.length, 1800)
+function BoardVisual({ active }: { active: boolean }) {
+    const stage = useTick(active, columns.length, 1800)
     const done = 2 + (stage === 2 ? 1 : 0)
     const total = 5
     return (
-        <div className="bento-visual board" ref={ref} aria-hidden="true">
+        <div className="bento-visual board" aria-hidden="true">
             <div className="board-cols">
                 {columns.map((col, c) => (
                     <div className="board-col" key={col.name}>
@@ -96,21 +93,19 @@ function BoardVisual() {
 
 const suggestion = 'Move 2 tasks from Ana to Ben'
 
-function SuggestVisual() {
-    const ref = useRef<HTMLDivElement>(null)
+function SuggestVisual({ active }: { active: boolean }) {
     const reduce = useReducedMotion()
-    const inView = useInView(ref)
     const [n, setN] = useState(0)
     const shown = reduce ? suggestion.length : n
 
     useEffect(() => {
-        if (reduce || !inView) return
+        if (reduce || !active) return
         const id = setTimeout(() => setN(c => (c >= suggestion.length ? 0 : c + 1)), n >= suggestion.length ? 2400 : n === 0 ? 600 : 45)
         return () => clearTimeout(id)
-    }, [reduce, inView, n])
+    }, [reduce, active, n])
 
     return (
-        <div className="bento-visual suggest" ref={ref} aria-hidden="true">
+        <div className="bento-visual suggest" aria-hidden="true">
             <div className="load-row">
                 <span className="load-name">Ana</span>
                 <span className="load-bar is-heavy"><span></span></span>
@@ -121,11 +116,7 @@ function SuggestVisual() {
                 <span className="load-bar is-light"><span></span></span>
                 <span className="load-count">2 tasks</span>
             </div>
-            <motion.div
-                className="suggest-chip"
-                animate={reduce ? undefined : { boxShadow: ['0 0 0 0px rgba(13, 13, 13, 0.14)', '0 0 0 6px rgba(13, 13, 13, 0)'] }}
-                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-            >
+            <div className="suggest-chip">
                 <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
                     <path d="M8 1.5l1.6 4.1 4.1 1.6-4.1 1.6L8 12.9 6.4 8.8 2.3 7.2l4.1-1.6z" />
                 </svg>
@@ -137,7 +128,7 @@ function SuggestVisual() {
                         transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
                     />
                 </span>
-            </motion.div>
+            </div>
         </div>
     )
 }
@@ -158,8 +149,21 @@ function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolea
 }
 
 function Features() {
+    const ref = useRef<HTMLElement>(null)
+    const inView = useInView(ref, { amount: 0.4 })
+    const reduce = useReducedMotion()
+    const [turn, setTurn] = useState(0)
+
+    useEffect(() => {
+        if (reduce || !inView) return
+        const id = setInterval(() => setTurn(t => (t + 1) % 3), 5400)
+        return () => clearInterval(id)
+    }, [reduce, inView])
+
+    const on = (k: number) => inView && turn === k
+
     return(
-        <section className="features" id="features">
+        <section className="features" id="features" ref={ref}>
             <div className="section-head">
                 <h2>Three things, done well</h2>
                 <p>Taskflo handles three jobs and leaves the rest out, so your team spends its time on the work instead of the tool.</p>
@@ -170,7 +174,7 @@ function Features() {
                         <h3>Task assignment</h3>
                         <p>Give each task an owner, a deadline and a priority.</p>
                     </div>
-                    <TaskVisual />
+                    <TaskVisual active={on(0)} />
                 </Card>
 
                 <Card delay={0.08}>
@@ -178,7 +182,7 @@ function Features() {
                         <h3>Progress tracking</h3>
                         <p>See the status of every task across your team.</p>
                     </div>
-                    <BoardVisual />
+                    <BoardVisual active={on(1)} />
                 </Card>
 
                 <Card delay={0.16}>
@@ -189,7 +193,7 @@ function Features() {
                         </div>
                         <p>Suggested priorities and assignments based on each person's workload.</p>
                     </div>
-                    <SuggestVisual />
+                    <SuggestVisual active={on(2)} />
                 </Card>
             </div>
         </section>
