@@ -2,6 +2,8 @@ import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useEffect, useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
+import PasswordField from '../components/PasswordField'
+import { passwordRules } from '../utils/passwordRules'
 
 type Errors = { first?: string, last?: string, email?: string, password?: string, confirm?: string, code?: string, form?: string }
 
@@ -45,6 +47,7 @@ function Register() {
         if (!email.trim()) next.email = 'Enter your email.'
         else if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = 'That email doesn’t look right. Check it and try again.'
         if (!password) next.password = 'Choose a password.'
+        else if (!passwordRules.every(rule => rule.test(password))) next.password = 'Your password needs to meet every rule above.'
         if (!confirmPassword) next.confirm = 'Type your password again.'
         else if (password !== confirmPassword) next.confirm = 'The passwords don’t match.'
         setErrors(next)
@@ -136,17 +139,8 @@ function Register() {
                         <FieldError id="reg-email-error" msg={errors.email} />
                     </div>
 
-                    <div className="field">
-                        <label htmlFor="reg-password">Password</label>
-                        <input id="reg-password" type="password" autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} {...invalid('reg-password', errors.password)} />
-                        <FieldError id="reg-password-error" msg={errors.password} />
-                    </div>
-
-                    <div className="field">
-                        <label htmlFor="reg-confirm">Confirm password</label>
-                        <input id="reg-confirm" type="password" autoComplete="new-password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} {...invalid('reg-confirm', errors.confirm)} />
-                        <FieldError id="reg-confirm-error" msg={errors.confirm} />
-                    </div>
+                    <PasswordField id="reg-password" label="Password" autoComplete="new-password" value={password} onChange={setPassword} error={errors.password} showRules />
+                    <PasswordField id="reg-confirm" label="Confirm password" autoComplete="new-password" value={confirmPassword} onChange={setConfirmPassword} error={errors.confirm} />
 
                     {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
 

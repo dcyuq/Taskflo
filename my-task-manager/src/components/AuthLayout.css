@@ -151,6 +151,78 @@
     box-shadow: 0 0 0 3px rgba(163, 38, 27, 0.14);
 }
 
+.password-wrap {
+    position: relative;
+}
+
+.field .password-wrap input {
+    padding-right: 72px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 64px;
+    height: 44px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 160ms ease-out;
+}
+
+.password-toggle:hover {
+    color: var(--ink);
+}
+
+.password-rules {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 10px;
+    list-style: none;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.password-rules li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 160ms ease-out;
+}
+
+.password-rules li::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    transition: background-color 160ms ease-out, border-color 160ms ease-out;
+}
+
+.password-rules li.is-met {
+    color: var(--ink);
+}
+
+.password-rules li.is-met::before {
+    border-color: var(--ink);
+    background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8.5l2.5 2.5 5.5-6'/%3E%3C/svg%3E") center / 10px no-repeat;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 .field-error {
     margin-top: 8px;
     font-size: 13px;

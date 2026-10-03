@@ -2,6 +2,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
+import PasswordField from '../components/PasswordField'
 
 type Errors = { email?: string, password?: string, form?: string }
 
@@ -57,19 +58,7 @@ function Login() {
                     {errors.email && <p className="field-error" id="login-email-error">{errors.email}</p>}
                 </div>
 
-                <div className="field">
-                    <label htmlFor="login-password">Password</label>
-                    <input
-                        id="login-password"
-                        type="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        aria-invalid={!!errors.password}
-                        aria-describedby={errors.password ? 'login-password-error' : undefined}
-                    />
-                    {errors.password && <p className="field-error" id="login-password-error">{errors.password}</p>}
-                </div>
+                <PasswordField id="login-password" label="Password" autoComplete="current-password" value={password} onChange={setPassword} error={errors.password} />
 
                 {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
 
