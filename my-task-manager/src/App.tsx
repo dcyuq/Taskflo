@@ -7,6 +7,7 @@ import WorkspaceLayout from './pages/WorkspaceLayout'
 import TasksView from './pages/TasksView'
 import TeamView from './pages/TeamView'
 import OverviewView from './pages/OverviewView'
+import PersonalTasks from './pages/PersonalTasks'
 import DashboardHome from './pages/DashboardHome'
 
 import {Routes, Route} from 'react-router-dom'
@@ -20,6 +21,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
           <Route index element={<DashboardHome />} />
+          <Route path="my-tasks" element={<PersonalTasks key="mine" mode="mine" />} />
+          <Route path="due-soon" element={<PersonalTasks key="soon" mode="soon" />} />
           <Route path="workspace/:id" element={<WorkspaceLayout />}>
             <Route index element={<TasksView />} />
             <Route path="overview" element={<OverviewView />} />

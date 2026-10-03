@@ -55,6 +55,7 @@ function Dashboard() {
                     open={drawerOpen}
                     list={list}
                     openTasks={openTasks}
+                    me={me}
                     onRetry={() => { setList({ status: 'loading' }); load() }}
                     onCreated={load}
                     onClose={() => setDrawerOpen(false)}

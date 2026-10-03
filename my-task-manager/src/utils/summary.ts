@@ -1,5 +1,5 @@
 import type { Task } from '../services/tasks'
-import { todayKey } from './dates'
+import { addDays, todayKey } from './dates'
 
 export function summarize(tasks: Task[]) {
     const today = todayKey()
@@ -10,3 +10,5 @@ export function summarize(tasks: Task[]) {
         dueToday: open.filter(t => t.due_date === today),
     }
 }
+
+export const isDueSoon = (task: Task) => !!task.due_date && task.due_date <= addDays(todayKey(), 7)

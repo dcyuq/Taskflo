@@ -23,7 +23,10 @@ function TasksView() {
     const [params, setParams] = useSearchParams()
     const [quick, setQuick] = useState('')
     const [adding, setAdding] = useState(false)
-    const [editing, setEditing] = useState<Editing>(null)
+    const [editing, setEditing] = useState<Editing>(() => {
+        const linked = tasks.find(t => t.id === params.get('task'))
+        return linked ? { task: linked } : null
+    })
     const viewKey = `taskflo:view:${workspace.id}`
     const fromUrl = params.get('view')
     const stored = readStored(viewKey)
@@ -131,7 +134,10 @@ function TasksView() {
                         return !!created
                     }}
                     onDelete={async () => !!editTask && remove(editTask)}
-                    onClose={() => setEditing(null)}
+                    onClose={() => {
+                        setEditing(null)
+                        if (params.has('task')) setParams(p => { p.delete('task'); return p }, { replace: true })
+                    }}
                 />
             )}
         </motion.div>

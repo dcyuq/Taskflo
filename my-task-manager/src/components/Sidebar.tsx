@@ -4,6 +4,7 @@ import { Link, NavLink } from 'react-router-dom'
 import NewWorkspaceModal from './NewWorkspaceModal'
 import ProfileMenu from './ProfileMenu'
 import type { Task } from '../services/tasks'
+import { isDueSoon } from '../utils/summary'
 import wordmark from '../assets/taskflo-wordmark.svg?raw'
 
 export type ListState =
@@ -16,6 +17,7 @@ interface SidebarProps {
     open: boolean
     list: ListState
     openTasks: Task[]
+    me: string
     onRetry: () => void
     onCreated: () => void
     onClose: () => void
@@ -29,10 +31,15 @@ function PlusIcon() {
     )
 }
 
-function Sidebar({ desktop, open, list, openTasks, onRetry, onCreated, onClose }: SidebarProps) {
+function Sidebar({ desktop, open, list, openTasks, me, onRetry, onCreated, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
     const visible = desktop || open
     const closeOnMobile = desktop ? undefined : onClose
+    const mine = openTasks.filter(t => t.assignee_id === me)
+    const personal = [
+        { to: '/dashboard/my-tasks', label: 'My tasks', count: mine.length, icon: <path d="M3.5 8.5l3 3 6-7" /> },
+        { to: '/dashboard/due-soon', label: 'Due soon', count: mine.filter(isDueSoon).length, icon: <><circle cx="8" cy="8" r="5.5" /><path d="M8 5v3l2 1.5" /></> },
+    ]
 
     useEffect(() => {
         if (desktop || !open) return
@@ -60,7 +67,21 @@ function Sidebar({ desktop, open, list, openTasks, onRetry, onCreated, onClose }
                 </div>
 
                 <div className="sidebar-scroll">
-                    <section className="sidebar-section" aria-labelledby="sidebar-workspaces">
+                    <ul className="sidebar-list" aria-label="Personal">
+                        {personal.map(item => (
+                            <li key={item.to}>
+                                <NavLink className="sidebar-item" to={item.to} onClick={closeOnMobile}>
+                                    <span className="sidebar-icon" aria-hidden="true">
+                                        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
+                                    </span>
+                                    <span className="sidebar-name">{item.label}</span>
+                                    {item.count > 0 && <span className="sidebar-count" aria-label={`${item.count} open`}>{item.count}</span>}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+
+                    <section className="sidebar-section is-spaced" aria-labelledby="sidebar-workspaces">
                         <div className="sidebar-section-head">
                             <h2 className="sidebar-label" id="sidebar-workspaces">Workspaces</h2>
                             <button type="button" className="sidebar-icon-btn is-small" aria-label="New workspace" title="New workspace" onClick={() => setShowModal(true)}>
