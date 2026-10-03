@@ -1,38 +1,63 @@
+/* The one loud moment on the page: an ink slab carrying the headline. */
 .Hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: clamp(64px, 12vw, 120px) 24px;
-    
+    max-width: 1200px;
+    margin: 8px auto 0;
+    padding: clamp(56px, 10vw, 128px) clamp(24px, 6vw, 80px);
+    border-radius: 28px;
+    background: var(--ink);
+    color: var(--paper);
 }
 
 .Hero h1 {
-    font-size: clamp(36px, 6vw, 64px);
-    line-height: 1.08;
-    letter-spacing: -0.03em;
+    max-width: 12ch;
+    font-size: clamp(44px, 9vw, 104px);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
     text-wrap: balance;
     font-weight: 700;
-    margin-bottom: 16px;
+    margin-bottom: 28px;
 }
 
 .Hero p {
-    font-size: 18px;
-    color: var(--muted);
-    margin-bottom: 32px;
+    max-width: 40ch;
+    text-wrap: pretty;
+    font-size: clamp(17px, 2vw, 20px);
+    line-height: 1.5;
+    color: #c9c6be;
+    margin-bottom: 40px;
 }
 
 .Hero-button {
-    background: var(--ink);
-    color: white;
-    padding: 12px 28px;
-    border-radius: 8px;
-    border: none;
+    display: inline-flex;
+    align-items: center;
+    height: 52px;
+    padding: 0 28px;
+    border-radius: 12px;
+    background: var(--paper);
+    color: var(--ink);
     font-size: 16px;
-    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 160ms ease-out, transform 160ms ease-out;
 }
 
 .Hero-button:hover {
-    background: #333;
+    background: #ffffff;
+}
+
+.Hero-button:active {
+    transform: translateY(1px);
+}
+
+.Hero-button:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 3px;
+}
+
+/* Inset the slab from the screen edge on phones. */
+@media (max-width: 1232px) {
+    .Hero {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
 }
