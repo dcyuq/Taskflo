@@ -54,10 +54,13 @@ function Register() {
         })
         return () => { cancelled = true }
     }, [password, firstName, lastName, email])
+
     const checks = [
         ...passwordRules.map(rule => ({ label: rule.label, met: rule.test(password) })),
         { label: 'Doesn’t include your name or email', met: password.length > 0 && !includesPersonal(password, personal) },
     ]
+    const ready = !!firstName.trim() && !!lastName.trim() && /^\S+@\S+\.\S+$/.test(email.trim())
+        && checks.every(c => c.met) && strongEnough && confirmPassword === password
 
     async function handleReg(e: React.SyntheticEvent) {
         e.preventDefault()
@@ -83,7 +86,7 @@ function Register() {
         })
         setLoading(false)
         if (error) {
-            if (error.code === 'weak_password') setErrors({ password: 'That password is too weak. Try a longer one.' })
+            if (error.code === 'weak_password') setErrors({ password: 'That password isn’t strong enough. Try a longer phrase or a few unrelated words.' })
             else if (error.code === 'over_email_send_rate_limit') setErrors({ form: 'Too many attempts. Wait a minute and try again.' })
             else setErrors({ form: 'Couldn’t create your account. Check your connection and try again.' })
             return
@@ -168,9 +171,10 @@ function Register() {
 
                     {errors.form && <p className="field-error" role="alert">{errors.form}</p>}
 
-                    <button type="submit" className="auth-submit" disabled={loading} aria-busy={loading}>
+                    <button type="submit" className="auth-submit" disabled={loading || !ready} aria-busy={loading} aria-describedby={ready ? undefined : 'reg-ready'}>
                         {loading ? 'Creating account…' : 'Create account'}
                     </button>
+                    {!ready && <p className="auth-hint" id="reg-ready">Fill in every field and meet each password check to continue.</p>}
                     <p className="auth-switch">Already have an account? <Link to="/login">Sign in</Link></p>
                 </form>
             ) : (

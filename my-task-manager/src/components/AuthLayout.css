@@ -288,6 +288,19 @@
     cursor: progress;
 }
 
+.auth-submit:disabled:not([aria-busy='true']) {
+    background: var(--line-strong);
+    color: var(--muted);
+    cursor: not-allowed;
+}
+
+.auth-hint {
+    margin-top: 10px;
+    font-size: 13px;
+    text-align: center;
+    color: var(--muted);
+}
+
 @media (prefers-reduced-motion: no-preference) {
     .auth-submit:active:not(:disabled) {
         transform: translateY(1px);
