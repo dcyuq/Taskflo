@@ -11,17 +11,14 @@ function TopNav() {
         useEffect(() => {
             async function loadUser() {
                 const { data : {session} } = await supabase.auth.getSession();
-                console.log("session:", session);
 
                 if(!session) return;
 
-                const {data, error} = await supabase 
+                const {data} = await supabase 
                     .from('Users')
                     .select('first_name')
                     .eq('id', session.user.id)
                     .single();
-                    console.log("data:", data);
-                    console.log("error:", error);
             
                 if (data) setFirstName(data.first_name);
             }

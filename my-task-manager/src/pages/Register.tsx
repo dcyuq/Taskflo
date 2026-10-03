@@ -40,7 +40,6 @@ function Register() {
             },
         });
         if (error) {
-             console.log(error);
             alert(error.message);
             setLoading(false);
             return;
@@ -61,7 +60,6 @@ function Register() {
             type: "email",
         });
         if (error) {
-            console.log(error);
             alert(error.message);
             return;
         }

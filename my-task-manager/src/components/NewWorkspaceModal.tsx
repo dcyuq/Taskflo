@@ -17,7 +17,6 @@ function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
         setLoading(true);
 
         const {error} = await createWorkspace(name.trim());
-        console.log("error:", error);
 
         if (error) {
             alert('Something went wrong. Please try again.');
