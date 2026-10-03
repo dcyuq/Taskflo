@@ -1,7 +1,7 @@
 .features {
     max-width: 1200px;
     margin: 0 auto;
-    padding: clamp(64px, 9vw, 112px) clamp(16px, 6vw, 80px);
+    padding: clamp(40px, 5vw, 64px) clamp(16px, 6vw, 80px);
 }
 
 .features h2 {
@@ -10,7 +10,7 @@
     letter-spacing: -0.02em;
     text-wrap: balance;
     font-weight: 700;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
 }
 
 .features-grid {
