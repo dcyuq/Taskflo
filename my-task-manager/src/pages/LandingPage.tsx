@@ -22,8 +22,11 @@ function LandingPage() {
                 </section>
                 <Features />
                 <HowItWorks />
-                <section className="features" id="faq">
-                    <h2>FAQ</h2>
+                <section className="features faq-section" id="faq">
+                    <div className="faq-intro">
+                        <h2>FAQ</h2>
+                        <p>Short answers about workspaces, invites and who can see what.</p>
+                    </div>
                     <div className="faq">
                         <details>
                             <summary>Who is Taskflo for?</summary>
