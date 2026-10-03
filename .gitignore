@@ -31,3 +31,12 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# AI tooling
+.ai/
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+.impeccable/
+PRODUCT.md
+DESIGN.md
