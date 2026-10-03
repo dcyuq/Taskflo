@@ -383,8 +383,16 @@
 }
 
 @media (max-width: 480px) {
+    .firstrun {
+        padding-top: 40px;
+    }
+
     .firstrun-invite {
         flex-wrap: wrap;
+    }
+
+    .firstrun-invite .firstrun-btn-small {
+        height: 40px;
     }
 
     .firstrun-invite-name {
@@ -393,7 +401,7 @@
 
     .firstrun-invite .firstrun-btn-quiet {
         margin-left: 48px;
-        height: 36px;
+        height: 40px;
     }
 
     .firstrun-step {
