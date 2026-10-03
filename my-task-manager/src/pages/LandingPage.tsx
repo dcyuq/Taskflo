@@ -12,8 +12,8 @@ function LandingPage() {
             <Navbar />
             <main className="Hero">
                 <span className="Hero-mark" aria-hidden="true"></span>
-                <h1>Manage your team with clarity</h1>
-                <p>Assign tasks, track progress, and keep everyone on track.</p>
+                <h1>Assign. Track. Done.</h1>
+                <p>A task manager for small teams that does less on purpose. Give work an owner and a deadline, see where it stands, and get on with it.</p>
                 <Link className="Hero-button" to="/register">Get started</Link>
             </main>
             <Features />
