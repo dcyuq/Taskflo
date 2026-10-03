@@ -94,6 +94,54 @@ function BoardVisual() {
     )
 }
 
+const suggestion = 'Move 2 tasks from Ana to Ben'
+
+function SuggestVisual() {
+    const ref = useRef<HTMLDivElement>(null)
+    const reduce = useReducedMotion()
+    const inView = useInView(ref)
+    const [n, setN] = useState(0)
+    const shown = reduce ? suggestion.length : n
+
+    useEffect(() => {
+        if (reduce || !inView) return
+        const id = setTimeout(() => setN(c => (c >= suggestion.length ? 0 : c + 1)), n >= suggestion.length ? 2400 : n === 0 ? 600 : 45)
+        return () => clearTimeout(id)
+    }, [reduce, inView, n])
+
+    return (
+        <div className="bento-visual suggest" ref={ref} aria-hidden="true">
+            <div className="load-row">
+                <span className="load-name">Ana</span>
+                <span className="load-bar is-heavy"><span></span></span>
+                <span className="load-count">7 tasks</span>
+            </div>
+            <div className="load-row">
+                <span className="load-name">Ben</span>
+                <span className="load-bar is-light"><span></span></span>
+                <span className="load-count">2 tasks</span>
+            </div>
+            <motion.div
+                className="suggest-chip"
+                animate={reduce ? undefined : { boxShadow: ['0 0 0 0px rgba(13, 13, 13, 0.14)', '0 0 0 6px rgba(13, 13, 13, 0)'] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+            >
+                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+                    <path d="M8 1.5l1.6 4.1 4.1 1.6-4.1 1.6L8 12.9 6.4 8.8 2.3 7.2l4.1-1.6z" />
+                </svg>
+                <span className="suggest-text">
+                    {suggestion.slice(0, shown)}
+                    <motion.span
+                        className="suggest-caret"
+                        animate={reduce ? undefined : { opacity: [1, 1, 0, 0] }}
+                        transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
+                    />
+                </span>
+            </motion.div>
+        </div>
+    )
+}
+
 function Card({ ink, wide, children }: { ink?: boolean, wide?: boolean, children: ReactNode }) {
     const reduce = useReducedMotion()
     return (
@@ -133,7 +181,7 @@ function Features() {
                         <h3>AI assistant <span className="feature-soon">Coming soon</span></h3>
                         <p>Suggested priorities and assignments based on each person's workload.</p>
                     </div>
-                    <div className="bento-visual" aria-hidden="true"></div>
+                    <SuggestVisual />
                 </Card>
             </div>
         </section>

@@ -257,6 +257,84 @@
     font-variant-numeric: tabular-nums;
 }
 
+.suggest {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.load-row {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+}
+
+.load-name {
+    font-weight: 600;
+}
+
+.load-bar {
+    height: 6px;
+    border-radius: 99px;
+    background: var(--line);
+    overflow: hidden;
+}
+
+.load-bar span {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+}
+
+.load-bar.is-heavy span {
+    width: 86%;
+}
+
+.load-bar.is-light span {
+    width: 24%;
+}
+
+.load-count {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.suggest-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    margin-top: 8px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.suggest-chip svg {
+    flex: none;
+}
+
+.suggest-text {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.suggest-caret {
+    display: inline-block;
+    width: 1.5px;
+    height: 1.05em;
+    margin-left: 2px;
+    vertical-align: -0.15em;
+    background: var(--ink);
+}
+
 @media (max-width: 420px) {
     .task-due {
         display: none;
