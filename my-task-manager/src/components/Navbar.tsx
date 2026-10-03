@@ -7,7 +7,7 @@ function Navbar() {
     return(
         <nav className="navbar">
             <h1>Taskflo</h1>
-            <button className="navbar-button" onClick={() => navigate('/login')}> Sign In </button>
+            <button className="navbar-button" onClick={() => navigate('/login')}>Sign in</button>
         </nav>
     )
 }

@@ -12,9 +12,9 @@ function LandingPage() {
         <div>
             <Navbar />
             <div className='Hero'>
-                <h1>Manage Your Team With Clarity</h1>
-                <p> Assign Tasks, Track Your Progress, Keep Everyone On Track</p>
-                 <button className="Hero-button" onClick={() => navigate('/register')}> Get Started </button>
+                <h1>Manage your team with clarity</h1>
+                <p>Assign tasks, track progress, and keep everyone on track.</p>
+                 <button className="Hero-button" onClick={() => navigate('/register')}>Get started</button>
             </div>
             <Features />
             <Footer />
