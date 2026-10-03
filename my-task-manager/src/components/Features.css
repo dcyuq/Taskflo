@@ -369,8 +369,23 @@
 }
 
 @media (max-width: 420px) {
-    .task-due {
-        display: none;
+    .task-row {
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .task-title {
+        white-space: normal;
+        line-height: 1.3;
+    }
+
+    .board-col {
+        padding: 6px;
+    }
+
+    .board-card {
+        padding: 6px;
+        hyphens: auto;
     }
 }
 

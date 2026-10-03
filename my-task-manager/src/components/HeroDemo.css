@@ -130,3 +130,16 @@
         padding: 14px;
     }
 }
+
+@media (max-width: 480px) {
+    .demo-row {
+        gap: 8px;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .demo-title {
+        white-space: normal;
+        line-height: 1.3;
+    }
+}
