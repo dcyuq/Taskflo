@@ -1,13 +1,15 @@
 import './Navbar.css'
-import { useNavigate } from 'react-router-dom'
+import './TopNav.css'
+import { Link } from 'react-router-dom'
 
 function Navbar() {
-    const navigate = useNavigate()
-
     return(
         <nav className="navbar">
-            <h1>Taskflo</h1>
-            <button className="navbar-button" onClick={() => navigate('/login')}>Sign in</button>
+            <Link to="/" className="topnav-brand navbar-brand">
+                <span className="topnav-mark">T</span>
+                Taskflo
+            </Link>
+            <Link to="/login" className="navbar-button">Sign in</Link>
         </nav>
     )
 }

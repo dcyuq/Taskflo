@@ -1,28 +1,27 @@
 .navbar {
-    background-color: var(--ink);
-    color:white;
-    padding: 25px 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.navbar h1 {
-    font-size: 30px;
-    font-weight: bold;
+.navbar-brand {
+    text-decoration: none;
 }
 
-
 .navbar-button {
-    background:white;
-    color: var(--ink);
     padding: 8px 16px;
     border-radius: 8px;
-    border: none;
-    cursor: pointer;
+    border: 1px solid var(--line-strong);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
 }
 
 .navbar-button:hover {
-  background: #333;
-  color: white;
+    background: var(--surface);
+    border-color: var(--ink);
 }
