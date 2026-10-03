@@ -146,3 +146,22 @@
     gap: 0;
   }
 }
+
+.confirm-dialog {
+  width: min(440px, calc(100vw - 32px));
+}
+
+.confirm-title {
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.confirm-message {
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}

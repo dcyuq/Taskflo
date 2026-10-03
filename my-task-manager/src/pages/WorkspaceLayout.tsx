@@ -105,6 +105,7 @@ function WorkspaceLayout({ id }: { id: string }) {
                 <h1 className="ws-title">{workspace.name}</h1>
                 <nav className="ws-tabs" aria-label="Workspace">
                     <NavLink to="" end className="ws-tab">Tasks</NavLink>
+                    <NavLink to="team" className="ws-tab">Team</NavLink>
                 </nav>
             </motion.header>
             <Outlet context={context} />

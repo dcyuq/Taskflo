@@ -389,3 +389,136 @@
     flex: 1;
   }
 }
+
+.team {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 760px;
+}
+
+.team-card {
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.team-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.team-card-head h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.team-lede {
+  max-width: 60ch;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.member-list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.member-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 8px 0;
+}
+
+.member-row + .member-row {
+  border-top: 1px solid var(--line);
+}
+
+.member-who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.member-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.member-you {
+  padding: 1px 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.member-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.member-badge {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.member-remove {
+  flex: none;
+  min-height: 44px;
+}
+
+.team-note,
+.team-empty {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.team-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.team-notice {
+  margin: 0;
+}
+
+.team-skeleton {
+  height: 44px;
+  margin-bottom: 8px;
+}
+
+.team-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--error);
+}
