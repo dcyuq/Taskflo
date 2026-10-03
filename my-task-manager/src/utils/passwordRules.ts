@@ -7,3 +7,13 @@ export const passwordRules = [
     { label: 'A number', test: (p: string) => /\d/.test(p) },
     { label: 'A symbol', test: (p: string) => /[^\p{L}\p{N}\s]/u.test(p) },
 ]
+
+export function personalParts(first: string, last: string, email: string) {
+    const local = email.trim().split('@')[0]
+    return [first, last, email, local, ...local.split(/[._+-]/)]
+        .map(part => part.trim().toLowerCase())
+        .filter(part => part.length >= 3)
+}
+
+export const includesPersonal = (password: string, parts: string[]) =>
+    parts.some(part => password.toLowerCase().includes(part))

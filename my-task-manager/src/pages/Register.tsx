@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
 import SignUpDemo from '../components/SignUpDemo'
-import { passwordRules } from '../utils/passwordRules'
+import { includesPersonal, passwordRules, personalParts } from '../utils/passwordRules'
 
 type Errors = { first?: string, last?: string, email?: string, password?: string, confirm?: string, code?: string, form?: string }
 
@@ -39,7 +39,11 @@ function Register() {
         return () => clearTimeout(id)
     }, [cooldown])
 
-    const checks = passwordRules.map(rule => ({ label: rule.label, met: rule.test(password) }))
+    const personal = personalParts(firstName, lastName, email)
+    const checks = [
+        ...passwordRules.map(rule => ({ label: rule.label, met: rule.test(password) })),
+        { label: 'Doesn’t include your name or email', met: password.length > 0 && !includesPersonal(password, personal) },
+    ]
 
     async function handleReg(e: React.SyntheticEvent) {
         e.preventDefault()
