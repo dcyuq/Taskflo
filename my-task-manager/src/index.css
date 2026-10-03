@@ -11,6 +11,7 @@
   --error: #a3261b;
   --ok: #2f6b3a;
   --ring: 0 0 0 3px rgba(13, 13, 13, 0.14);
+  --nav-h: 76px;
   --container: 1440px;
   --gutter: clamp(16px, 4vw, 56px);
   --card-inset: max(16px, calc((100% - var(--container)) / 2 + 16px));
@@ -82,9 +83,14 @@ input:focus-visible {
   box-shadow: var(--ring);
 }
 
+html {
+  scroll-padding-top: var(--nav-h);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
   }
 }
 
@@ -111,6 +117,3 @@ main:focus {
   outline: none;
 }
 
-section[id] {
-  scroll-margin-top: 80px;
-}
