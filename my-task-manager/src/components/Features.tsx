@@ -161,7 +161,7 @@ function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolea
 function Features() {
     return(
         <section className="features" id="features">
-            <h2>Everything your team needs</h2>
+            <h2>Three things, done well</h2>
             <div className="bento">
                 <Card ink wide>
                     <div className="bento-text">
