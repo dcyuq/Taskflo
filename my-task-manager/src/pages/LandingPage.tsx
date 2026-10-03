@@ -45,28 +45,28 @@ function LandingPage() {
                         <h2>FAQ</h2>
                         <p>Short answers about workspaces, invites and who can see what.</p>
                     </div>
-                    <div className="faq">
-                        <details open>
+                    <motion.div className="faq" initial={reduce ? false : 'hidden'} whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
+                        <motion.details variants={rise} open>
                             <summary>Who is Taskflo for?</summary>
                             <p>Leads of small teams, roughly 3 to 20 people, who want one simple place to bring their team together.</p>
-                        </details>
-                        <details>
+                        </motion.details>
+                        <motion.details variants={rise}>
                             <summary>How do teammates join?</summary>
                             <p>Add their email when you set up your workspace. When they sign in to Taskflo with that address, the invite is waiting for them to accept.</p>
-                        </details>
-                        <details>
+                        </motion.details>
+                        <motion.details variants={rise}>
                             <summary>Do invites expire?</summary>
                             <p>Yes. An invite lasts 7 days and can only be used once.</p>
-                        </details>
-                        <details>
+                        </motion.details>
+                        <motion.details variants={rise}>
                             <summary>Who can see my workspace?</summary>
                             <p>Only its members. Someone you've invited can see the workspace name until they accept or decline.</p>
-                        </details>
-                        <details>
+                        </motion.details>
+                        <motion.details variants={rise}>
                             <summary>Can I have more than one workspace?</summary>
                             <p>Yes. Create one per team and switch between them from the sidebar.</p>
-                        </details>
-                    </div>
+                        </motion.details>
+                    </motion.div>
                 </section>
             </main>
             <Footer />
