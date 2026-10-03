@@ -292,6 +292,26 @@
   box-shadow: var(--ring);
 }
 
+.quick-add-details {
+  flex: none;
+  min-height: 36px;
+  margin-right: -8px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 160ms ease-out, color 160ms ease-out;
+}
+
+.quick-add-details:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+
 .quick-add input {
   flex: 1;
   min-width: 0;
@@ -317,23 +337,7 @@
 }
 
 .tasks-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding: clamp(24px, 4vw, 40px);
-  border: 1px dashed var(--line-strong);
-  border-radius: 16px;
-  background: var(--surface);
-}
-
-.tasks-empty h2 {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.tasks-empty p {
-  margin-bottom: 8px;
+  padding: 4px 2px;
   font-size: 15px;
   color: var(--muted);
 }
@@ -384,9 +388,6 @@
     flex-basis: 100%;
   }
 
-  .tasks-toolbar .btn-primary {
-    flex: 1;
-  }
 }
 
 .team {

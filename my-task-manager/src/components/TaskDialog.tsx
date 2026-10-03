@@ -6,6 +6,7 @@ import './TaskDialog.css'
 interface TaskDialogProps {
     task: Task | null
     defaultStatus?: TaskStatus
+    defaultTitle?: string
     members: Member[]
     canDelete: boolean
     onSave: (values: TaskPatch & { title: string }) => Promise<boolean>
@@ -13,9 +14,9 @@ interface TaskDialogProps {
     onClose: () => void
 }
 
-function TaskDialog({ task, defaultStatus = 'todo', members, canDelete, onSave, onDelete, onClose }: TaskDialogProps) {
+function TaskDialog({ task, defaultStatus = 'todo', defaultTitle = '', members, canDelete, onSave, onDelete, onClose }: TaskDialogProps) {
     const dialogRef = useRef<HTMLDialogElement>(null)
-    const [title, setTitle] = useState(task?.title ?? '')
+    const [title, setTitle] = useState(task?.title ?? defaultTitle)
     const [status, setStatus] = useState<TaskStatus>(task?.status ?? defaultStatus)
     const [assignee, setAssignee] = useState(task?.assignee_id ?? '')
     const [due, setDue] = useState(task?.due_date ?? '')

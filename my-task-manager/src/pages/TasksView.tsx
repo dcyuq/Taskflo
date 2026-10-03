@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import TaskDialog from '../components/TaskDialog'
@@ -11,7 +11,7 @@ import { rise, staggered } from '../utils/motion'
 import { readStored, store } from '../utils/storage'
 
 type View = 'list' | 'board'
-type Editing = { task: Task } | { status: TaskStatus } | null
+type Editing = { task: Task } | { status: TaskStatus, title?: string } | null
 
 const isView = (value: string | null): value is View => value === 'list' || value === 'board'
 
@@ -23,7 +23,6 @@ function TasksView() {
     const [quick, setQuick] = useState('')
     const [adding, setAdding] = useState(false)
     const [editing, setEditing] = useState<Editing>(null)
-    const quickRef = useRef<HTMLInputElement>(null)
     const viewKey = `taskflo:view:${workspace.id}`
     const fromUrl = params.get('view')
     const stored = readStored(viewKey)
@@ -60,7 +59,6 @@ function TasksView() {
                     </svg>
                     <input
                         id="quick-add"
-                        ref={quickRef}
                         type="text"
                         maxLength={200}
                         autoComplete="off"
@@ -68,6 +66,9 @@ function TasksView() {
                         value={quick}
                         onChange={e => setQuick(e.target.value)}
                     />
+                    <button type="button" className="quick-add-details" onClick={() => setEditing({ status: 'todo', title: quick.trim() })}>
+                        Add details
+                    </button>
                 </form>
                 <div className="view-toggle" role="group" aria-label="View">
                     {(['list', 'board'] as const).map(option => (
@@ -76,7 +77,6 @@ function TasksView() {
                         </button>
                     ))}
                 </div>
-                <button type="button" className="btn btn-primary" onClick={() => setEditing({ status: 'todo' })}>New task</button>
             </motion.div>
 
             {error && (
@@ -87,11 +87,9 @@ function TasksView() {
             )}
 
             {tasks.length === 0 ? (
-                <motion.div className="tasks-empty" variants={rise}>
-                    <h2>No tasks yet</h2>
-                    <p>Add the first one and give it an owner and a due date.</p>
-                    <button type="button" className="btn btn-outline" onClick={() => quickRef.current?.focus()}>Add a task</button>
-                </motion.div>
+                <motion.p className="tasks-empty" variants={rise}>
+                    No tasks yet. Type the first one above and press Enter.
+                </motion.p>
             ) : view === 'list' ? (
                 <TaskList tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onPatch={patch} />
             ) : (
@@ -102,9 +100,15 @@ function TasksView() {
                 <TaskDialog
                     task={editTask}
                     defaultStatus={'status' in editing ? editing.status : undefined}
+                    defaultTitle={'title' in editing ? editing.title : undefined}
                     members={members}
                     canDelete={!!editTask && canDelete(editTask)}
-                    onSave={async values => editTask ? patch(editTask, values) : !!(await create(values))}
+                    onSave={async values => {
+                        if (editTask) return patch(editTask, values)
+                        const created = await create(values)
+                        if (created && 'title' in editing && editing.title) setQuick('')
+                        return !!created
+                    }}
                     onDelete={async () => !!editTask && remove(editTask)}
                     onClose={() => setEditing(null)}
                 />

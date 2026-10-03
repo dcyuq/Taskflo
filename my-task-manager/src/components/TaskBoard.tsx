@@ -104,15 +104,16 @@ function Column({ status, label, children, count, onAdd }: { status: TaskStatus,
                     {label}
                     <span className="task-group-count">{count}</span>
                 </h2>
-                <button type="button" className="board-col-add" aria-label={`Add a task to ${label}`} onClick={onAdd}>
-                    <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                        <path d="M8 3v10M3 8h10" />
-                    </svg>
-                </button>
             </header>
             <div className="board-col-body">
                 {children}
                 {count === 0 && <p className="board-col-empty">Drop tasks here</p>}
+                <button type="button" className="board-col-add" onClick={onAdd}>
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                        <path d="M8 3v10M3 8h10" />
+                    </svg>
+                    Add task<span className="sr-only"> to {label}</span>
+                </button>
             </div>
         </motion.section>
     )
