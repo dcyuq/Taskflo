@@ -60,3 +60,19 @@ textarea {
   color: var(--placeholder);
   opacity: 1;
 }
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+input:focus-visible {
+  outline: none;
+  border-color: var(--ink);
+  box-shadow: var(--ring);
+}
