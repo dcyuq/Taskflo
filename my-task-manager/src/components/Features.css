@@ -429,6 +429,7 @@ main > .faq-section {
     align-content: center;
     align-items: start;
     gap: 32px clamp(24px, 4vw, 72px);
+    min-height: calc(100dvh - var(--nav-h) - var(--footer-h));
 }
 
 .faq-intro p {

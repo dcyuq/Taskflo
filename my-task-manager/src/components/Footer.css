@@ -1,8 +1,13 @@
 .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px 24px;
+    min-height: var(--footer-h);
+    padding: 12px 24px;
     border-top: 1px solid var(--line);
-    padding: 32px 24px;
-    text-align: center;
+    background: var(--paper);
     font-size: 13px;
     color: var(--muted);
-    margin-top: 40px;
 }
