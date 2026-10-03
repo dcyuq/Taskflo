@@ -60,11 +60,12 @@
     border-radius: 16px;
     background: var(--surface);
     color: var(--ink);
-    transition: border-color 160ms ease-out;
+    transition: border-color 160ms ease-out, box-shadow 200ms ease-out;
 }
 
 .bento-card:hover {
     border-color: var(--line-strong);
+    box-shadow: 0 12px 28px -18px rgba(13, 13, 13, 0.35);
 }
 
 .bento-card.is-ink {

@@ -140,6 +140,8 @@ function Card({ ink, wide, delay = 0, children }: { ink?: boolean, wide?: boolea
             className={`bento-card${ink ? ' is-ink' : ''}${wide ? ' is-wide' : ''}`}
             initial={reduce ? false : { opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={reduce ? undefined : { y: -4, transition: { duration: 0.2 } }}
+            whileTap={reduce ? undefined : { scale: 0.99, transition: { duration: 0.1 } }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] }}
         >
