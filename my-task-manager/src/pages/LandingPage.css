@@ -1,11 +1,25 @@
-/* The one loud moment on the page: an ink slab carrying the headline. */
 .Hero {
+    --mark: clamp(380px, 44vw, 520px);
+    position: relative;
+    overflow: hidden;
     max-width: 1200px;
     margin: 8px auto 0;
     padding: clamp(56px, 10vw, 128px) clamp(24px, 6vw, 80px);
     border-radius: 28px;
     background: var(--ink);
     color: var(--paper);
+}
+
+.Hero-mark {
+    position: absolute;
+    top: 50%;
+    right: calc(var(--mark) * -0.28);
+    width: var(--mark);
+    aspect-ratio: 1;
+    transform: translateY(-50%);
+    background-color: var(--paper);
+    mask: url("../assets/taskflo-mark.svg") center / contain no-repeat;
+    pointer-events: none;
 }
 
 .Hero h1 {
@@ -54,7 +68,18 @@
     outline-offset: 3px;
 }
 
-/* Inset the slab from the screen edge on phones. */
+@media (min-width: 900px) {
+    .Hero {
+        padding-right: calc(var(--mark) * 0.72 + 40px);
+    }
+}
+
+@media (max-width: 899px) {
+    .Hero-mark {
+        display: none;
+    }
+}
+
 @media (max-width: 1232px) {
     .Hero {
         margin-left: 16px;

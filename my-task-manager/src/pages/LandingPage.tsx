@@ -9,7 +9,8 @@ function LandingPage() {
     return (
         <div>
             <Navbar />
-            <main className='Hero'>
+            <main className="Hero">
+                <span className="Hero-mark" aria-hidden="true"></span>
                 <h1>Manage your team with clarity</h1>
                 <p>Assign tasks, track progress, and keep everyone on track.</p>
                 <Link className="Hero-button" to="/register">Get started</Link>
