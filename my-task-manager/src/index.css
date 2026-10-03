@@ -12,6 +12,7 @@
   --ok: #2f6b3a;
   --ring: 0 0 0 3px rgba(13, 13, 13, 0.14);
   --nav-h: 76px;
+  --headline: clamp(30px, 4.4vw, 56px);
   --container: 1440px;
   --gutter: clamp(16px, 4vw, 56px);
   --card-inset: max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));

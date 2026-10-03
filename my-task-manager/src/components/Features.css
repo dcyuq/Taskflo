@@ -5,7 +5,7 @@
 }
 
 .features h2 {
-    font-size: clamp(30px, 4.4vw, 56px);
+    font-size: var(--headline);
     line-height: 1.15;
     letter-spacing: -0.03em;
     text-wrap: balance;
