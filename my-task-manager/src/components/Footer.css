@@ -3,6 +3,6 @@
     padding: 35px 50px;
     text-align: center;
     font-size: 13px;
-    color: gray;
+    color: var(--muted);
     margin-top: 40px;
 }

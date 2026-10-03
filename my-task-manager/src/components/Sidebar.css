@@ -54,7 +54,7 @@ flex-direction: column;
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: gray;
+  color: var(--muted);
   width: 32px;
   height: 32px;
   border-radius: 8px;

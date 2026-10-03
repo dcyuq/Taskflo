@@ -29,7 +29,7 @@
     border: none;
     cursor: pointer;
     font-size: 14px;
-    color: gray;
+    color: var(--muted);
     width: 28px;
     height: 28px;
     border-radius: 8px;

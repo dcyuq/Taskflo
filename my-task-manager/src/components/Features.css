@@ -31,7 +31,7 @@
 
 .feature-card p {
     font-size: 14px;
-    color: gray;
+    color: var(--muted);
     line-height: 1.6;
 }
 

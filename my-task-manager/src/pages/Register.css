@@ -24,7 +24,7 @@
 
 .RegisterBox form > p {
   font-size: 14px;
-  color: gray;
+  color: var(--muted);
   margin-bottom: 32px;
 }
 
@@ -32,7 +32,7 @@
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: gray;
+  color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -53,13 +53,13 @@
 }
 
 .RegisterBox input:focus {
-  border-color: black;
+  border-color: var(--ink);
 }
 
 .register-btn {
   width: 100%;
   height: 44px;
-  background: black;
+  background: var(--ink);
   color: white;
   border: none;
   border-radius: 8px;
@@ -76,13 +76,13 @@
 
 .register-login-link {
   font-size: 13px;
-  color: gray;
+  color: var(--muted);
   margin-top: 16px;
   text-align: center;
 }
 
 .register-login-link a {
-  color: black;
+  color: var(--ink);
   font-weight: 600;
   text-decoration: none;
 }

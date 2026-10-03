@@ -1,5 +1,5 @@
 .navbar {
-    background-color: black;
+    background-color: var(--ink);
     color:white;
     padding: 25px 32px;
     display: flex;
@@ -15,7 +15,7 @@
 
 .navbar-button {
     background:white;
-    color: black;
+    color: var(--ink);
     padding: 8px 16px;
     border-radius: 8px;
     border: none;
