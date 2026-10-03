@@ -43,6 +43,11 @@ function LandingPage() {
                     </details>
                 </div>
             </section>
+            <section className="Cta" id="get-started" aria-labelledby="cta-title">
+                <h2 id="cta-title">Get your team going in minutes</h2>
+                <p>Create a workspace, invite your team by email and hand out the first task.</p>
+                <Link className="Hero-button" to="/register">Get started</Link>
+            </section>
             <Footer />
         </div>
     )

@@ -68,6 +68,34 @@
     outline-offset: 3px;
 }
 
+.Cta {
+    max-width: 1200px;
+    margin: clamp(40px, 5vw, 64px) auto 0;
+    padding: clamp(48px, 8vw, 96px) clamp(24px, 6vw, 80px);
+    border-radius: 28px;
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.Cta h2 {
+    max-width: 16ch;
+    font-size: clamp(32px, 5.5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.Cta p {
+    max-width: 44ch;
+    font-size: clamp(16px, 1.8vw, 18px);
+    line-height: 1.5;
+    color: var(--paper-dim);
+    text-wrap: pretty;
+    margin-bottom: 32px;
+}
+
 @media (min-width: 900px) {
     .Hero {
         padding-right: calc(var(--mark) * 0.88 + 40px);
@@ -81,7 +109,8 @@
 }
 
 @media (max-width: 1232px) {
-    .Hero {
+    .Hero,
+    .Cta {
         margin-left: 16px;
         margin-right: 16px;
     }
