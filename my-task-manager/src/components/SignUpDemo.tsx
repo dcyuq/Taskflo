@@ -3,8 +3,8 @@ import './AuthDemos.css'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { useLoop } from '../hooks/useLoop'
+import { ease } from '../utils/motion'
 
-const ease = [0.22, 1, 0.36, 1] as const
 const invitee = 'priya@northlight.co'
 const appear = {
     initial: { opacity: 0, scale: 0.85 },

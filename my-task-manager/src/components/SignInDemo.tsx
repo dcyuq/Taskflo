@@ -2,8 +2,7 @@ import './HeroDemo.css'
 import './AuthDemos.css'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLoop } from '../hooks/useLoop'
-
-const ease = [0.22, 1, 0.36, 1] as const
+import { ease } from '../utils/motion'
 
 const feed = [
     { who: 'AR', text: <><b>Ana</b> finished <b>Write launch notes</b></>, time: '2m' },
