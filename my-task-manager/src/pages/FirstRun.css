@@ -357,8 +357,8 @@
     place-items: center;
     font-family: "Sora", sans-serif;
     font-size: 13px;
-    color: #5f5d58;
-    background: #f9f8f5;
+    color: var(--muted);
+    background: var(--paper);
 }
 
 @media (max-width: 480px) {

@@ -4,13 +4,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f9f8f5;
+  background-color: var(--paper);
   font-family: 'Sora', sans-serif;
 }
 
 .RegisterBox {
   background: white;
-  border: 1px solid #e8e6e0;
+  border: 1px solid var(--line);
   border-radius: 16px;
   padding: clamp(24px, 7vw, 48px);
   width: 100%;
@@ -40,8 +40,8 @@
 .RegisterBox input {
   width: 100%;
   height: 44px;
-  background: #f9f8f5;
-  border: 1px solid #e8e6e0;
+  background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: 8px;
   padding: 0 14px;
   font-size: 14px;
@@ -70,7 +70,7 @@
 }
 
 .register-btn:hover {
-  background: #333;
+  background: var(--ink-hover);
 }
 
 .register-login-link {

@@ -2,8 +2,8 @@
     height: 54px;
     display: flex;
     align-items: center;
-    background: #ffffff;
-    border-bottom: 1px solid #e8e6e0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
     font-family: "Sora", sans-serif;
     padding: 0 16px
 }
@@ -13,7 +13,7 @@
   letter-spacing: -0.02em;
   min-width: 0;
   font-weight: 700;
-  color: #0d0d0d;
+  color: var(--ink);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -24,8 +24,8 @@
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: #0d0d0d;
-  color: #f9f8f5;
+  background: var(--ink);
+  color: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,8 +48,8 @@
   gap: 7px;
   padding: 4px 10px 4px 4px;
   border-radius: 99px;
-  border: 1px solid #e8e6e0;
-  background: #ffffff;
+  border: 1px solid var(--line);
+  background: var(--surface);
   font-family: "Sora", sans-serif;
 }
 
@@ -58,8 +58,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #0d0d0d;
-  color: #f9f8f5;
+  background: var(--ink);
+  color: var(--paper);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,7 +70,7 @@
 .topnav-profile-name {
   font-size: 13px;
   font-weight: 500;
-  color: #0d0d0d;
+  color: var(--ink);
 }
 
 .drawer-btn {
@@ -78,8 +78,8 @@
   height: 38px;
   border-radius: 9px;
   background: transparent;
-  border: 1px solid #e8e6e0;
-  color: #0d0d0d;
+  border: 1px solid var(--line);
+  color: var(--ink);
   font-size: 16px;
   display: flex;
   align-items: center;
@@ -89,7 +89,7 @@
 }
 
 .drawer-btn:hover {
-  background: #f9f8f5;
+  background: var(--paper);
   border-color: #c8c6c0;
 }
 @media (max-width: 640px) {
@@ -114,10 +114,10 @@
   background: transparent;
   font-size: 13px;
   font-weight: 500;
-  color: #0d0d0d;
+  color: var(--ink);
   cursor: pointer;
 }
 
 .topnav-signout:hover {
-  background: #f9f8f5;
+  background: var(--paper);
 }
