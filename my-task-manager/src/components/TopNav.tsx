@@ -38,12 +38,7 @@ return (
                     <span className="topnav-mark">T</span>
                         Taskflo
                     </div>
-                    <div className="topnav-search">
-                        <input type="text" placeholder="Search tasks, people, workspaces..." />
-                    </div>
                     <div className="topnav-actions">
-                        <button className="topnav-iconbtn" aria-label="Create new">+</button>
-                        <button className="topnav-iconbtn" aria-label="Notifications">🔔</button>
                         <button className="topnav-profile">
                             <span className="topnav-avatar"></span>
                             <span className="topnav-profile-name">{firstName}</span>

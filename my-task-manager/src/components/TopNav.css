@@ -32,54 +32,12 @@
 }
 
 
-.topnav-search {
-    flex: 0 0 380px;
-}
-
-.topnav-search input {
-  width: 100%;
-  height: 36px;
-  padding: 0 12px;
-  box-sizing: border-box;
-  border-radius: 8px;
-  border: 1px solid #e8e6e0;
-  background: #f9f8f5;
-  font-family: "Sora", sans-serif;
-  font-size: 13px;
-  color: #0d0d0d;
-}
-
-.topnav-search input:focus {
-  outline: none;
-  border-color: #0d0d0d;
-  background: #ffffff;
-}
-
 .topnav-actions {
   flex: 1;                      
   display: flex;
   align-items: center;
   justify-content: flex-end;    
   gap: 6px;
-}
-
-.topnav-iconbtn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  font-size: 22px;
-  color: gray;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;  
-}
-
-.topnav-iconbtn:hover {
-  background: #f9f8f5;
 }
 
 .topnav-profile {
@@ -136,22 +94,11 @@
   background: #f9f8f5;
   border-color: #c8c6c0;
 }
-/* Narrow screens: the fixed-width search pushed the page wider than the
-   viewport. Let it shrink, then drop it on phones. */
-@media (max-width: 900px) {
-  .topnav-search {
-    flex: 1 1 240px;
-    min-width: 0;
-    margin: 0 12px;
-  }
-}
-
 @media (max-width: 640px) {
   .topnav {
     padding: 0 12px;
   }
 
-  .topnav-search,
   .topnav-profile-name {
     display: none;
   }
