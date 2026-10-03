@@ -6,6 +6,11 @@ main > section {
     scroll-snap-align: start;
 }
 
+main > #features {
+    justify-content: flex-start;
+    padding-top: 8px;
+}
+
 main > .Hero {
     display: grid;
     place-items: center;
