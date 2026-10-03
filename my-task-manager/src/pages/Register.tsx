@@ -39,6 +39,8 @@ function Register() {
         return () => clearTimeout(id)
     }, [cooldown])
 
+    const checks = passwordRules.map(rule => ({ label: rule.label, met: rule.test(password) }))
+
     async function handleReg(e: React.SyntheticEvent) {
         e.preventDefault()
         if (loading) return
@@ -48,7 +50,7 @@ function Register() {
         if (!email.trim()) next.email = 'Enter your email.'
         else if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = 'That email doesn’t look right. Check it and try again.'
         if (!password) next.password = 'Choose a password.'
-        else if (!passwordRules.every(rule => rule.test(password))) next.password = 'Your password needs to meet every rule above.'
+        else if (!checks.every(c => c.met)) next.password = 'Your password needs to meet every rule above.'
         if (!confirmPassword) next.confirm = 'Type your password again.'
         else if (password !== confirmPassword) next.confirm = 'The passwords don’t match.'
         setErrors(next)
@@ -140,7 +142,7 @@ function Register() {
                         <FieldError id="reg-email-error" msg={errors.email} />
                     </div>
 
-                    <PasswordField id="reg-password" label="Password" autoComplete="new-password" value={password} onChange={setPassword} error={errors.password} showRules />
+                    <PasswordField id="reg-password" label="Password" autoComplete="new-password" value={password} onChange={setPassword} error={errors.password} checks={checks} />
                     <PasswordField id="reg-confirm" label="Confirm password" autoComplete="new-password" value={confirmPassword} onChange={setConfirmPassword} error={errors.confirm} />
 
                     {errors.form && <p className="field-error" role="alert">{errors.form}</p>}

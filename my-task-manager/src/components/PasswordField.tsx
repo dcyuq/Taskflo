@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { passwordRules } from '../utils/passwordRules'
+import type { ReactNode } from 'react'
+import { PASSWORD_MAX } from '../utils/passwordRules'
 
 type Props = {
     id: string
@@ -8,12 +9,13 @@ type Props = {
     onChange: (value: string) => void
     autoComplete: 'current-password' | 'new-password'
     error?: string
-    showRules?: boolean
+    checks?: { label: string, met: boolean }[]
+    children?: ReactNode
 }
 
-function PasswordField({ id, label, value, onChange, autoComplete, error, showRules }: Props) {
+function PasswordField({ id, label, value, onChange, autoComplete, error, checks, children }: Props) {
     const [visible, setVisible] = useState(false)
-    const describedBy = [showRules && `${id}-rules`, error && `${id}-error`].filter(Boolean).join(' ') || undefined
+    const describedBy = [checks && `${id}-rules`, error && `${id}-error`].filter(Boolean).join(' ') || undefined
 
     return (
         <div className="field">
@@ -23,6 +25,7 @@ function PasswordField({ id, label, value, onChange, autoComplete, error, showRu
                     id={id}
                     type={visible ? 'text' : 'password'}
                     autoComplete={autoComplete}
+                    maxLength={PASSWORD_MAX}
                     value={value}
                     onChange={e => onChange(e.target.value)}
                     aria-invalid={!!error}
@@ -38,17 +41,15 @@ function PasswordField({ id, label, value, onChange, autoComplete, error, showRu
                     {visible ? 'Hide' : 'Show'}
                 </button>
             </div>
-            {showRules && (
+            {children}
+            {checks && (
                 <ul className="password-rules" id={`${id}-rules`}>
-                    {passwordRules.map(rule => {
-                        const met = rule.test(value)
-                        return (
-                            <li key={rule.label} className={met ? 'is-met' : undefined}>
-                                {rule.label}
-                                <span className="sr-only">{met ? ', done' : ', not yet'}</span>
-                            </li>
-                        )
-                    })}
+                    {checks.map(check => (
+                        <li key={check.label} className={check.met ? 'is-met' : undefined}>
+                            {check.label}
+                            <span className="sr-only">{check.met ? ', done' : ', not yet'}</span>
+                        </li>
+                    ))}
                 </ul>
             )}
             {error && <p className="field-error" id={`${id}-error`}>{error}</p>}
