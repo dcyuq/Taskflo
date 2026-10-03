@@ -244,7 +244,7 @@ function InviteStep({ workspace }: { workspace: { id: string; name: string } }) 
             <EmailChipField id="firstrun-emails" chips={chips} autoFocus />
 
             <div className="firstrun-actions">
-                <button type="submit" className="firstrun-btn-primary" disabled={sending}>
+                <button type="submit" className="firstrun-btn-primary" disabled={sending} onMouseDown={(e) => e.preventDefault()}>
                     {sending ? 'Sending…' : count > 1 ? `Send ${count} invites` : 'Send invite'}
                 </button>
                 <button type="button" className="firstrun-btn-quiet" onClick={goToWorkspace} disabled={sending}>
