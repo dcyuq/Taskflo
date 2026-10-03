@@ -17,7 +17,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1; 
+  margin-right: auto;
+  text-decoration: none;
 }
 
 .topnav-mark {
@@ -120,4 +121,12 @@
 
 .topnav-signout:hover {
   background: var(--paper);
+}
+
+.brand-wordmark {
+  display: block;
+  height: 28px;
+  aspect-ratio: 341.5 / 76.2;
+  background-color: currentColor;
+  mask: url("../assets/taskflo-wordmark.svg") center / contain no-repeat;
 }

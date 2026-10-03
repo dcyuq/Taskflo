@@ -2,7 +2,7 @@ import './TopNav.css';
 import { supabase } from "../supabaseClient";
 import {useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function TopNav() {
     
@@ -38,10 +38,9 @@ return (
             <div className="drawer">
                 <button className="drawer-btn" aria-label="Workspaces" onClick={() => setDrawerOpen(!drawerOpen)}>☰</button>
             </div>
-                 <div className="topnav-brand">
-                    <span className="topnav-mark">T</span>
-                        Taskflo
-                    </div>
+                    <Link to="/" className="topnav-brand" aria-label="Taskflo">
+                        <span className="brand-wordmark" aria-hidden="true"></span>
+                    </Link>
                     <div className="topnav-actions">
                         <div className="topnav-profile">
                             <span className="topnav-avatar" aria-hidden="true">{firstName.charAt(0).toUpperCase()}</span>
