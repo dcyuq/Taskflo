@@ -7,6 +7,13 @@
     gap: 8px;
     padding: 16px max(var(--gutter), calc((100% - var(--container)) / 2 + var(--gutter)));
     background: var(--paper);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
+}
+
+.navbar.is-scrolled {
+    border-bottom-color: var(--line);
+    box-shadow: 0 6px 16px -12px rgba(13, 13, 13, 0.25);
 }
 
 .navbar-links {

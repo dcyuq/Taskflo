@@ -1,6 +1,6 @@
 import './Navbar.css'
 import './TopNav.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 import wordmark from '../assets/taskflo-wordmark.svg?raw'
@@ -14,6 +14,8 @@ const sections = [
 function Navbar() {
     const [active, setActive] = useState('')
     const [menuOpen, setMenuOpen] = useState(false)
+    const [scrolled, setScrolled] = useState(false)
+    const nav = useRef<HTMLElement>(null)
 
     useEffect(() => {
         const update = () => {
@@ -25,6 +27,7 @@ function Navbar() {
                 if (el && el.getBoundingClientRect().top <= line) current = s.id
             }
             setActive(atBottom ? sections[sections.length - 1].id : current)
+            setScrolled((document.getElementById('features')?.getBoundingClientRect().top ?? Infinity) <= (nav.current?.offsetHeight ?? 0))
         }
         const frame = requestAnimationFrame(update)
         window.addEventListener('scroll', update, { passive: true })
@@ -52,7 +55,7 @@ function Navbar() {
     }
 
     return(
-        <nav className="navbar">
+        <nav ref={nav} className={`navbar${scrolled ? ' is-scrolled' : ''}`}>
             <Link to="/" className="topnav-brand" aria-label="Taskflo, back to top" onClick={toTop}>
                 <span className="brand-wordmark" aria-hidden="true" dangerouslySetInnerHTML={{ __html: wordmark }} />
             </Link>
