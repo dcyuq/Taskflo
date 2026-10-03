@@ -90,7 +90,7 @@
     display: grid;
     place-items: center;
     min-height: 340px;
-    padding: clamp(24px, 4vw, 48px);
+    padding: 56px clamp(24px, 4vw, 48px) clamp(24px, 4vw, 48px);
     border: 1px solid var(--line);
     border-radius: 16px;
     background: var(--surface);
