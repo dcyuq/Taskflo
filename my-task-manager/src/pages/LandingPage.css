@@ -1,3 +1,18 @@
+.landing::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: radial-gradient(var(--line-strong) 1px, transparent 1.5px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+}
+
+.landing .faq {
+    background: var(--paper);
+}
+
 main > section {
     display: flex;
     flex-direction: column;

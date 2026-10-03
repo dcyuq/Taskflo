@@ -16,7 +16,7 @@ const rise = {
 function LandingPage() {
     const reduce = useReducedMotion()
     return (
-        <div>
+        <div className="landing">
             <a className="skip-link" href="#main">Skip to content</a>
             <Navbar />
             <main id="main" tabIndex={-1}>
