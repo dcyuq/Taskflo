@@ -1,16 +1,17 @@
 import './NewWorkspaceModal.css';
 import { createWorkspace } from '../services/workspace';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface NewWorkspaceModalProps {
     onClose: () => void;
     onCreated: () => void;
 }
 
-// Native <dialog> + showModal() gives focus trapping, Esc to close and inert background.
 function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
 
     const dialogRef = useRef<HTMLDialogElement>(null);
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -28,9 +29,9 @@ function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
         setLoading(true);
         setError('');
 
-        const {error} = await createWorkspace(name.trim());
+        const {data, error} = await createWorkspace(name.trim());
 
-        if (error) {
+        if (error || !data) {
             setError("Couldn't create the workspace. Check your connection and try again.");
             setLoading(false);
             return;
@@ -38,6 +39,7 @@ function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
 
         onCreated();
         onClose();
+        navigate(`/dashboard/workspace/${data.id}`);
     }
     return (
         <dialog
