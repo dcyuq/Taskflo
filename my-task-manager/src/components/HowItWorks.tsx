@@ -1,5 +1,5 @@
 import './HowItWorks.css'
-import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'motion/react'
+import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion } from 'motion/react'
 import type { AnimationPlaybackControls } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import type { FocusEvent, KeyboardEvent } from 'react'
@@ -73,7 +73,9 @@ function HowItWorks() {
     const Mock = mocks[active]
     const [hovered, setHovered] = useState(false)
     const [focused, setFocused] = useState(false)
-    const paused = hovered || focused
+    const section = useRef<HTMLElement>(null)
+    const inView = useInView(section)
+    const paused = hovered || focused || !inView
     const progress = useMotionValue(0)
     const controls = useRef<AnimationPlaybackControls | null>(null)
 
@@ -92,7 +94,7 @@ function HowItWorks() {
     useEffect(() => {
         if (paused) controls.current?.pause()
         else controls.current?.play()
-    }, [paused, active])
+    }, [paused, active, reduce])
 
     const onBlur = (e: FocusEvent) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false)
@@ -118,6 +120,7 @@ function HowItWorks() {
         <section
             className="features"
             id="how-it-works"
+            ref={section}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onFocus={() => setFocused(true)}
