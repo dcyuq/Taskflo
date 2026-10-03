@@ -1,30 +1,42 @@
 import { useRef, useState } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import Avatar from '../components/Avatar'
+import { useSearchParams } from 'react-router-dom'
+import { motion, useReducedMotion } from 'motion/react'
 import TaskDialog from '../components/TaskDialog'
-import DueChip from '../components/DueChip'
+import TaskList from '../components/TaskList'
+import TaskBoard from '../components/TaskBoard'
 import { useWorkspace } from '../hooks/useWorkspace'
 import { useTaskActions } from '../hooks/useTaskActions'
-import { statuses, type Task } from '../services/tasks'
-import { ease, rise, staggered } from '../utils/motion'
+import type { Task, TaskStatus } from '../services/tasks'
+import { rise, staggered } from '../utils/motion'
+import { readStored, store } from '../utils/storage'
 
-function CheckIcon() {
-    return (
-        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M3.5 8.5l3 3 6-7" />
-        </svg>
-    )
-}
+type View = 'list' | 'board'
+type Editing = { task: Task } | { status: TaskStatus } | null
+
+const isView = (value: string | null): value is View => value === 'list' || value === 'board'
 
 function TasksView() {
-    const { tasks, members } = useWorkspace()
+    const { workspace, tasks, members } = useWorkspace()
     const { create, patch, remove, canDelete, error, setError } = useTaskActions()
     const reduce = useReducedMotion()
+    const [params, setParams] = useSearchParams()
     const [quick, setQuick] = useState('')
     const [adding, setAdding] = useState(false)
-    const [editing, setEditing] = useState<Task | 'new' | null>(null)
+    const [editing, setEditing] = useState<Editing>(null)
     const quickRef = useRef<HTMLInputElement>(null)
+    const viewKey = `taskflo:view:${workspace.id}`
+    const fromUrl = params.get('view')
+    const stored = readStored(viewKey)
+    const view: View = isView(fromUrl) ? fromUrl : isView(stored) ? stored : 'list'
     const nameOf = (id: string | null) => members.find(m => m.id === id)?.name
+
+    function chooseView(next: View) {
+        store(viewKey, next)
+        setParams(p => {
+            p.set('view', next)
+            return p
+        }, { replace: true })
+    }
 
     async function handleQuickAdd(e: React.SyntheticEvent) {
         e.preventDefault()
@@ -36,11 +48,7 @@ function TasksView() {
         if (created) setQuick('')
     }
 
-    const item = {
-        initial: reduce ? false : { opacity: 0, y: 8 },
-        animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease } },
-        exit: reduce ? undefined : { opacity: 0, transition: { duration: 0.2 } },
-    } as const
+    const editTask = editing && 'task' in editing ? editing.task : null
 
     return (
         <motion.div className="tasks" initial={reduce ? false : 'hidden'} animate="show" variants={staggered}>
@@ -61,7 +69,14 @@ function TasksView() {
                         onChange={e => setQuick(e.target.value)}
                     />
                 </form>
-                <button type="button" className="btn btn-primary" onClick={() => setEditing('new')}>New task</button>
+                <div className="view-toggle" role="group" aria-label="View">
+                    {(['list', 'board'] as const).map(option => (
+                        <button key={option} type="button" aria-pressed={view === option} onClick={() => chooseView(option)}>
+                            {option === 'list' ? 'List' : 'Board'}
+                        </button>
+                    ))}
+                </div>
+                <button type="button" className="btn btn-primary" onClick={() => setEditing({ status: 'todo' })}>New task</button>
             </motion.div>
 
             {error && (
@@ -77,57 +92,20 @@ function TasksView() {
                     <p>Add the first one and give it an owner and a due date.</p>
                     <button type="button" className="btn btn-outline" onClick={() => quickRef.current?.focus()}>Add a task</button>
                 </motion.div>
+            ) : view === 'list' ? (
+                <TaskList tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onPatch={patch} />
             ) : (
-                statuses.map(status => {
-                    const group = tasks.filter(t => t.status === status.id)
-                    return (
-                        <motion.section key={status.id} className="task-group" aria-labelledby={`group-${status.id}`} variants={rise}>
-                            <h2 className="task-group-title" id={`group-${status.id}`}>
-                                {status.label}
-                                <span className="task-group-count">{group.length}</span>
-                            </h2>
-                            {group.length === 0 && <p className="task-group-empty">Nothing here.</p>}
-                            <ul className="task-list">
-                                <AnimatePresence initial={false}>
-                                    {group.map(task => {
-                                        const done = task.status === 'done'
-                                        const who = nameOf(task.assignee_id)
-                                        return (
-                                            <motion.li key={task.id} layout={!reduce} className={`task-row${done ? ' is-done' : ''}`} {...item}>
-                                                <button
-                                                    type="button"
-                                                    className="task-check"
-                                                    aria-label={done ? `Mark ${task.title} as not done` : `Mark ${task.title} as done`}
-                                                    aria-pressed={done}
-                                                    onClick={() => patch(task, { status: done ? 'todo' : 'done' })}
-                                                >
-                                                    {done && <CheckIcon />}
-                                                </button>
-                                                <button type="button" className="task-row-title" onClick={() => setEditing(task)}>
-                                                    {task.title}
-                                                </button>
-                                                <DueChip task={task} />
-                                                <span className="task-assignee" title={who ?? 'Unassigned'}>
-                                                    <Avatar name={who} />
-                                                    <span className="sr-only">{who ? `Assigned to ${who}` : 'Unassigned'}</span>
-                                                </span>
-                                            </motion.li>
-                                        )
-                                    })}
-                                </AnimatePresence>
-                            </ul>
-                        </motion.section>
-                    )
-                })
+                <TaskBoard tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onAdd={status => setEditing({ status })} onPatch={patch} />
             )}
 
             {editing && (
                 <TaskDialog
-                    task={editing === 'new' ? null : editing}
+                    task={editTask}
+                    defaultStatus={'status' in editing ? editing.status : undefined}
                     members={members}
-                    canDelete={editing !== 'new' && canDelete(editing)}
-                    onSave={async values => editing === 'new' ? !!(await create(values)) : patch(editing, values)}
-                    onDelete={async () => editing !== 'new' && remove(editing)}
+                    canDelete={!!editTask && canDelete(editTask)}
+                    onSave={async values => editTask ? patch(editTask, values) : !!(await create(values))}
+                    onDelete={async () => !!editTask && remove(editTask)}
                     onClose={() => setEditing(null)}
                 />
             )}
