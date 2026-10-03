@@ -5,8 +5,10 @@ import HowItWorks from '../components/HowItWorks'
 import HeroDemo from '../components/HeroDemo'
 import Footer from '../components/Footer'
 import './LandingPage.css'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
+
+const spotQuery = '(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)'
 
 const rise = {
     hidden: { opacity: 0, y: 18 },
@@ -15,8 +17,27 @@ const rise = {
 
 function LandingPage() {
     const reduce = useReducedMotion()
+    const landing = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (!window.matchMedia(spotQuery).matches) return
+        let frame = 0
+        const onMove = (e: PointerEvent) => {
+            cancelAnimationFrame(frame)
+            frame = requestAnimationFrame(() => {
+                landing.current?.style.setProperty('--mx', `${e.clientX}px`)
+                landing.current?.style.setProperty('--my', `${e.clientY}px`)
+            })
+        }
+        window.addEventListener('pointermove', onMove, { passive: true })
+        return () => {
+            cancelAnimationFrame(frame)
+            window.removeEventListener('pointermove', onMove)
+        }
+    }, [])
+
     return (
-        <div className="landing">
+        <div className="landing" ref={landing}>
             <a className="skip-link" href="#main">Skip to content</a>
             <Navbar />
             <main id="main" tabIndex={-1}>

@@ -9,6 +9,20 @@
     mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
 }
 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .landing::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background-image: radial-gradient(var(--placeholder) 1px, transparent 1.5px);
+        background-size: 24px 24px;
+        opacity: 0.35;
+        mask-image: radial-gradient(240px circle at var(--mx, -999px) var(--my, -999px), #000, transparent);
+    }
+}
+
 .landing .faq {
     background: var(--paper);
 }
