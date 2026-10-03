@@ -1,8 +1,8 @@
 import './HowItWorks.css'
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useReducedMotion } from 'motion/react'
 import type { AnimationPlaybackControls } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
-import type { FocusEvent, KeyboardEvent } from 'react'
+import { Fragment, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import type { FocusEvent, HTMLAttributes, KeyboardEvent } from 'react'
 
 const steps = [
     { title: 'Create a workspace', text: 'Name it after your team. One workspace holds one team and its work.' },
@@ -66,6 +66,14 @@ function AssignMock() {
 
 const mocks = [WorkspaceMock, InviteMock, AssignMock]
 
+const narrowQuery = '(max-width: 720px)'
+const subscribeNarrow = (cb: () => void) => {
+    const mq = window.matchMedia(narrowQuery)
+    mq.addEventListener('change', cb)
+    return () => mq.removeEventListener('change', cb)
+}
+const getNarrow = () => window.matchMedia(narrowQuery).matches
+
 function HowItWorks() {
     const [active, setActive] = useState(0)
     const reduce = useReducedMotion()
@@ -75,13 +83,15 @@ function HowItWorks() {
     const [focused, setFocused] = useState(false)
     const section = useRef<HTMLElement>(null)
     const inView = useInView(section)
+    const narrow = useSyncExternalStore(subscribeNarrow, getNarrow)
+    const auto = !reduce && !narrow
     const paused = hovered || focused || !inView
     const progress = useMotionValue(0)
     const controls = useRef<AnimationPlaybackControls | null>(null)
 
     useEffect(() => {
         progress.set(0)
-        if (reduce) return
+        if (!auto) return
         const c = animate(progress, 1, {
             duration: 5,
             ease: 'linear',
@@ -89,12 +99,12 @@ function HowItWorks() {
         })
         controls.current = c
         return () => c.stop()
-    }, [active, reduce, progress])
+    }, [active, auto, progress])
 
     useEffect(() => {
         if (paused) controls.current?.pause()
         else controls.current?.play()
-    }, [paused, active, reduce])
+    }, [paused, active, auto])
 
     const onBlur = (e: FocusEvent) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false)
@@ -116,6 +126,44 @@ function HowItWorks() {
         tabs.current[next]?.focus()
     }
 
+    const stepButton = (i: number, aria: HTMLAttributes<HTMLButtonElement>) => (
+        <button
+            key={steps[i].title}
+            ref={el => { tabs.current[i] = el }}
+            type="button"
+            id={`hiw-tab-${i}`}
+            className={`hiw-tab${active === i ? ' is-active' : ''}`}
+            onClick={() => setActive(i)}
+            {...aria}
+        >
+            {active === i && auto && (
+                <motion.span className="hiw-line" style={{ scaleX: progress }} aria-hidden="true" />
+            )}
+            <span className="hiw-num">{i + 1}</span>
+            <span className="hiw-copy">
+                <span className="hiw-title">{steps[i].title}</span>
+                <span className="hiw-text">{steps[i].text}</span>
+            </span>
+        </button>
+    )
+
+    const panel = (aria: HTMLAttributes<HTMLDivElement>) => (
+        <div className="hiw-panel" id="hiw-panel" {...aria}>
+            <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                    key={active}
+                    className="hiw-mock"
+                    initial={reduce ? false : 'hidden'}
+                    animate="show"
+                    exit={reduce ? undefined : { opacity: 0, y: -6, transition: { duration: 0.14 } }}
+                    variants={{ show: { transition: { staggerChildren: 0.05 } } }}
+                >
+                    <Mock />
+                </motion.div>
+            </AnimatePresence>
+        </div>
+    )
+
     return (
         <section
             className="features"
@@ -134,45 +182,23 @@ function HowItWorks() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             >
-                <div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey}>
-                    {steps.map((s, i) => (
-                        <button
-                            key={s.title}
-                            ref={el => { tabs.current[i] = el }}
-                            type="button"
-                            role="tab"
-                            id={`hiw-tab-${i}`}
-                            aria-selected={active === i}
-                            aria-controls="hiw-panel"
-                            tabIndex={active === i ? 0 : -1}
-                            className="hiw-tab"
-                            onClick={() => setActive(i)}
-                        >
-                            {active === i && !reduce && (
-                                <motion.span className="hiw-line" style={{ scaleX: progress }} aria-hidden="true" />
-                            )}
-                            <span className="hiw-num">{i + 1}</span>
-                            <span className="hiw-copy">
-                                <span className="hiw-title">{s.title}</span>
-                                <span className="hiw-text">{s.text}</span>
-                            </span>
-                        </button>
-                    ))}
-                </div>
-                <div className="hiw-panel" id="hiw-panel" role="tabpanel" aria-labelledby={`hiw-tab-${active}`}>
-                    <AnimatePresence mode="wait" initial={false}>
-                        <motion.div
-                            key={active}
-                            className="hiw-mock"
-                            initial={reduce ? false : 'hidden'}
-                            animate="show"
-                            exit={reduce ? undefined : { opacity: 0, y: -6, transition: { duration: 0.14 } }}
-                            variants={{ show: { transition: { staggerChildren: 0.05 } } }}
-                        >
-                            <Mock />
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
+                {narrow ? (
+                    <div className="hiw-tabs" onKeyDown={onKey}>
+                        {steps.map((s, i) => (
+                            <Fragment key={s.title}>
+                                {stepButton(i, { 'aria-expanded': active === i, 'aria-controls': active === i ? 'hiw-panel' : undefined })}
+                                {active === i && panel({ role: 'region', 'aria-labelledby': `hiw-tab-${i}` })}
+                            </Fragment>
+                        ))}
+                    </div>
+                ) : (
+                    <>
+                        <div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey}>
+                            {steps.map((_, i) => stepButton(i, { role: 'tab', 'aria-selected': active === i, 'aria-controls': 'hiw-panel', tabIndex: active === i ? 0 : -1 }))}
+                        </div>
+                        {panel({ role: 'tabpanel', 'aria-labelledby': `hiw-tab-${active}` })}
+                    </>
+                )}
             </motion.div>
         </section>
     )

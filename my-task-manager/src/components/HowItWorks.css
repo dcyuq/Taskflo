@@ -28,7 +28,7 @@
 }
 
 .hiw-tab:hover,
-.hiw-tab[aria-selected="true"] {
+.hiw-tab.is-active {
     color: var(--ink);
 }
 
@@ -61,7 +61,7 @@
     transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
 }
 
-.hiw-tab[aria-selected="true"] .hiw-num {
+.hiw-tab.is-active .hiw-num {
     background: var(--ink);
     border-color: var(--ink);
     color: var(--paper);
@@ -243,6 +243,11 @@
     }
 
     .hiw-panel {
-        min-height: 300px;
+        min-height: 0;
+        margin: 4px 0 20px;
+    }
+
+    .hiw-tab.is-active {
+        border-bottom-color: transparent;
     }
 }
