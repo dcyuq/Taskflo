@@ -23,6 +23,12 @@
     }
 }
 
+#how-it-works {
+    background: var(--paper-shade);
+    box-shadow: 0 0 0 100vmax var(--paper-shade);
+    clip-path: inset(0 -100vmax);
+}
+
 .landing .faq {
     background: var(--paper);
 }
