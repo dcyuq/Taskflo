@@ -9,6 +9,7 @@ import { useTaskActions } from '../hooks/useTaskActions'
 import type { Task, TaskStatus } from '../services/tasks'
 import { rise, staggered } from '../utils/motion'
 import { readStored, store } from '../utils/storage'
+import { summarize } from '../utils/summary'
 
 type View = 'list' | 'board'
 type Editing = { task: Task } | { status: TaskStatus, title?: string } | null
@@ -48,9 +49,29 @@ function TasksView() {
     }
 
     const editTask = editing && 'task' in editing ? editing.task : null
+    const { open, overdue, dueToday } = summarize(tasks)
 
     return (
         <motion.div className="tasks" initial={reduce ? false : 'hidden'} animate="show" variants={staggered}>
+            {tasks.length > 0 && (
+                <motion.div className="glance" role="group" aria-label="At a glance" variants={rise}>
+                    <span className={`glance-stat${overdue.length ? ' is-alert' : ''}`}><strong>{overdue.length}</strong> overdue</span>
+                    <span className="glance-stat"><strong>{dueToday.length}</strong> due today</span>
+                    <span className="glance-people">
+                        {members.map(member => {
+                            const count = open.filter(t => t.assignee_id === member.id).length
+                            return (
+                                <span key={member.id} className="glance-person" title={`${member.name}: ${count} open`}>
+                                    <span aria-hidden="true">{member.name.split(' ')[0]}</span>
+                                    <strong aria-hidden="true">{count}</strong>
+                                    <span className="sr-only">{count} open for {member.name}</span>
+                                </span>
+                            )
+                        })}
+                    </span>
+                </motion.div>
+            )}
+
             <motion.div className="tasks-toolbar" variants={rise}>
                 <form className="quick-add" onSubmit={handleQuickAdd}>
                     <label htmlFor="quick-add" className="sr-only">Add a task</label>

@@ -4,7 +4,8 @@ import { motion, useReducedMotion } from 'motion/react'
 import Avatar from '../components/Avatar'
 import { useWorkspace } from '../hooks/useWorkspace'
 import { useTaskActions } from '../hooks/useTaskActions'
-import { dateKey, todayKey } from '../utils/dates'
+import { dateKey } from '../utils/dates'
+import { summarize } from '../utils/summary'
 import { duration, ease, rise, staggered } from '../utils/motion'
 
 function startOfWeek() {
@@ -18,11 +19,8 @@ function OverviewView() {
     const { tasks, members } = useWorkspace()
     const { patch, error, setError } = useTaskActions()
     const reduce = useReducedMotion()
-    const today = todayKey()
     const weekStart = startOfWeek()
-    const open = tasks.filter(t => t.status !== 'done')
-    const overdue = open.filter(t => t.due_date && t.due_date < today)
-    const dueToday = open.filter(t => t.due_date === today)
+    const { open, overdue, dueToday } = summarize(tasks)
     const doneThisWeek = tasks.filter(t => t.status === 'done' && dateKey(new Date(t.updated_at)) >= dateKey(weekStart))
 
     const people = [

@@ -740,3 +740,63 @@
     white-space: nowrap;
   }
 }
+
+.glance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.glance-stat strong {
+  margin-right: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.glance-stat.is-alert,
+.glance-stat.is-alert strong {
+  color: var(--error);
+}
+
+.glance-people {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.glance-person {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 2px 4px 2px 12px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.glance-person strong {
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 99px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 639px) {
+  .glance-people {
+    margin-left: 0;
+  }
+}
