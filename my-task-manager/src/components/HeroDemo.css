@@ -1,0 +1,132 @@
+.demo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 520px;
+    justify-self: end;
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--surface);
+    color: var(--ink);
+}
+
+.demo-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 4px 8px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.demo-count {
+    font-size: 13px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.demo-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+    font-size: 14px;
+    transition: border-color 200ms ease-out;
+}
+
+.demo-row.is-live {
+    border-color: var(--ink);
+}
+
+.demo-check {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line-strong);
+    color: var(--paper);
+    transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.is-done .demo-check {
+    background: var(--ink);
+    border-color: var(--ink);
+}
+
+.demo-title {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.is-done .demo-title {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+}
+
+.demo-due {
+    flex: none;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 9px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.demo-avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.demo-avatar.is-empty {
+    background: transparent;
+    border: 1.5px dashed var(--line-strong);
+}
+
+.demo-bar {
+    height: 6px;
+    margin: 8px 4px 0;
+    border-radius: 99px;
+    background: var(--line);
+    overflow: hidden;
+}
+
+.demo-fill {
+    display: block;
+    height: 100%;
+    background: var(--ink);
+    transform-origin: left;
+}
+
+@media (max-width: 899px) {
+    .demo {
+        justify-self: stretch;
+        max-width: none;
+        padding: 14px;
+    }
+}

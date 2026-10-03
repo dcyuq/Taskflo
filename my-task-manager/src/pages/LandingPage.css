@@ -29,15 +29,6 @@ main > .Hero {
     gap: clamp(32px, 5vw, 80px);
 }
 
-.Hero-mark {
-    justify-self: end;
-    width: 100%;
-    max-width: 620px;
-    aspect-ratio: 1;
-    background-color: var(--paper);
-    mask: url("../assets/taskflo-mark.svg") center / contain no-repeat;
-    pointer-events: none;
-}
 
 .Hero h1 {
     max-width: 12ch;
@@ -89,11 +80,5 @@ main > .Hero {
 @media (max-width: 899px) {
     main > .Hero {
         grid-template-columns: minmax(0, 1fr);
-    }
-
-    .Hero-mark {
-        order: -1;
-        justify-self: start;
-        max-width: 72px;
     }
 }

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Features from '../components/Features'
 import HowItWorks from '../components/HowItWorks'
+import HeroDemo from '../components/HeroDemo'
 import Footer from '../components/Footer'
 import './LandingPage.css'
 
@@ -18,7 +19,7 @@ function LandingPage() {
                         <p>A task manager for small teams that does less on purpose. Give work an owner and a deadline, see where it stands, and get on with it.</p>
                         <Link className="Hero-button" to="/register">Get started</Link>
                     </div>
-                    <span className="Hero-mark" aria-hidden="true"></span>
+                    <HeroDemo />
                 </section>
                 <Features />
                 <HowItWorks />
