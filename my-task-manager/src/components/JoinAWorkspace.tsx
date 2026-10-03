@@ -1,1 +1,0 @@
-import './JoinAWorkspace.css';
