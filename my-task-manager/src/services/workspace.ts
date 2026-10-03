@@ -4,7 +4,7 @@ export async function createWorkspace(name : string) {
     const {data : {session}} = await supabase.auth.getSession();
     if (!session) return {error : 'Not logged in'};
 
-    const {data, error} = await supabase 
+    const {data, error} = await supabase
     .from('workspaces')
     .insert ({
         name,
@@ -16,15 +16,70 @@ export async function createWorkspace(name : string) {
     return {data,error};
 }
 
+// Workspaces the user owns or has joined. Invited-but-not-joined workspaces
+// are readable through RLS too, so filter on membership explicitly.
 export async function getWorkspaces() {
-    const {data : {session}} = await supabase.auth.getSession(); 
+    const {data : {session}} = await supabase.auth.getSession();
     if (!session) return {data: null, error: 'Not logged in'};
 
-    const {data, error} = await supabase 
+    const {data, error} = await supabase
         .from('workspaces')
-        .select('id, name')
-        .eq('owner_id', session.user.id)
+        .select('id, name, workspace_members!inner(user_id)')
+        .eq('workspace_members.user_id', session.user.id)
         .order('created_at', {ascending: true});
 
-    return {data, error};
+    return {data: data?.map(({id, name}) => ({id, name})) ?? null, error};
+}
+
+export interface PendingInvite {
+    id: string;
+    token: string;
+    workspaceId: string;
+    workspaceName: string;
+}
+
+export async function getPendingInvites() {
+    const {data : {session}} = await supabase.auth.getSession();
+    if (!session?.user.email) return {data: null, error: 'Not logged in'};
+
+    const {data, error} = await supabase
+        .from('invites')
+        .select('id, token, workspace_id, workspaces(name)')
+        .eq('email', session.user.email.toLowerCase())
+        .is('accepted_at', null)
+        .is('declined_at', null)
+        .gt('expires_at', new Date().toISOString())
+        .order('created_at', {ascending: true});
+
+    const invites: PendingInvite[] | null = data?.map(row => {
+        const ws = row.workspaces as unknown as {name: string} | null;
+        return {id: row.id, token: row.token, workspaceId: row.workspace_id, workspaceName: ws?.name ?? 'A workspace'};
+    }) ?? null;
+
+    return {data: invites, error};
+}
+
+export async function acceptInvite(token: string) {
+    const {data, error} = await supabase.rpc('accept_invite', {invite_token: token});
+    return {workspaceId: data as string | null, error};
+}
+
+export async function declineInvite(token: string) {
+    const {error} = await supabase.rpc('decline_invite', {invite_token: token});
+    return {error};
+}
+
+export async function sendInvites(workspaceId: string, emails: string[]) {
+    const {data : {session}} = await supabase.auth.getSession();
+    if (!session) return {error : 'Not logged in'};
+
+    const {error} = await supabase
+        .from('invites')
+        .insert(emails.map(email => ({
+            workspace_id: workspaceId,
+            email,
+            invited_by: session.user.id,
+        })));
+
+    return {error};
 }

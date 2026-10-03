@@ -17,13 +17,14 @@ function Sidebar({ open, onClose }: SidebarProps) {
     const navigate = useNavigate();
 
     async function fetchWorkspaces() {
-      const { data, error } = await getWorkspaces();
+      const { data } = await getWorkspaces();
       if (data) setWorkspaces(data);
     }
 
+    // Refetch on open so workspaces created or joined elsewhere (e.g. first run) show up.
     useEffect(() => {
       fetchWorkspaces();
-    }, []);
+    }, [open]);
 
   return (
     <>
