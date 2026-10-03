@@ -34,3 +34,15 @@
     color: gray;
     line-height: 1.6;
 }
+
+.feature-soon {
+    margin-left: 6px;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 1px solid #e8e6e0;
+    font-size: 11px;
+    font-weight: 600;
+    vertical-align: middle;
+    color: #5f5d58;
+    white-space: nowrap;
+}
