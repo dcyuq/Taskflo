@@ -1,5 +1,6 @@
 .RegisterPage {
   min-height: 100vh;
+  padding: 24px 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,7 +12,7 @@
   background: white;
   border: 1px solid #e8e6e0;
   border-radius: 16px;
-  padding: 48px;
+  padding: clamp(24px, 7vw, 48px);
   width: 100%;
   max-width: 420px;
 }
