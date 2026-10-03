@@ -25,15 +25,15 @@ function WorkspaceDetail() {
     if (workspaceName === null) {
         return (
             <div className="workspace-detail">
-                <h1>Workspace not found</h1>
-                <p>It may have been deleted, or you're not a member. <Link to="/dashboard">Go to your workspaces</Link></p>
+                <h1 className="firstrun-title">Workspace not found</h1>
+                <p className="firstrun-lede">It may have been deleted, or you're not a member. <Link to="/dashboard">Go to your workspaces</Link></p>
             </div>
         );
     }
 
     return (
         <div className="workspace-detail">
-            <h1>{workspaceName}</h1>
+            <h1 className="firstrun-title">{workspaceName}</h1>
         </div>
     );
 }
