@@ -1,0 +1,238 @@
+.hiw {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(24px, 4vw, 56px);
+    align-items: start;
+}
+
+.hiw-tabs {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--line-strong);
+}
+
+.hiw-tab {
+    position: relative;
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    min-height: 44px;
+    padding: 20px 4px;
+    border: none;
+    border-bottom: 1px solid var(--line-strong);
+    background: transparent;
+    text-align: left;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 160ms ease-out;
+}
+
+.hiw-tab:hover,
+.hiw-tab[aria-selected="true"] {
+    color: var(--ink);
+}
+
+.hiw-tab:focus-visible {
+    outline-offset: -2px;
+    border-radius: 8px;
+}
+
+.hiw-num {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
+}
+
+.hiw-tab[aria-selected="true"] .hiw-num {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+}
+
+.hiw-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 3px;
+}
+
+.hiw-title {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.hiw-text {
+    max-width: 40ch;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+.hiw-panel {
+    display: grid;
+    place-items: center;
+    min-height: 340px;
+    padding: clamp(24px, 4vw, 48px);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+}
+
+.hiw-mock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 380px;
+}
+
+.mock-label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.mock-input {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--ink);
+    border-radius: 10px;
+    box-shadow: var(--ring);
+    font-size: 15px;
+}
+
+.mock-caret {
+    width: 1.5px;
+    height: 1.1em;
+    margin-left: 2px;
+    background: var(--ink);
+}
+
+.mock-button {
+    display: grid;
+    place-items: center;
+    height: 44px;
+    margin-top: 8px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.mock-chips {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 7px 8px;
+}
+
+.mock-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 11px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.mock-hint {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.mock-task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 56px;
+    margin-bottom: 10px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+}
+
+.mock-task-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.mock-due {
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 9px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.mock-people {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.mock-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.mock-person + .mock-person {
+    border-top: 1px solid var(--line);
+}
+
+.mock-person.is-picked {
+    background: var(--paper);
+    font-weight: 600;
+}
+
+.mock-avatar {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.mock-check {
+    margin-left: auto;
+}
+
+@media (max-width: 720px) {
+    .hiw {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hiw-panel {
+        min-height: 300px;
+    }
+}

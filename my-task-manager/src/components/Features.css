@@ -13,12 +13,6 @@
     margin-bottom: 32px;
 }
 
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 32px 40px;
-}
-
 .bento {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -351,24 +345,6 @@
     }
 }
 
-.feature-card {
-    padding-top: 20px;
-    border-top: 2px solid var(--ink);
-}
-
-.feature-card h3 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.feature-card p {
-    max-width: 34ch;
-    font-size: 15px;
-    color: var(--muted);
-    line-height: 1.6;
-}
-
 .feature-soon {
     margin-left: 6px;
     padding: 2px 8px;
@@ -379,19 +355,6 @@
     vertical-align: middle;
     color: var(--muted);
     white-space: nowrap;
-}
-
-.steps {
-    list-style: none;
-}
-
-.step-num {
-    display: block;
-    margin-bottom: 12px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
 }
 
 .faq {
