@@ -158,7 +158,7 @@
   border: none;
   border-radius: 8px;
   background: none;
-  color: var(--placeholder);
+  color: var(--muted);
   cursor: grab;
 }
 
