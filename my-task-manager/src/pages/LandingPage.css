@@ -13,7 +13,6 @@ main > .Cta {
 }
 
 .Hero {
-    --mark: clamp(340px, 40vw, 520px);
     position: relative;
     overflow: hidden;
     margin: 8px var(--card-inset);
@@ -23,13 +22,19 @@ main > .Cta {
     color: var(--paper);
 }
 
+main > .Hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    align-content: center;
+    align-items: center;
+    gap: clamp(32px, 5vw, 80px);
+}
+
 .Hero-mark {
-    position: absolute;
-    top: 50%;
-    right: calc(var(--mark) * -0.12);
-    width: var(--mark);
-    height: var(--mark);
-    transform: translateY(-50%);
+    justify-self: end;
+    width: 100%;
+    max-width: 620px;
+    aspect-ratio: 1;
     background-color: var(--paper);
     mask: url("../assets/taskflo-mark.svg") center / contain no-repeat;
     pointer-events: none;
@@ -109,14 +114,14 @@ main > .Cta {
     margin-bottom: 32px;
 }
 
-@media (min-width: 900px) {
-    .Hero {
-        padding-right: calc(var(--mark) * 0.88 + 40px);
-    }
-}
-
 @media (max-width: 899px) {
+    main > .Hero {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .Hero-mark {
-        display: none;
+        order: -1;
+        justify-self: start;
+        max-width: 72px;
     }
 }
