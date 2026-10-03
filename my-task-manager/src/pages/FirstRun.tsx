@@ -81,7 +81,7 @@ function WorkspaceStep({
         setInvites((list) => list.filter((i) => i.id !== invite.id));
     }
 
-    async function handleCreate(e: React.FormEvent) {
+    async function handleCreate(e: React.SyntheticEvent) {
         e.preventDefault();
         const trimmed = name.trim();
         if (!trimmed) {
@@ -254,7 +254,7 @@ function InviteStep({ workspace }: { workspace: { id: string; name: string } }) 
         }
     }
 
-    async function handleSend(e: React.FormEvent) {
+    async function handleSend(e: React.SyntheticEvent) {
         e.preventDefault();
         if (draft.trim() && !commit(draft)) return;
 
