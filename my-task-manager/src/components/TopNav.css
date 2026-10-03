@@ -48,13 +48,9 @@
   border-radius: 99px;
   border: 1px solid #e8e6e0;
   background: #ffffff;
-  cursor: pointer;
   font-family: "Sora", sans-serif;
 }
 
-.topnav-profile:hover {
-  background: #f9f8f5;
-}
 
 .topnav-avatar {
   width: 28px;
@@ -117,4 +113,20 @@
   .topnav-profile {
     padding: 4px;
   }
+}
+
+.topnav-signout {
+  height: 36px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0d0d0d;
+  cursor: pointer;
+}
+
+.topnav-signout:hover {
+  background: #f9f8f5;
 }

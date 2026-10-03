@@ -2,11 +2,18 @@ import './TopNav.css';
 import { supabase } from "../supabaseClient";
 import {useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
+import { useNavigate } from 'react-router-dom';
 
 function TopNav() {
     
     const [firstName, setFirstName] = useState('');
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const navigate = useNavigate();
+
+    async function handleSignOut() {
+        await supabase.auth.signOut();
+        navigate('/login', { replace: true });
+    }
 
         useEffect(() => {
             async function loadUser() {
@@ -36,10 +43,11 @@ return (
                         Taskflo
                     </div>
                     <div className="topnav-actions">
-                        <button className="topnav-profile">
-                            <span className="topnav-avatar"></span>
+                        <div className="topnav-profile">
+                            <span className="topnav-avatar" aria-hidden="true">{firstName.charAt(0).toUpperCase()}</span>
                             <span className="topnav-profile-name">{firstName}</span>
-                        </button>
+                        </div>
+                        <button className="topnav-signout" onClick={handleSignOut}>Sign out</button>
                     </div>
                 </div>
             <Sidebar open={drawerOpen} onClose={() => setDrawerOpen(false)} />
