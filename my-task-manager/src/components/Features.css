@@ -49,3 +49,16 @@
     color: var(--muted);
     white-space: nowrap;
 }
+
+.steps {
+    list-style: none;
+}
+
+.step-num {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
