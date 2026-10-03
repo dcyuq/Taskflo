@@ -16,3 +16,10 @@ textarea {
   font: inherit;
   color: inherit;
 }
+
+.form-error {
+  margin: -4px 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #a3261b;
+}
