@@ -49,18 +49,18 @@ function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
         >
             <form onSubmit={handleCreate} noValidate>
                 <div className="modal-header">
-                    <h2 id="new-workspace-title" className='modal-title'>New Workspace</h2>
+                    <h2 id="new-workspace-title" className='modal-title'>New workspace</h2>
                     <button type="button" className="modal-close" aria-label="Close" onClick={onClose}>✕</button>
                 </div>
 
                 <div className="modal-body">
-                    <label className="modal-label" htmlFor="new-workspace-name">Workspace Name</label>
-                    <input id="new-workspace-name" className='modal-input' type="text" placeholder="e.g. Marketing Team" autoComplete="off" maxLength={80} value={name} onChange={(e) => setName(e.target.value)}/>
+                    <label className="modal-label" htmlFor="new-workspace-name">Workspace name</label>
+                    <input id="new-workspace-name" className='modal-input' type="text" placeholder="e.g. Marketing team" autoComplete="off" maxLength={80} value={name} onChange={(e) => setName(e.target.value)}/>
                     {error && <div className="form-error" role="alert">{error}</div>}
                 </div>
 
                 <div className="modal-footer">
-                    <button type="submit" className="modal-create" disabled={loading}>{loading ? 'Creating...' : 'Create'}</button>
+                    <button type="submit" className="modal-create" disabled={loading}>{loading ? 'Creating…' : 'Create workspace'}</button>
                     <button type="button" className="modal-cancel" onClick={onClose}>Cancel</button>
                 </div>
             </form>

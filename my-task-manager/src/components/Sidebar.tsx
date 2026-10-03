@@ -52,7 +52,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
 
         <div className="sidebar-footer">
           <button className="sidebar-new-workspace" onClick={() => setShowModal(true)}>
-            +  New Workspace
+            + New workspace
           </button>
         </div>
 
