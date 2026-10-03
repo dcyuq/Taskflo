@@ -106,9 +106,15 @@
 }
 
 .brand-wordmark {
-  display: block;
+  display: inline-block;
+  flex: none;
+  width: 125.5px;
   height: 28px;
-  aspect-ratio: 341.5 / 76.2;
-  background-color: currentColor;
-  mask: url("../assets/taskflo-wordmark.svg") center / contain no-repeat;
+  line-height: 0;
+}
+
+.brand-wordmark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }

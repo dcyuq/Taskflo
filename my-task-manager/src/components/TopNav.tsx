@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 import {useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { Link, useNavigate } from 'react-router-dom';
+import wordmark from '../assets/taskflo-wordmark.svg?raw';
 
 function TopNav() {
     
@@ -39,7 +40,7 @@ return (
                 <button className="drawer-btn" aria-label="Workspaces" onClick={() => setDrawerOpen(!drawerOpen)}>☰</button>
             </div>
                     <Link to="/" className="topnav-brand" aria-label="Taskflo">
-                        <span className="brand-wordmark" aria-hidden="true"></span>
+                        <span className="brand-wordmark" aria-hidden="true" dangerouslySetInnerHTML={{ __html: wordmark }} />
                     </Link>
                     <div className="topnav-actions">
                         <div className="topnav-profile">
