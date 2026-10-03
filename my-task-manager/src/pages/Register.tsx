@@ -95,14 +95,17 @@ function Register() {
             <div className='RegisterBox'>
                 {!otpSent && (
                     <form onSubmit={handleReg} noValidate>
-                        <h1> New Here? </h1>
-                        <p>Register now!</p>
-
+                        <h1>Create your account</h1>
+                        <p>Set up Taskflo for you and your team.</p>
 
                         <div>
-                            <label htmlFor="reg-first"> Name</label>
-                            <input id="reg-first" type='text' autoComplete="given-name" aria-label="First name" placeholder="First Name" value={FirstName} onChange={(e) => setFirstname(e.target.value)} ></input>
-                            <input type='text' autoComplete="family-name" aria-label="Last name" placeholder="Last Name" value={LastName} onChange={(e) => setLastName(e.target.value)} ></input>
+                            <label htmlFor="reg-first">First name</label>
+                            <input id="reg-first" type='text' autoComplete="given-name" value={FirstName} onChange={(e) => setFirstname(e.target.value)} ></input>
+                        </div>
+
+                        <div>
+                            <label htmlFor="reg-last">Last name</label>
+                            <input id="reg-last" type='text' autoComplete="family-name" value={LastName} onChange={(e) => setLastName(e.target.value)} ></input>
                         </div>
 
                         <div>
@@ -111,31 +114,31 @@ function Register() {
                         </div>
 
                         <div>
-                            <label htmlFor="reg-password"> Password </label>
-                            <input id="reg-password" type='password' autoComplete="new-password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
+                            <label htmlFor="reg-password">Password</label>
+                            <input id="reg-password" type='password' autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)}></input>
                         </div>
 
                         <div>
-                            <label htmlFor="reg-confirm"> Confirm Passowrd </label>
-                            <input id="reg-confirm" type='password' autoComplete="new-password" placeholder="Confirm Your Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}></input>
+                            <label htmlFor="reg-confirm">Confirm password</label>
+                            <input id="reg-confirm" type='password' autoComplete="new-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}></input>
                         </div>
 
                         {error && <div className="form-error" role="alert">{error}</div>}
 
-                        <button type="submit" className="register-btn" disabled={loading}> {loading ? "Creating account..." : "Create Account"}</button>
+                        <button type="submit" className="register-btn" disabled={loading}>{loading ? "Creating account…" : "Create account"}</button>
                         <p className="register-login-link">Already have an account? <Link to="/login">Sign in</Link></p>
                     </form>
                 )}
 
                 {otpSent && (
                     <form onSubmit={handleVerify} noValidate>
-                        <h1>Check your Email</h1>
-                        <p>We sent a 6-digit code to {email}</p>
-                        <label htmlFor="reg-code">Code</label>
-                        <input id="reg-code" type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="Enter Code" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}></input>
+                        <h1>Check your email</h1>
+                        <p>We sent a 6-digit code to {email}. Enter it below to finish creating your account.</p>
+                        <label htmlFor="reg-code">Verification code</label>
+                        <input id="reg-code" type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="123456" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}></input>
                         {error && <div className="form-error" role="alert">{error}</div>}
                         {notice && <div className="form-notice" role="status">{notice}</div>}
-                        <button type="submit" className="register-btn" disabled={loading}>{loading ? "Verifying..." : "Verify"}</button>
+                        <button type="submit" className="register-btn" disabled={loading}>{loading ? "Verifying…" : "Verify email"}</button>
                         <p className="register-login-link">
                             <button type="button" className="link-btn" onClick={handleResend}>Send a new code</button>
                             {" · "}
