@@ -56,3 +56,12 @@ export async function deleteTask(id: string) {
     const { data, error } = await supabase.from('tasks').delete().eq('id', id).select('id')
     return { error: error ?? (data?.length ? null : new Error('Not allowed')) }
 }
+
+export async function listOpenTasks() {
+    const { data, error } = await supabase
+        .from('tasks')
+        .select(columns)
+        .neq('status', 'done')
+        .order('due_date', { ascending: true, nullsFirst: false })
+    return { data: data as Task[] | null, error }
+}

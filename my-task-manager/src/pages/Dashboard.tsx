@@ -4,11 +4,22 @@ import TopNav from '../components/TopNav'
 import Sidebar, { type ListState } from '../components/Sidebar'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { getWorkspaces } from '../services/workspace'
+import { listOpenTasks, type Task } from '../services/tasks'
+import { supabase } from '../supabaseClient'
 import './Dashboard.css'
+
+export interface DashboardContext {
+    workspaces: { id: string, name: string }[]
+    openTasks: Task[]
+    me: string
+    reloadOpen: () => void
+}
 
 function Dashboard() {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [list, setList] = useState<ListState>({ status: 'loading' })
+    const [openTasks, setOpenTasks] = useState<Task[]>([])
+    const [me, setMe] = useState('')
     const desktop = useMediaQuery('(min-width: 1024px)')
     const { pathname } = useLocation()
     const match = useMatch('/dashboard/workspace/:id/*')
@@ -19,9 +30,20 @@ function Dashboard() {
         })
     }, [])
 
-    useEffect(load, [load, pathname])
+    const reloadOpen = useCallback(() => {
+        listOpenTasks().then(({ data }) => data && setOpenTasks(data))
+    }, [])
 
-    const current = list.status === 'ready' ? list.workspaces.find(w => w.id === match?.params.id)?.name : undefined
+    useEffect(load, [load, pathname])
+    useEffect(reloadOpen, [reloadOpen, pathname])
+
+    useEffect(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => setMe(session?.user.id ?? ''))
+    }, [])
+
+    const workspaces = list.status === 'ready' ? list.workspaces : []
+    const current = workspaces.find(w => w.id === match?.params.id)?.name
+    const context: DashboardContext = { workspaces, openTasks, me, reloadOpen }
 
     return (
         <div className={`app${desktop ? ' is-desktop' : ''}`}>
@@ -32,12 +54,13 @@ function Dashboard() {
                     desktop={desktop}
                     open={drawerOpen}
                     list={list}
+                    openTasks={openTasks}
                     onRetry={() => { setList({ status: 'loading' }); load() }}
                     onCreated={load}
                     onClose={() => setDrawerOpen(false)}
                 />
                 <main className="app-main dot-grid" id="app-main" tabIndex={-1}>
-                    <Outlet />
+                    <Outlet context={context} />
                 </main>
             </div>
         </div>

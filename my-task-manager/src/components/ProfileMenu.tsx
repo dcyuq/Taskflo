@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 
-function ProfileMenu({ placement }: { placement: 'down' | 'up' }) {
+function ProfileMenu({ compact = false }: { compact?: boolean }) {
     const [profile, setProfile] = useState({ name: '', email: '' })
     const navigate = useNavigate()
 
@@ -29,17 +29,19 @@ function ProfileMenu({ placement }: { placement: 'down' | 'up' }) {
         <>
             <button
                 type="button"
-                className={`topnav-profile is-${placement}`}
+                className={`profile-card${compact ? ' is-compact' : ''}`}
                 popoverTarget="profile-menu"
                 aria-label={profile.name ? `Account menu for ${profile.name}` : 'Account menu'}
             >
                 <span className="topnav-avatar" aria-hidden="true">{initial}</span>
-                <span className="topnav-profile-name" aria-hidden="true">{placement === 'up' ? profile.name : profile.name.split(' ')[0]}</span>
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d={placement === 'up' ? 'M4 10l4-4 4 4' : 'M4 6l4 4 4-4'} />
-                </svg>
+                {!compact && (
+                    <span className="profile-card-who" aria-hidden="true">
+                        <span className="profile-card-name">{profile.name}</span>
+                        <span className="profile-card-email">{profile.email}</span>
+                    </span>
+                )}
             </button>
-            <div id="profile-menu" className={`profile-menu is-${placement}`} popover="auto">
+            <div id="profile-menu" className="profile-menu is-up" popover="auto">
                 <div className="profile-menu-head">
                     <span className="topnav-avatar" aria-hidden="true">{initial}</span>
                     <span className="profile-menu-who">
