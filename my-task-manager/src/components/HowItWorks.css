@@ -1,8 +1,8 @@
 .hiw {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: clamp(24px, 4vw, 56px);
-    align-items: start;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: clamp(24px, 4vw, 72px);
+    align-items: center;
 }
 
 .hiw-tabs {
@@ -89,7 +89,7 @@
 .hiw-panel {
     display: grid;
     place-items: center;
-    min-height: 340px;
+    min-height: clamp(360px, 58dvh, 600px);
     padding: 56px clamp(24px, 4vw, 48px) clamp(24px, 4vw, 48px);
     border: 1px solid var(--line);
     border-radius: 16px;
@@ -118,7 +118,7 @@
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    max-width: 380px;
+    max-width: 440px;
 }
 
 .mock-label {
