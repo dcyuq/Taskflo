@@ -56,3 +56,4 @@ desktop.ini
 *.tmp
 test-results/
 playwright-report/
+.playwright-mcp/
