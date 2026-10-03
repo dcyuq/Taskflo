@@ -57,3 +57,47 @@
     box-shadow: inset 0 -2px 0 var(--ink);
     border-radius: 0;
 }
+
+.navbar-menu {
+    display: none;
+    min-height: 44px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.navbar-menu:hover {
+    background: var(--surface);
+}
+
+@media (max-width: 720px) {
+    .navbar-menu {
+        display: block;
+    }
+
+    .navbar-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        margin: 0;
+        padding: 8px 16px 16px;
+        background: var(--paper);
+        border-bottom: 1px solid var(--line);
+    }
+
+    .navbar-links.open {
+        display: flex;
+    }
+
+    .navbar-links a.active {
+        box-shadow: inset 2px 0 0 var(--ink);
+    }
+}

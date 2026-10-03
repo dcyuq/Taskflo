@@ -12,6 +12,7 @@ const sections = [
 
 function Navbar() {
     const [active, setActive] = useState('')
+    const [menuOpen, setMenuOpen] = useState(false)
 
     useEffect(() => {
         const update = () => {
@@ -34,12 +35,28 @@ function Navbar() {
         }
     }, [])
 
+    useEffect(() => {
+        if (!menuOpen) return
+        const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false)
+        window.addEventListener('keydown', onKey)
+        return () => window.removeEventListener('keydown', onKey)
+    }, [menuOpen])
+
     return(
         <nav className="navbar">
             <Link to="/" className="topnav-brand" aria-label="Taskflo">
                 <span className="brand-wordmark" aria-hidden="true" dangerouslySetInnerHTML={{ __html: wordmark }} />
             </Link>
-            <ul className="navbar-links">
+            <button
+                type="button"
+                className="navbar-menu"
+                aria-expanded={menuOpen}
+                aria-controls="navbar-links"
+                onClick={() => setMenuOpen(o => !o)}
+            >
+                {menuOpen ? "Close" : "Menu"}
+            </button>
+            <ul id="navbar-links" className={`navbar-links${menuOpen ? " open" : ""}`} onClick={() => setMenuOpen(false)}>
                 {sections.map(s => (
                     <li key={s.id}>
                         <a
