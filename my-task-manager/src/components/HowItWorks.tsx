@@ -1,7 +1,8 @@
 import './HowItWorks.css'
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { useRef, useState } from 'react'
-import type { KeyboardEvent } from 'react'
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'motion/react'
+import type { AnimationPlaybackControls } from 'motion/react'
+import { useEffect, useRef, useState } from 'react'
+import type { FocusEvent, KeyboardEvent } from 'react'
 
 const steps = [
     { title: 'Create a workspace', text: 'Name it after your team. One workspace holds one team and its work.' },
@@ -70,6 +71,32 @@ function HowItWorks() {
     const reduce = useReducedMotion()
     const tabs = useRef<(HTMLButtonElement | null)[]>([])
     const Mock = mocks[active]
+    const [hovered, setHovered] = useState(false)
+    const [focused, setFocused] = useState(false)
+    const paused = hovered || focused
+    const progress = useMotionValue(0)
+    const controls = useRef<AnimationPlaybackControls | null>(null)
+
+    useEffect(() => {
+        progress.set(0)
+        if (reduce) return
+        const c = animate(progress, 1, {
+            duration: 5,
+            ease: 'linear',
+            onComplete: () => setActive(a => (a + 1) % steps.length),
+        })
+        controls.current = c
+        return () => c.stop()
+    }, [active, reduce, progress])
+
+    useEffect(() => {
+        if (paused) controls.current?.pause()
+        else controls.current?.play()
+    }, [paused, active])
+
+    const onBlur = (e: FocusEvent) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false)
+    }
 
     const onKey = (e: KeyboardEvent) => {
         const last = steps.length - 1
@@ -88,7 +115,14 @@ function HowItWorks() {
     }
 
     return (
-        <section className="features" id="how-it-works">
+        <section
+            className="features"
+            id="how-it-works"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onFocus={() => setFocused(true)}
+            onBlur={onBlur}
+        >
             <h2>How it works</h2>
             <div className="hiw">
                 <div className="hiw-tabs" role="tablist" aria-orientation="vertical" aria-label="Steps" onKeyDown={onKey}>
@@ -105,6 +139,9 @@ function HowItWorks() {
                             className="hiw-tab"
                             onClick={() => setActive(i)}
                         >
+                            {active === i && !reduce && (
+                                <motion.span className="hiw-line" style={{ scaleX: progress }} aria-hidden="true" />
+                            )}
                             <span className="hiw-num">{i + 1}</span>
                             <span className="hiw-copy">
                                 <span className="hiw-title">{s.title}</span>

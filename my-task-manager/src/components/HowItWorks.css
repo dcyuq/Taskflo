@@ -37,6 +37,16 @@
     border-radius: 8px;
 }
 
+.hiw-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--ink);
+    transform-origin: left;
+}
+
 .hiw-num {
     flex: none;
     display: grid;
