@@ -23,10 +23,14 @@ function TasksView() {
     const [params, setParams] = useSearchParams()
     const [quick, setQuick] = useState('')
     const [adding, setAdding] = useState(false)
-    const [editing, setEditing] = useState<Editing>(() => {
-        const linked = tasks.find(t => t.id === params.get('task'))
-        return linked ? { task: linked } : null
-    })
+    const [editing, setEditing] = useState<Editing>(null)
+    const linkedId = params.get('task')
+    const [seenLink, setSeenLink] = useState<string | null>(null)
+    if (linkedId !== seenLink) {
+        setSeenLink(linkedId)
+        const linked = tasks.find(t => t.id === linkedId)
+        if (linked) setEditing({ task: linked })
+    }
     const viewKey = `taskflo:view:${workspace.id}`
     const fromUrl = params.get('view')
     const stored = readStored(viewKey)
@@ -122,6 +126,7 @@ function TasksView() {
 
             {editing && (
                 <TaskDialog
+                    key={editTask?.id ?? 'new'}
                     task={editTask}
                     defaultStatus={'status' in editing ? editing.status : undefined}
                     defaultTitle={'title' in editing ? editing.title : undefined}
