@@ -16,6 +16,7 @@ import {
 } from '@dnd-kit/core'
 import { motion, useReducedMotion } from 'motion/react'
 import DueChip from './DueChip'
+import GripIcon from './GripIcon'
 import { statuses, type Task, type TaskPatch, type TaskStatus } from '../services/tasks'
 import { ease, rise } from '../utils/motion'
 import { groupOf } from '../utils/summary'
@@ -42,16 +43,6 @@ const columnKeys: KeyboardCoordinateGetter = (event, { context, currentCoordinat
     if (!rect) return currentCoordinates
     const width = context.collisionRect?.width ?? 0
     return { x: rect.left + (rect.width - width) / 2, y: rect.top + 56 }
-}
-
-function GripIcon() {
-    return (
-        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
-            <circle cx="6" cy="4" r="1.2" /><circle cx="10" cy="4" r="1.2" />
-            <circle cx="6" cy="8" r="1.2" /><circle cx="10" cy="8" r="1.2" />
-            <circle cx="6" cy="12" r="1.2" /><circle cx="10" cy="12" r="1.2" />
-        </svg>
-    )
 }
 
 function CardBody({ task, who, onEdit }: { task: Task, who?: string, onEdit?: () => void }) {
