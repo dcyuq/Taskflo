@@ -119,7 +119,7 @@ function TaskDialog({ task, defaultStatus = 'todo', defaultTitle = '', members, 
                     )}
                     {confirming ? (
                         <div className="task-dialog-confirm" role="group" aria-label="Confirm delete">
-                            <span>Delete this task?</span>
+                            <span>Delete this task? This can’t be undone.</span>
                             <button type="button" className="btn btn-quiet" onClick={() => setConfirming(false)}>Keep</button>
                             <button type="button" className="btn btn-danger" disabled={saving} onClick={handleDelete}>Delete</button>
                         </div>
