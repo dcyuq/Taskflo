@@ -149,7 +149,15 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                         {list.status === 'error' && (
                             <div className="sidebar-error" role="alert">
                                 <p>Couldn't load your workspaces.</p>
-                                <button type="button" className="btn btn-quiet btn-small" onClick={onRetry}>Try again</button>
+                                {collapsed ? (
+                                    <button type="button" className="sidebar-icon-btn is-error" aria-label="Couldn't load your workspaces. Try again" title="Couldn't load your workspaces. Try again" onClick={onRetry}>
+                                        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                            <path d="M13 8a5 5 0 1 1-1.5-3.5M13 2.5v3h-3" />
+                                        </svg>
+                                    </button>
+                                ) : (
+                                    <button type="button" className="btn btn-quiet btn-small" onClick={onRetry}>Try again</button>
+                                )}
                             </div>
                         )}
 
