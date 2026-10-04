@@ -18,7 +18,8 @@ type Editing = { task: Task } | { status: TaskStatus, title?: string } | null
 const isView = (value: string | null): value is View => value === 'list' || value === 'board'
 
 function TasksView() {
-    const { workspace, tasks, members } = useWorkspace()
+    const { workspace, tasks: all, members, board, isOwner } = useWorkspace()
+    const tasks = board ? all.filter(t => t.board_id === board.id) : []
     const { create, patch, complete, undoDone, justDone, remove, canDelete, error, setError } = useTaskActions()
     const reduce = useReducedMotion()
     const [params, setParams] = useSearchParams()
@@ -30,7 +31,7 @@ function TasksView() {
     const [seenLink, setSeenLink] = useState<string | null>(null)
     if (linkedId !== seenLink) {
         setSeenLink(linkedId)
-        const linked = tasks.find(t => t.id === linkedId)
+        const linked = all.find(t => t.id === linkedId)
         if (linked) setEditing({ task: linked })
     }
     const viewKey = `taskflo:view:${workspace.id}`
@@ -78,8 +79,18 @@ function TasksView() {
     const shown = filtered ? tasks.filter(t => ownerOf(t) === filtered.id) : tasks
     const quickFor = filtered && filtered.id !== 'none' ? filtered : null
 
+    if (!board) {
+        return (
+            <p className="tasks-empty">
+                {isOwner ? 'No boards yet. Add one with the + next to the workspace name in the sidebar.' : 'No boards yet. The workspace owner can add one.'}
+            </p>
+        )
+    }
+
     return (
         <motion.div className="tasks" initial={reduce ? false : 'hidden'} animate="show" variants={staggered}>
+            <motion.h2 className="tasks-board" variants={rise}>{board.name}</motion.h2>
+
             {tasks.length > 0 && (
                 <motion.div className="glance" variants={rise}>
                     <span className={`glance-stat${overdue.length ? ' is-alert' : ''}`}><strong>{overdue.length}</strong> overdue</span>

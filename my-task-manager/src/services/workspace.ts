@@ -115,3 +115,8 @@ export async function orderWorkspaces(ids: string[]) {
 
     return {error: results.find(r => r.error)?.error ?? null};
 }
+
+export async function renameWorkspace(id: string, name: string) {
+    const {data, error} = await supabase.from('workspaces').update({name}).eq('id', id).select('id');
+    return {error: error ?? (data?.length ? null : new Error('Not allowed'))};
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useParams } from 'react-router-dom'
+import { Link, NavLink, Outlet, useOutletContext, useParams } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { supabase } from '../supabaseClient'
 import { getWorkspace } from '../services/workspace'
@@ -7,6 +7,7 @@ import { listMembers, type Member } from '../services/members'
 import { listTasks, type Task } from '../services/tasks'
 import { LAST_WORKSPACE_KEY, type WorkspaceContext } from '../hooks/useWorkspace'
 import { rise } from '../utils/motion'
+import type { DashboardContext } from './Dashboard'
 import { store } from '../utils/storage'
 import './Workspace.css'
 
@@ -27,6 +28,7 @@ async function fetchWorkspace(id: string): Promise<Loaded> {
 
 function WorkspaceLayout({ id }: { id: string }) {
     const reduce = useReducedMotion()
+    const { workspaces, board } = useOutletContext<DashboardContext>()
     const [status, setStatus] = useState<Status>('loading')
     const [workspace, setWorkspace] = useState<WorkspaceContext['workspace'] | null>(null)
     const [members, setMembers] = useState<Member[]>([])
@@ -93,6 +95,7 @@ function WorkspaceLayout({ id }: { id: string }) {
         workspace,
         members,
         tasks,
+        board,
         setTasks,
         me,
         isOwner: workspace.owner_id === me,
@@ -102,7 +105,7 @@ function WorkspaceLayout({ id }: { id: string }) {
     return (
         <div className="ws">
             <motion.header className="ws-head" initial={reduce ? false : 'hidden'} animate="show" variants={rise}>
-                <h1 className="ws-title">{workspace.name}</h1>
+                <h1 className="ws-title">{workspaces.find(w => w.id === id)?.name ?? workspace.name}</h1>
                 <nav className="ws-tabs" aria-label="Workspace">
                     <NavLink to="" end className="ws-tab">Tasks</NavLink>
                     <NavLink to="overview" className="ws-tab">Overview</NavLink>

@@ -81,7 +81,7 @@ function PersonalTasks({ mode }: { mode: 'mine' | 'soon' }) {
                                 {group.tasks.map(task => (
                                     <li key={task.id} className="task-row">
                                         <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => markDone(task)} />
-                                        <Link className="task-row-title" to={`/dashboard/workspace/${group.id}?task=${task.id}`}>{task.title}</Link>
+                                        <Link className="task-row-title" to={`/dashboard/workspace/${group.id}?board=${task.board_id}&task=${task.id}`}>{task.title}</Link>
                                         <DueChip task={task} />
                                     </li>
                                 ))}

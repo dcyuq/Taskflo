@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Outlet, useLocation, useMatch } from 'react-router-dom'
+import { Outlet, useLocation, useMatch, useSearchParams } from 'react-router-dom'
 import TopNav from '../components/TopNav'
 import JumpDialog from '../components/JumpDialog'
 import Sidebar, { type ListState } from '../components/Sidebar'
 import { useMediaQuery } from '../hooks/useMediaQuery'
+import { orderedBoards, useBoards, type BoardsApi } from '../hooks/useBoards'
+import type { Board } from '../services/boards'
 import { getWorkspaces, orderWorkspaces, type WorkspaceSummary } from '../services/workspace'
 import { listOpenTasks, type Task } from '../services/tasks'
 import { supabase } from '../supabaseClient'
@@ -14,6 +16,8 @@ export interface DashboardContext {
     openTasks: Task[]
     me: string
     reloadOpen: () => void
+    boards: BoardsApi
+    board: Board | null
 }
 
 function Dashboard() {
@@ -25,6 +29,10 @@ function Dashboard() {
     const desktop = useMediaQuery('(min-width: 1024px)')
     const { pathname } = useLocation()
     const match = useMatch('/dashboard/workspace/:id/*')
+    const [params] = useSearchParams()
+    const boards = useBoards(match?.params.id)
+    const inOrder = boards.tree ? orderedBoards(boards.tree) : []
+    const board = inOrder.find(b => b.id === params.get('board')) ?? inOrder[0] ?? null
 
     const load = useCallback(() => {
         getWorkspaces().then(({ data, error }) => {
@@ -64,7 +72,7 @@ function Dashboard() {
 
     const workspaces = list.status === 'ready' ? list.workspaces : []
     const current = workspaces.find(w => w.id === match?.params.id)
-    const context: DashboardContext = { workspaces, openTasks, me, reloadOpen }
+    const context: DashboardContext = { workspaces, openTasks, me, reloadOpen, boards, board }
 
     return (
         <div className={`app${desktop ? ' is-desktop' : ''}`}>
@@ -76,12 +84,14 @@ function Dashboard() {
                     open={drawerOpen}
                     list={list}
                     current={current}
+                    boards={boards}
+                    selectedBoard={board?.id}
                     openTasks={openTasks}
                     me={me}
                     onSearch={() => { setDrawerOpen(false); setSearching(true) }}
                     onRetry={() => { setList({ status: 'loading' }); load() }}
                     onReorder={reorder}
-                    onCreated={load}
+                    onChanged={load}
                     onClose={() => setDrawerOpen(false)}
                 />
                 <main className="app-main dot-grid" id="app-main" tabIndex={-1}>

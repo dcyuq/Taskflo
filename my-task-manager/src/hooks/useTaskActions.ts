@@ -4,7 +4,7 @@ import { useJustDone } from './useJustDone'
 import { createTask, deleteTask, updateTask, type Task, type TaskPatch } from '../services/tasks'
 
 export function useTaskActions() {
-    const { workspace, setTasks, me, isOwner } = useWorkspace()
+    const { workspace, board, setTasks, me, isOwner } = useWorkspace()
     const [error, setError] = useState('')
     const [justDone, showDone] = useJustDone()
 
@@ -12,7 +12,8 @@ export function useTaskActions() {
 
     async function create(input: TaskPatch & { title: string }) {
         setError('')
-        const { data, error } = await createTask(workspace.id, input)
+        if (!board) return null
+        const { data, error } = await createTask(workspace.id, board.id, input)
         if (error || !data) {
             setError(error?.code === '42501'
                 ? 'Couldn’t add that task. You’re no longer a member of this workspace.'

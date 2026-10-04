@@ -1,9 +1,13 @@
 import './Sidebar.css'
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import NewWorkspaceModal from './NewWorkspaceModal'
 import WorkspacePanel from './WorkspacePanel'
+import WorkspaceDialogs, { type WorkspaceAsk } from './WorkspaceDialogs'
+import ActionMenu from './ActionMenu'
+import type { BoardsApi } from '../hooks/useBoards'
+import { menuFor, type MenuAt, type MenuItem } from '../utils/menu'
 import GripIcon from './GripIcon'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
@@ -28,12 +32,14 @@ interface SidebarProps {
     open: boolean
     list: ListState
     current?: WorkspaceSummary
+    boards: BoardsApi
+    selectedBoard?: string
     openTasks: Task[]
     me: string
     onSearch: () => void
     onRetry: () => void
     onReorder: (next: WorkspaceSummary[]) => Promise<boolean>
-    onCreated: () => void
+    onChanged: () => void
     onClose: () => void
 }
 
@@ -52,9 +58,10 @@ interface WorkspaceRowProps {
     count: number
     collapsed: boolean
     onNavigate?: () => void
+    onMenu: (e: React.MouseEvent) => void
 }
 
-function WorkspaceRow({ workspace, count, collapsed, onNavigate }: WorkspaceRowProps) {
+function WorkspaceRow({ workspace, count, collapsed, onNavigate, onMenu }: WorkspaceRowProps) {
     const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: workspace.id })
 
     return (
@@ -62,6 +69,7 @@ function WorkspaceRow({ workspace, count, collapsed, onNavigate }: WorkspaceRowP
             ref={setNodeRef}
             className={`sidebar-row${isDragging ? ' is-dragging' : ''}`}
             style={{ transform: transform ? `translate3d(0, ${transform.y}px, 0)` : undefined, transition }}
+            onContextMenu={onMenu}
         >
             <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} onClick={onNavigate} title={collapsed ? workspace.name : undefined}>
                 <span className="sidebar-initial" aria-hidden="true">{workspace.name.trim().charAt(0).toUpperCase()}</span>
@@ -77,10 +85,13 @@ function WorkspaceRow({ workspace, count, collapsed, onNavigate }: WorkspaceRowP
     )
 }
 
-function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetry, onReorder, onCreated, onClose }: SidebarProps) {
+function Sidebar({ desktop, open, list, current, boards, selectedBoard, openTasks, me, onSearch, onRetry, onReorder, onChanged, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
     const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
     const [orderError, setOrderError] = useState('')
+    const [menu, setMenu] = useState<MenuAt | null>(null)
+    const [ask, setAsk] = useState<WorkspaceAsk | null>(null)
+    const navigate = useNavigate()
     const sensors = useSortSensors()
     const reduce = useReducedMotion()
     const collapsed = desktop && collapsedPref
@@ -92,6 +103,18 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
     async function handleReorder(next: WorkspaceSummary[]) {
         setOrderError('')
         if (!await onReorder(next)) setOrderError('Couldn’t save the new order. Check your connection and try again.')
+    }
+
+    function workspaceMenu(e: React.MouseEvent, workspace: WorkspaceSummary) {
+        const own = workspace.owner_id === me
+        const items: MenuItem[] = own
+            ? [
+                { label: 'Rename', onSelect: () => setAsk({ kind: 'rename', workspace }) },
+                { label: 'Invite members', onSelect: () => navigate(`/dashboard/workspace/${workspace.id}/team`) },
+                { label: 'Delete workspace', danger: true, separated: true, onSelect: () => setAsk({ kind: 'delete', workspace }) },
+            ]
+            : [{ label: 'Leave workspace', danger: true, onSelect: () => setAsk({ kind: 'leave', workspace }) }]
+        setMenu(menuFor(e, `${workspace.name} options`, items))
     }
 
     const visible = desktop || open
@@ -230,6 +253,7 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
                                                 count={openTasks.filter(t => t.workspace_id === workspace.id).length}
                                                 collapsed={collapsed}
                                                 onNavigate={closeOnMobile}
+                                                onMenu={e => workspaceMenu(e, workspace)}
                                             />
                                         ))}
                                     </ul>
@@ -240,7 +264,17 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
                         {orderError && <p className="sidebar-error" role="alert">{orderError}</p>}
                     </section>
 
-                    {current && !collapsed && <WorkspacePanel key={current.id} workspace={current} me={me} />}
+                    {current && !collapsed && (
+                        <WorkspacePanel
+                            key={current.id}
+                            workspace={current}
+                            me={me}
+                            api={boards}
+                            selectedId={selectedBoard}
+                            onOptions={e => workspaceMenu(e, current)}
+                            onNavigate={closeOnMobile}
+                        />
+                    )}
                 </div>
 
                 <div className="sidebar-footer">
@@ -248,7 +282,9 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
                 </div>
             </motion.nav>
 
-            {showModal && <NewWorkspaceModal onClose={() => setShowModal(false)} onCreated={onCreated} />}
+            {showModal && <NewWorkspaceModal onClose={() => setShowModal(false)} onCreated={onChanged} />}
+            {menu && <ActionMenu key={menu.label} at={menu} onClose={() => setMenu(null)} />}
+            {ask && <WorkspaceDialogs ask={ask} me={me} current={current?.id} onChanged={onChanged} onClose={() => setAsk(null)} />}
         </>
     )
 }
