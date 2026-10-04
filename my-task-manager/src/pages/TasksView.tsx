@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import TaskDialog from '../components/TaskDialog'
 import TaskList from '../components/TaskList'
 import TaskBoard from '../components/TaskBoard'
+import UndoNote from '../components/UndoNote'
 import { useWorkspace } from '../hooks/useWorkspace'
 import { useTaskActions } from '../hooks/useTaskActions'
 import type { Task, TaskStatus } from '../services/tasks'
@@ -18,7 +19,7 @@ const isView = (value: string | null): value is View => value === 'list' || valu
 
 function TasksView() {
     const { workspace, tasks, members } = useWorkspace()
-    const { create, patch, remove, canDelete, error, setError } = useTaskActions()
+    const { create, patch, complete, undoDone, justDone, remove, canDelete, error, setError } = useTaskActions()
     const reduce = useReducedMotion()
     const [params, setParams] = useSearchParams()
     const [quick, setQuick] = useState('')
@@ -119,7 +120,7 @@ function TasksView() {
                     No tasks yet. Type the first one above and press Enter.
                 </motion.p>
             ) : view === 'list' ? (
-                <TaskList tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onPatch={patch} />
+                <TaskList tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onPatch={(task, change) => change.status === 'done' ? complete(task) : patch(task, change)} />
             ) : (
                 <TaskBoard tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onAdd={status => setEditing({ status })} onPatch={patch} />
             )}
@@ -145,6 +146,7 @@ function TasksView() {
                     }}
                 />
             )}
+            <UndoNote task={justDone} onUndo={undoDone} />
         </motion.div>
     )
 }

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useWorkspace } from './useWorkspace'
+import { useJustDone } from './useJustDone'
 import { createTask, deleteTask, updateTask, type Task, type TaskPatch } from '../services/tasks'
 
 export function useTaskActions() {
     const { workspace, setTasks, me, isOwner } = useWorkspace()
     const [error, setError] = useState('')
+    const [justDone, showDone] = useJustDone()
 
     const canDelete = (task: Task) => isOwner || task.created_by === me
 
@@ -36,6 +38,17 @@ export function useTaskActions() {
         return true
     }
 
+    async function complete(task: Task) {
+        showDone(task)
+        if (!await patch(task, { status: 'done' })) showDone(null)
+    }
+
+    async function undoDone() {
+        if (!justDone) return
+        showDone(null)
+        await patch({ ...justDone, status: 'done' }, { status: justDone.status })
+    }
+
     async function remove(task: Task) {
         setError('')
         const { error } = await deleteTask(task.id)
@@ -47,5 +60,5 @@ export function useTaskActions() {
         return true
     }
 
-    return { create, patch, remove, canDelete, error, setError }
+    return { create, patch, complete, undoDone, justDone, remove, canDelete, error, setError }
 }

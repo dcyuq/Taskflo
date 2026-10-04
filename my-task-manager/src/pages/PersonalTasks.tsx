@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { Link, useOutletContext } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import DueChip from '../components/DueChip'
-import { updateTask } from '../services/tasks'
+import UndoNote from '../components/UndoNote'
+import { useJustDone } from '../hooks/useJustDone'
+import { updateTask, type Task } from '../services/tasks'
 import { isDueSoon } from '../utils/summary'
 import { rise, staggered } from '../utils/motion'
 import type { DashboardContext } from './Dashboard'
@@ -13,21 +15,37 @@ function PersonalTasks({ mode }: { mode: 'mine' | 'soon' }) {
     const reduce = useReducedMotion()
     const [error, setError] = useState('')
     const [doneIds, setDoneIds] = useState<string[]>([])
+    const [justDone, showDone] = useJustDone()
     const mine = openTasks.filter(t => t.assignee_id === me && !doneIds.includes(t.id))
     const tasks = mode === 'mine' ? mine : mine.filter(isDueSoon)
     const groups = workspaces
         .map(w => ({ ...w, tasks: tasks.filter(t => t.workspace_id === w.id) }))
         .filter(g => g.tasks.length > 0)
 
-    async function markDone(id: string) {
+    async function markDone(task: Task) {
         setError('')
-        setDoneIds(ids => [...ids, id])
-        const { error } = await updateTask(id, { status: 'done' })
+        setDoneIds(ids => [...ids, task.id])
+        showDone(task)
+        const { error } = await updateTask(task.id, { status: 'done' })
         if (error) {
-            setDoneIds(ids => ids.filter(x => x !== id))
+            setDoneIds(ids => ids.filter(x => x !== task.id))
+            showDone(null)
             setError('Couldn’t mark that task as done. Check your connection and try again.')
             return
         }
+        reloadOpen()
+    }
+
+    async function undoDone() {
+        if (!justDone) return
+        const task = justDone
+        showDone(null)
+        const { error } = await updateTask(task.id, { status: task.status })
+        if (error) {
+            setError('Couldn’t undo that. Open the task’s workspace to change it back.')
+            return
+        }
+        setDoneIds(ids => ids.filter(x => x !== task.id))
         reloadOpen()
     }
 
@@ -62,7 +80,7 @@ function PersonalTasks({ mode }: { mode: 'mine' | 'soon' }) {
                             <ul className="task-list">
                                 {group.tasks.map(task => (
                                     <li key={task.id} className="task-row">
-                                        <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => markDone(task.id)} />
+                                        <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => markDone(task)} />
                                         <Link className="task-row-title" to={`/dashboard/workspace/${group.id}?task=${task.id}`}>{task.title}</Link>
                                         <DueChip task={task} />
                                     </li>
@@ -72,6 +90,7 @@ function PersonalTasks({ mode }: { mode: 'mine' | 'soon' }) {
                     ))}
                 </div>
             )}
+            <UndoNote task={justDone} onUndo={undoDone} />
         </motion.div>
     )
 }

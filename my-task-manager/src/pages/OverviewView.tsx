@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Assignee from '../components/Assignee'
 import { motion, useReducedMotion } from 'motion/react'
 import Avatar from '../components/Avatar'
+import UndoNote from '../components/UndoNote'
 import { useWorkspace } from '../hooks/useWorkspace'
 import { useTaskActions } from '../hooks/useTaskActions'
 import { dateKey } from '../utils/dates'
@@ -17,7 +18,7 @@ function startOfWeek() {
 
 function OverviewView() {
     const { tasks, members } = useWorkspace()
-    const { patch, error, setError } = useTaskActions()
+    const { complete, undoDone, justDone, error, setError } = useTaskActions()
     const reduce = useReducedMotion()
     const weekStart = startOfWeek()
     const { open, overdue, dueToday } = summarize(tasks)
@@ -102,7 +103,7 @@ function OverviewView() {
                                 const who = members.find(m => m.id === task.assignee_id)?.name
                                 return (
                                     <li key={task.id} className="today-row">
-                                        <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => patch(task, { status: 'done' })} />
+                                        <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => complete(task)} />
                                         <span className="today-title">{task.title}</span>
                                         <Assignee name={who} />
                                     </li>
@@ -113,6 +114,7 @@ function OverviewView() {
                     <Link to=".." relative="path" className="overview-link">View all tasks</Link>
                 </motion.section>
             </div>
+            <UndoNote task={justDone} onUndo={undoDone} />
         </motion.div>
     )
 }
