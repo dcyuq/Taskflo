@@ -3,10 +3,11 @@ import Assignee from '../components/Assignee'
 import { motion, useReducedMotion } from 'motion/react'
 import Avatar from '../components/Avatar'
 import UndoNote from '../components/UndoNote'
+import DueChip from '../components/DueChip'
 import { useWorkspace } from '../hooks/useWorkspace'
 import { useTaskActions } from '../hooks/useTaskActions'
 import { dateKey } from '../utils/dates'
-import { summarize } from '../utils/summary'
+import { byDue, summarize } from '../utils/summary'
 import { duration, ease, rise, staggered } from '../utils/motion'
 
 function startOfWeek() {
@@ -33,6 +34,7 @@ function OverviewView() {
         overdue: overdue.filter(t => t.assignee_id === p.id).length,
     })).filter(p => p.id !== null || p.open > 0)
     const most = Math.max(1, ...people.map(p => p.open))
+    const needsAction = [...overdue, ...dueToday].sort(byDue)
 
     const stats = [
         { label: 'Open tasks', value: open.length },
@@ -66,25 +68,27 @@ function OverviewView() {
                     </div>
                     <ul className="load-list">
                         {people.map(p => (
-                            <li key={p.id ?? 'none'} className="load-item">
-                                <Avatar name={p.id ? p.name : undefined} size={32} />
-                                <span className="load-body">
-                                    <span className="load-top">
-                                        <span className="load-person">{p.name}</span>
-                                        <span className="load-count">
-                                            {p.open} open
-                                            {p.overdue > 0 && <span className="load-overdue"> · {p.overdue} overdue</span>}
+                            <li key={p.id ?? 'none'}>
+                                <Link className="load-item" to={{ pathname: '..', search: `?assignee=${p.id ?? 'none'}` }} relative="path">
+                                    <Avatar name={p.id ? p.name : undefined} size={32} />
+                                    <span className="load-body">
+                                        <span className="load-top">
+                                            <span className="load-person">{p.name}</span>
+                                            <span className="load-count">
+                                                {p.open} open
+                                                {p.overdue > 0 && <span className="load-overdue"> · {p.overdue} overdue</span>}
+                                            </span>
+                                        </span>
+                                        <span className="load-track" aria-hidden="true">
+                                            <motion.span
+                                                className="load-fill"
+                                                initial={reduce ? false : { scaleX: 0 }}
+                                                animate={{ scaleX: p.open / most }}
+                                                transition={{ duration, ease }}
+                                            />
                                         </span>
                                     </span>
-                                    <span className="load-track" aria-hidden="true">
-                                        <motion.span
-                                            className="load-fill"
-                                            initial={reduce ? false : { scaleX: 0 }}
-                                            animate={{ scaleX: p.open / most }}
-                                            transition={{ duration, ease }}
-                                        />
-                                    </span>
-                                </span>
+                                </Link>
                             </li>
                         ))}
                     </ul>
@@ -92,19 +96,20 @@ function OverviewView() {
 
                 <motion.section className="team-card" aria-labelledby="today-title" variants={rise}>
                     <div className="team-card-head">
-                        <h2 id="today-title">Due today</h2>
-                        <span className="task-group-count">{dueToday.length}</span>
+                        <h2 id="today-title">Overdue and due today</h2>
+                        <span className="task-group-count">{needsAction.length}</span>
                     </div>
-                    {dueToday.length === 0 ? (
-                        <p className="team-empty">Nothing due today.</p>
+                    {needsAction.length === 0 ? (
+                        <p className="team-empty">Nothing overdue or due today.</p>
                     ) : (
                         <ul className="today-list">
-                            {dueToday.map(task => {
+                            {needsAction.map(task => {
                                 const who = members.find(m => m.id === task.assignee_id)?.name
                                 return (
                                     <li key={task.id} className="today-row">
                                         <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => complete(task)} />
-                                        <span className="today-title">{task.title}</span>
+                                        <Link className="today-title" to={{ pathname: '..', search: `?task=${task.id}` }} relative="path">{task.title}</Link>
+                                        <DueChip task={task} />
                                         <Assignee name={who} />
                                     </li>
                                 )
