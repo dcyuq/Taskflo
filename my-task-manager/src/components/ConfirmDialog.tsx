@@ -4,9 +4,9 @@ import './TaskDialog.css'
 interface ConfirmDialogProps {
     title: string
     message: string
-    confirmLabel?: string
+    confirmLabel: string
     requireText?: string
-    onConfirm?: () => Promise<string | null>
+    onConfirm: () => Promise<string | null>
     onClose: () => void
 }
 
@@ -23,7 +23,7 @@ function ConfirmDialog({ title, message, confirmLabel, requireText, onConfirm, o
 
     async function handleConfirm(e: React.SyntheticEvent) {
         e.preventDefault()
-        if (!onConfirm || !matches || busy) return
+        if (!matches || busy) return
         setBusy(true)
         const failed = await onConfirm()
         setBusy(false)
@@ -52,12 +52,10 @@ function ConfirmDialog({ title, message, confirmLabel, requireText, onConfirm, o
                 {error && <p className="field-error" role="alert">{error}</p>}
                 <div className="task-dialog-actions">
                     <div className="task-dialog-save">
-                        <button type="button" className="btn btn-quiet" onClick={onClose} autoFocus={!requireText}>{onConfirm ? 'Cancel' : 'Close'}</button>
-                        {onConfirm && (
-                            <button type="submit" className="btn btn-danger" disabled={busy || !matches} aria-busy={busy}>
-                                {busy ? 'Working…' : confirmLabel}
-                            </button>
-                        )}
+                        <button type="button" className="btn btn-quiet" onClick={onClose} autoFocus={!requireText}>Cancel</button>
+                        <button type="submit" className="btn btn-danger" disabled={busy || !matches} aria-busy={busy}>
+                            {busy ? 'Working…' : confirmLabel}
+                        </button>
                     </div>
                 </div>
             </form>
