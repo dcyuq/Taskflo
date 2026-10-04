@@ -67,6 +67,10 @@ export function useSidebarTree() {
     async function remove(id: string) {
         const { error } = await deleteCategory(id)
         if (error) return 'Couldn’t delete that category. Check your connection and try again.'
+        if (ready) {
+            const after = Math.max(-1, ...ready.workspaces.map(w => w.position)) + 1
+            await placeWorkspaces(inCategory(ready.workspaces, id).map((w, i) => ({ id: w.id, position: after + i, category_id: null })))
+        }
         load()
         return null
     }
