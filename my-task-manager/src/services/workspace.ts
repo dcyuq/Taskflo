@@ -25,17 +25,29 @@ export async function getWorkspace(id: string) {
     return {data, error};
 }
 
+export interface WorkspaceSummary {
+    id: string;
+    name: string;
+    owner_id: string | null;
+}
+
 export async function getWorkspaces() {
     const {data : {session}} = await supabase.auth.getSession();
     if (!session) return {data: null, error: 'Not logged in'};
 
     const {data, error} = await supabase
-        .from('workspaces')
-        .select('id, name, workspace_members!inner(user_id)')
-        .eq('workspace_members.user_id', session.user.id)
-        .order('created_at', {ascending: true});
+        .from('workspace_members')
+        .select('workspaces(id, name, owner_id)')
+        .eq('user_id', session.user.id)
+        .order('position', {ascending: true, nullsFirst: false})
+        .order('joined_at', {ascending: true});
 
-    return {data: data?.map(({id, name}) => ({id, name})) ?? null, error};
+    return {data: data?.map(row => row.workspaces as unknown as WorkspaceSummary) ?? null, error};
+}
+
+export async function deleteWorkspace(id: string) {
+    const {data, error} = await supabase.from('workspaces').delete().eq('id', id).select('id');
+    return {error: error ?? (data?.length ? null : new Error('Not allowed'))};
 }
 
 export interface PendingInvite {
