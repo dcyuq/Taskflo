@@ -1,11 +1,16 @@
 import './Sidebar.css'
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { motion, useReducedMotion } from 'motion/react'
 import NewWorkspaceModal from './NewWorkspaceModal'
 import ProfileMenu from './ProfileMenu'
 import type { Task } from '../services/tasks'
 import { isDueSoon } from '../utils/summary'
 import wordmark from '../assets/taskflo-wordmark.svg?raw'
+import { duration, ease } from '../utils/motion'
+import { readStored, store } from '../utils/storage'
+
+const COLLAPSED_KEY = 'taskflo:sidebar-collapsed'
 
 export type ListState =
     | { status: 'loading' }
@@ -36,6 +41,14 @@ function PlusIcon() {
 
 function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCreated, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
+    const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
+    const reduce = useReducedMotion()
+    const collapsed = desktop && collapsedPref
+
+    function toggleCollapsed() {
+        store(COLLAPSED_KEY, collapsedPref ? '0' : '1')
+        setCollapsedPref(c => !c)
+    }
     const visible = desktop || open
     const closeOnMobile = desktop ? undefined : onClose
     const mine = openTasks.filter(t => t.assignee_id === me)
@@ -55,11 +68,35 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
         <>
             {!desktop && <div className={`sidebar-overlay${open ? ' visible' : ''}`} onClick={onClose} />}
 
-            <nav className={`sidebar${desktop ? ' is-desktop' : ''}${open ? ' open' : ''}`} aria-label="Main" inert={!visible}>
+            <motion.nav
+                className={`sidebar${desktop ? ' is-desktop' : ''}${collapsed ? ' is-collapsed' : ''}${open ? ' open' : ''}`}
+                aria-label="Main"
+                inert={!visible}
+                initial={false}
+                animate={desktop ? { width: collapsed ? 68 : 264 } : undefined}
+                transition={{ duration: reduce ? 0 : duration * 0.45, ease }}
+            >
                 <div className="sidebar-header">
-                    <Link to="/dashboard" className="sidebar-brand" aria-label="Taskflo dashboard" onClick={closeOnMobile}>
-                        <span className="brand-wordmark" aria-hidden="true" dangerouslySetInnerHTML={{ __html: wordmark }} />
-                    </Link>
+                    {!collapsed && (
+                        <Link to="/dashboard" className="sidebar-brand" aria-label="Taskflo dashboard" onClick={closeOnMobile}>
+                            <span className="brand-wordmark" aria-hidden="true" dangerouslySetInnerHTML={{ __html: wordmark }} />
+                        </Link>
+                    )}
+                    {desktop && (
+                        <button
+                            type="button"
+                            className="sidebar-icon-btn"
+                            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                            aria-expanded={!collapsed}
+                            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                            onClick={toggleCollapsed}
+                        >
+                            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <rect x="2" y="2.5" width="12" height="11" rx="2" /><path d="M6 2.5v11" />
+                                <path d={collapsed ? 'M9 6.5l1.5 1.5L9 9.5' : 'M11 6.5L9.5 8l1.5 1.5'} />
+                            </svg>
+                        </button>
+                    )}
                     {!desktop && (
                         <button type="button" className="sidebar-icon-btn" aria-label="Close navigation" onClick={onClose}>
                             <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
@@ -70,7 +107,7 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                 </div>
 
                 <div className="sidebar-search-wrap">
-                    <button type="button" className="sidebar-search" onClick={onSearch} aria-keyshortcuts="Control+K Meta+K">
+                    <button type="button" className="sidebar-search" onClick={onSearch} aria-keyshortcuts="Control+K Meta+K" title={collapsed ? 'Search' : undefined}>
                         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                             <circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" />
                         </svg>
@@ -83,7 +120,7 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                     <ul className="sidebar-list" aria-label="Personal">
                         {personal.map(item => (
                             <li key={item.to}>
-                                <NavLink className="sidebar-item" to={item.to} onClick={closeOnMobile}>
+                                <NavLink className="sidebar-item" to={item.to} onClick={closeOnMobile} title={collapsed ? item.label : undefined}>
                                     <span className="sidebar-icon" aria-hidden="true">
                                         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
                                     </span>
@@ -126,7 +163,7 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                                     const count = openTasks.filter(t => t.workspace_id === workspace.id).length
                                     return (
                                         <li key={workspace.id}>
-                                            <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} onClick={closeOnMobile}>
+                                            <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} onClick={closeOnMobile} title={collapsed ? workspace.name : undefined}>
                                                 <span className="sidebar-initial" aria-hidden="true">{workspace.name.trim().charAt(0).toUpperCase()}</span>
                                                 <span className="sidebar-name">{workspace.name}</span>
                                                 {count > 0 && <span className="sidebar-count" aria-label={`${count} open`}>{count}</span>}
@@ -140,9 +177,9 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                 </div>
 
                 <div className="sidebar-footer">
-                    <ProfileMenu />
+                    <ProfileMenu compact={collapsed} />
                 </div>
-            </nav>
+            </motion.nav>
 
             {showModal && <NewWorkspaceModal onClose={() => setShowModal(false)} onCreated={onCreated} />}
         </>

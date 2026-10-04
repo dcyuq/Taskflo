@@ -341,3 +341,66 @@
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
+
+.sidebar.is-desktop {
+  overflow: hidden;
+}
+
+.sidebar.is-collapsed .sidebar-header {
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.sidebar.is-collapsed .sidebar-search-wrap,
+.sidebar.is-collapsed .sidebar-scroll,
+.sidebar.is-collapsed .sidebar-footer {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.sidebar.is-collapsed .sidebar-search {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar.is-collapsed .sidebar-name,
+.sidebar.is-collapsed .sidebar-label,
+.sidebar.is-collapsed .sidebar-count {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.sidebar.is-collapsed .sidebar-kbd,
+.sidebar.is-collapsed .sidebar-error p,
+.sidebar.is-collapsed .sidebar-empty {
+  display: none;
+}
+
+.sidebar.is-collapsed .sidebar-item {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar.is-collapsed .sidebar-section-head {
+  justify-content: center;
+  padding: 0 0 4px;
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+}
+
+.sidebar.is-collapsed .profile-card {
+  justify-content: center;
+  padding: 6px 0;
+}
+
+.sidebar-search,
+.sidebar-item,
+.sidebar-name,
+.sidebar-label,
+.profile-card-who {
+  white-space: nowrap;
+}
