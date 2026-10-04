@@ -4,6 +4,10 @@ import { Link, NavLink } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import NewWorkspaceModal from './NewWorkspaceModal'
 import WorkspacePanel from './WorkspacePanel'
+import GripIcon from './GripIcon'
+import { DndContext, closestCenter } from '@dnd-kit/core'
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { sortAnnouncements, useSortSensors } from '../hooks/useSortable'
 import ProfileMenu from './ProfileMenu'
 import type { Task } from '../services/tasks'
 import type { WorkspaceSummary } from '../services/workspace'
@@ -28,6 +32,7 @@ interface SidebarProps {
     me: string
     onSearch: () => void
     onRetry: () => void
+    onReorder: (next: WorkspaceSummary[]) => Promise<boolean>
     onCreated: () => void
     onClose: () => void
 }
@@ -42,9 +47,41 @@ function PlusIcon() {
     )
 }
 
-function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetry, onCreated, onClose }: SidebarProps) {
+interface WorkspaceRowProps {
+    workspace: WorkspaceSummary
+    count: number
+    collapsed: boolean
+    onNavigate?: () => void
+}
+
+function WorkspaceRow({ workspace, count, collapsed, onNavigate }: WorkspaceRowProps) {
+    const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: workspace.id })
+
+    return (
+        <li
+            ref={setNodeRef}
+            className={`sidebar-row${isDragging ? ' is-dragging' : ''}`}
+            style={{ transform: transform ? `translate3d(0, ${transform.y}px, 0)` : undefined, transition }}
+        >
+            <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} onClick={onNavigate} title={collapsed ? workspace.name : undefined}>
+                <span className="sidebar-initial" aria-hidden="true">{workspace.name.trim().charAt(0).toUpperCase()}</span>
+                <span className="sidebar-name">{workspace.name}</span>
+                {count > 0 && <span className="sidebar-count">{count}<span className="sr-only"> open</span></span>}
+            </NavLink>
+            {!collapsed && (
+                <button ref={setActivatorNodeRef} type="button" className="sidebar-grip" {...attributes} {...listeners} aria-label={`Move ${workspace.name}`}>
+                    <GripIcon />
+                </button>
+            )}
+        </li>
+    )
+}
+
+function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetry, onReorder, onCreated, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
     const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
+    const [orderError, setOrderError] = useState('')
+    const sensors = useSortSensors()
     const reduce = useReducedMotion()
     const collapsed = desktop && collapsedPref
 
@@ -52,6 +89,11 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
         store(COLLAPSED_KEY, collapsedPref ? '0' : '1')
         setCollapsedPref(c => !c)
     }
+    async function handleReorder(next: WorkspaceSummary[]) {
+        setOrderError('')
+        if (!await onReorder(next)) setOrderError('Couldn’t save the new order. Check your connection and try again.')
+    }
+
     const visible = desktop || open
     const closeOnMobile = desktop ? undefined : onClose
     const mine = openTasks.filter(t => t.assignee_id === me)
@@ -169,21 +211,33 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
                         )}
 
                         {list.status === 'ready' && list.workspaces.length > 0 && (
-                            <ul className="sidebar-list">
-                                {list.workspaces.map(workspace => {
-                                    const count = openTasks.filter(t => t.workspace_id === workspace.id).length
-                                    return (
-                                        <li key={workspace.id}>
-                                            <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} onClick={closeOnMobile} title={collapsed ? workspace.name : undefined}>
-                                                <span className="sidebar-initial" aria-hidden="true">{workspace.name.trim().charAt(0).toUpperCase()}</span>
-                                                <span className="sidebar-name">{workspace.name}</span>
-                                                {count > 0 && <span className="sidebar-count">{count}<span className="sr-only"> open</span></span>}
-                                            </NavLink>
-                                        </li>
-                                    )
-                                })}
-                            </ul>
+                            <DndContext
+                                sensors={sensors}
+                                collisionDetection={closestCenter}
+                                accessibility={{ announcements: sortAnnouncements(id => list.workspaces.find(w => w.id === id)?.name ?? 'workspace') }}
+                                onDragEnd={({ active, over }) => {
+                                    if (!over || active.id === over.id) return
+                                    const ids = list.workspaces.map(w => w.id)
+                                    handleReorder(arrayMove(list.workspaces, ids.indexOf(String(active.id)), ids.indexOf(String(over.id))))
+                                }}
+                            >
+                                <SortableContext items={list.workspaces} strategy={verticalListSortingStrategy}>
+                                    <ul className="sidebar-list">
+                                        {list.workspaces.map(workspace => (
+                                            <WorkspaceRow
+                                                key={workspace.id}
+                                                workspace={workspace}
+                                                count={openTasks.filter(t => t.workspace_id === workspace.id).length}
+                                                collapsed={collapsed}
+                                                onNavigate={closeOnMobile}
+                                            />
+                                        ))}
+                                    </ul>
+                                </SortableContext>
+                            </DndContext>
                         )}
+
+                        {orderError && <p className="sidebar-error" role="alert">{orderError}</p>}
                     </section>
 
                     {current && !collapsed && <WorkspacePanel key={current.id} workspace={current} me={me} />}

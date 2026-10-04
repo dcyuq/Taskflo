@@ -436,3 +436,71 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.sidebar-row {
+  position: relative;
+  border-radius: 8px;
+}
+
+.sidebar-row .sidebar-item {
+  padding-right: 36px;
+}
+
+.sidebar-row.is-dragging {
+  z-index: 1;
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line-strong);
+}
+
+.sidebar-grip {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  cursor: grab;
+  opacity: 0;
+  transform: translateY(-50%);
+  touch-action: none;
+}
+
+.sidebar-row:hover .sidebar-grip,
+.sidebar-grip:focus-visible {
+  opacity: 1;
+}
+
+.sidebar-grip:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+
+@media (pointer: coarse) {
+  .sidebar-row .sidebar-item {
+    padding-right: 48px;
+  }
+
+  .sidebar-grip {
+    right: 0;
+    width: 44px;
+    height: 44px;
+    opacity: 1;
+  }
+
+  .sidebar-row:hover:has(.sidebar-grip) .sidebar-count {
+    opacity: 1;
+  }
+}
+
+.sidebar-row:has(.sidebar-grip) .sidebar-count {
+  transition: opacity 160ms ease-out;
+}
+
+.sidebar-row:hover:has(.sidebar-grip) .sidebar-count {
+  opacity: 0;
+}

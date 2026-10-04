@@ -4,7 +4,7 @@ import TopNav from '../components/TopNav'
 import JumpDialog from '../components/JumpDialog'
 import Sidebar, { type ListState } from '../components/Sidebar'
 import { useMediaQuery } from '../hooks/useMediaQuery'
-import { getWorkspaces, type WorkspaceSummary } from '../services/workspace'
+import { getWorkspaces, orderWorkspaces, type WorkspaceSummary } from '../services/workspace'
 import { listOpenTasks, type Task } from '../services/tasks'
 import { supabase } from '../supabaseClient'
 import './Dashboard.css'
@@ -31,6 +31,14 @@ function Dashboard() {
             setList(error || !data ? { status: 'error' } : { status: 'ready', workspaces: data })
         })
     }, [])
+
+    async function reorder(next: WorkspaceSummary[]) {
+        const before = list
+        setList({ status: 'ready', workspaces: next })
+        const { error } = await orderWorkspaces(next.map(w => w.id))
+        if (error) setList(before)
+        return !error
+    }
 
     const reloadOpen = useCallback(() => {
         listOpenTasks().then(({ data }) => data && setOpenTasks(data))
@@ -72,6 +80,7 @@ function Dashboard() {
                     me={me}
                     onSearch={() => { setDrawerOpen(false); setSearching(true) }}
                     onRetry={() => { setList({ status: 'loading' }); load() }}
+                    onReorder={reorder}
                     onCreated={load}
                     onClose={() => setDrawerOpen(false)}
                 />

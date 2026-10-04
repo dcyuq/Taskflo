@@ -102,3 +102,16 @@ export async function sendInvites(workspaceId: string, emails: string[]) {
 
     return {error};
 }
+
+export async function orderWorkspaces(ids: string[]) {
+    const {data : {session}} = await supabase.auth.getSession();
+    if (!session) return {error : 'Not logged in'};
+
+    const results = await Promise.all(ids.map((id, position) => supabase
+        .from('workspace_members')
+        .update({position})
+        .eq('workspace_id', id)
+        .eq('user_id', session.user.id)));
+
+    return {error: results.find(r => r.error)?.error ?? null};
+}
