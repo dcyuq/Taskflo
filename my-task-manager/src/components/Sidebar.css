@@ -449,7 +449,7 @@
 .sidebar-row.is-dragging {
   z-index: 1;
   background: var(--surface);
-  box-shadow: 0 0 0 1px var(--line-strong);
+  box-shadow: var(--lift);
 }
 
 .sidebar-grip {
@@ -659,7 +659,8 @@
   padding: 8px 12px;
   border-radius: 8px;
   background: var(--surface);
-  box-shadow: 0 0 0 1px var(--line-strong), 0 8px 24px rgba(13, 13, 13, 0.12);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--lift);
   font-size: 14px;
   font-weight: 500;
   color: var(--ink);
