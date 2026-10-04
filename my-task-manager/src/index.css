@@ -116,8 +116,6 @@ textarea {
 
 input:focus-visible {
   outline: none;
-  border-color: var(--ink);
-  box-shadow: var(--ring);
 }
 
 html {
