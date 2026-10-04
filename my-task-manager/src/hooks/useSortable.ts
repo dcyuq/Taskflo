@@ -1,12 +1,9 @@
-import { KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, type Announcements, type UniqueIdentifier } from '@dnd-kit/core'
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
+import { MouseSensor, TouchSensor, useSensor, useSensors, type Announcements, type UniqueIdentifier } from '@dnd-kit/core'
 
-export function useSortSensors(keyboard = true) {
-    const keys = useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+export function useSortSensors() {
     return useSensors(
         useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
         useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
-        keyboard ? keys : null,
     )
 }
 
