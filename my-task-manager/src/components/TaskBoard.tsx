@@ -18,6 +18,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import DueChip from './DueChip'
 import { statuses, type Task, type TaskPatch, type TaskStatus } from '../services/tasks'
 import { ease, rise } from '../utils/motion'
+import { groupOf } from '../utils/summary'
 import './TaskBoard.css'
 
 interface TaskBoardProps {
@@ -153,7 +154,7 @@ function TaskBoard({ tasks, nameOf, onEdit, onAdd, onPatch }: TaskBoardProps) {
         >
             <div className="board">
                 {statuses.map(status => {
-                    const column = tasks.filter(t => t.status === status.id)
+                    const column = groupOf(tasks, status.id)
                     return (
                         <Column key={status.id} status={status.id} label={status.label} count={column.length} dragging={!!activeId} onAdd={() => onAdd(status.id)}>
                             {column.map(task => (
