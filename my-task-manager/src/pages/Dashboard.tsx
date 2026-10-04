@@ -2,9 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import TopNav from '../components/TopNav'
 import JumpDialog from '../components/JumpDialog'
-import Sidebar, { type ListState } from '../components/Sidebar'
+import Sidebar from '../components/Sidebar'
 import { useMediaQuery } from '../hooks/useMediaQuery'
-import { getWorkspaces, orderWorkspaces, type WorkspaceSummary } from '../services/workspace'
+import { inOrder, useSidebarTree } from '../hooks/useSidebarTree'
+import type { WorkspaceSummary } from '../services/workspace'
 import { listOpenTasks, type Task } from '../services/tasks'
 import { supabase } from '../supabaseClient'
 import './Dashboard.css'
@@ -18,27 +19,14 @@ export interface DashboardContext {
 
 function Dashboard() {
     const [drawerOpen, setDrawerOpen] = useState(false)
-    const [list, setList] = useState<ListState>({ status: 'loading' })
+    const tree = useSidebarTree()
+    const { list, load } = tree
     const [openTasks, setOpenTasks] = useState<Task[]>([])
     const [me, setMe] = useState('')
     const [searching, setSearching] = useState(false)
     const desktop = useMediaQuery('(min-width: 1024px)')
     const { pathname } = useLocation()
     const match = useMatch('/dashboard/workspace/:id/*')
-
-    const load = useCallback(() => {
-        getWorkspaces().then(({ data, error }) => {
-            setList(error || !data ? { status: 'error' } : { status: 'ready', workspaces: data })
-        })
-    }, [])
-
-    async function reorder(next: WorkspaceSummary[]) {
-        const before = list
-        setList({ status: 'ready', workspaces: next })
-        const { error } = await orderWorkspaces(next.map(w => w.id))
-        if (error) setList(before)
-        return !error
-    }
 
     const reloadOpen = useCallback(() => {
         listOpenTasks().then(({ data }) => data && setOpenTasks(data))
@@ -62,7 +50,7 @@ function Dashboard() {
         supabase.auth.getSession().then(({ data: { session } }) => setMe(session?.user.id ?? ''))
     }, [])
 
-    const workspaces = list.status === 'ready' ? list.workspaces : []
+    const workspaces = list.status === 'ready' ? inOrder(list.workspaces, list.categories) : []
     const current = workspaces.find(w => w.id === match?.params.id)
     const context: DashboardContext = { workspaces, openTasks, me, reloadOpen }
 
@@ -74,14 +62,11 @@ function Dashboard() {
                 <Sidebar
                     desktop={desktop}
                     open={drawerOpen}
-                    list={list}
+                    tree={tree}
                     current={current}
                     openTasks={openTasks}
                     me={me}
                     onSearch={() => { setDrawerOpen(false); setSearching(true) }}
-                    onRetry={() => { setList({ status: 'loading' }); load() }}
-                    onReorder={reorder}
-                    onChanged={load}
                     onClose={() => setDrawerOpen(false)}
                 />
                 <main className="app-main dot-grid" id="app-main" tabIndex={-1}>

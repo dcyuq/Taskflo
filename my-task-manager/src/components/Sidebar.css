@@ -431,91 +431,10 @@
   color: var(--error);
 }
 
-.sidebar-current {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sidebar-row {
-  position: relative;
-  border-radius: 8px;
-}
-
-.sidebar-row .sidebar-item {
-  padding-right: 36px;
-}
-
-.sidebar-row.is-dragging {
-  z-index: 1;
-  background: var(--surface);
-  box-shadow: var(--lift);
-}
-
-.sidebar-grip {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 32px;
-  border: none;
-  border-radius: 6px;
-  background: none;
-  color: var(--muted);
-  cursor: grab;
-  opacity: 0;
-  transform: translateY(-50%);
-  touch-action: none;
-}
-
-.sidebar-row:hover .sidebar-grip,
-.sidebar-grip:focus-visible {
-  opacity: 1;
-}
-
-.sidebar-grip:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: -2px;
-}
-
-@media (pointer: coarse) {
-  .sidebar-row .sidebar-item {
-    padding-right: 48px;
-  }
-
-  .sidebar-grip {
-    right: 0;
-    width: 44px;
-    height: 44px;
-    opacity: 1;
-  }
-
-  .sidebar-row:hover:has(.sidebar-grip) .sidebar-count {
-    opacity: 1;
-  }
-}
-
-.sidebar-row:has(.sidebar-grip) .sidebar-count {
-  transition: opacity 160ms ease-out;
-}
-
-.sidebar-row:hover:has(.sidebar-grip) .sidebar-count {
-  opacity: 0;
-}
-
 .action-menu-separator {
   height: 1px;
   margin: 4px 4px;
   background: var(--line);
-}
-
-.sidebar-head-actions {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: 2px;
 }
 
 .tree-categories {
@@ -527,7 +446,7 @@
 }
 
 .tree-category,
-.tree-board {
+.tree-row {
   position: relative;
   border-radius: 8px;
 }
@@ -591,8 +510,8 @@
 
 .tree-head:hover .tree-action,
 .tree-head:focus-within .tree-action,
-.tree-board:hover .tree-action,
-.tree-board:focus-within .tree-action {
+.tree-row:hover .tree-action,
+.tree-row:focus-within .tree-action {
   opacity: 1;
 }
 
@@ -607,18 +526,23 @@
   outline-offset: -2px;
 }
 
-.tree-board .tree-action {
+.tree-row .tree-action {
   position: absolute;
   top: 50%;
   right: 6px;
   transform: translateY(-50%);
 }
 
-.tree-board-link {
+.tree-link {
   padding-right: 40px;
 }
 
-.tree-boards {
+.tree-row:has(.tree-action:is(:hover, :focus-visible)) .sidebar-count,
+.tree-row:hover .sidebar-count {
+  opacity: 0;
+}
+
+.tree-items {
   margin-top: 2px;
 }
 
@@ -685,11 +609,11 @@
     min-height: 44px;
   }
 
-  .tree-board-link {
+  .tree-link {
     padding-right: 52px;
   }
 
-  .tree-board .tree-action {
+  .tree-row .tree-action {
     right: 0;
   }
 }

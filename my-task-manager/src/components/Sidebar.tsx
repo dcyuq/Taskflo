@@ -5,12 +5,11 @@ import { motion, useReducedMotion } from 'motion/react'
 import NewWorkspaceModal from './NewWorkspaceModal'
 import WorkspaceDialogs, { type WorkspaceAsk } from './WorkspaceDialogs'
 import ActionMenu from './ActionMenu'
-import { menuFor, type MenuAt, type MenuItem } from '../utils/menu'
-import GripIcon from './GripIcon'
-import { DndContext, closestCenter } from '@dnd-kit/core'
-import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { sortAnnouncements, useSortSensors } from '../hooks/useSortable'
+import NameDialog from './NameDialog'
+import WorkspaceTree from './WorkspaceTree'
 import ProfileMenu from './ProfileMenu'
+import { inOrder, type SidebarTree } from '../hooks/useSidebarTree'
+import { menuFor, type MenuAt, type MenuItem } from '../utils/menu'
 import type { Task } from '../services/tasks'
 import type { WorkspaceSummary } from '../services/workspace'
 import { isDueSoon } from '../utils/summary'
@@ -20,22 +19,14 @@ import { readStored, store } from '../utils/storage'
 
 const COLLAPSED_KEY = 'taskflo:sidebar-collapsed'
 
-export type ListState =
-    | { status: 'loading' }
-    | { status: 'error' }
-    | { status: 'ready', workspaces: WorkspaceSummary[] }
-
 interface SidebarProps {
     desktop: boolean
     open: boolean
-    list: ListState
+    tree: SidebarTree
     current?: WorkspaceSummary
     openTasks: Task[]
     me: string
     onSearch: () => void
-    onRetry: () => void
-    onReorder: (next: WorkspaceSummary[]) => Promise<boolean>
-    onChanged: () => void
     onClose: () => void
 }
 
@@ -49,72 +40,40 @@ function PlusIcon() {
     )
 }
 
-interface WorkspaceRowProps {
-    workspace: WorkspaceSummary
-    count: number
-    collapsed: boolean
-    onNavigate?: () => void
-    onMenu: (e: React.MouseEvent) => void
-}
-
-function WorkspaceRow({ workspace, count, collapsed, onNavigate, onMenu }: WorkspaceRowProps) {
-    const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: workspace.id })
-
-    return (
-        <li
-            ref={setNodeRef}
-            className={`sidebar-row${isDragging ? ' is-dragging' : ''}`}
-            style={{ transform: transform ? `translate3d(0, ${transform.y}px, 0)` : undefined, transition }}
-            onContextMenu={onMenu}
-        >
-            <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} onClick={onNavigate} title={collapsed ? workspace.name : undefined}>
-                <span className="sidebar-initial" aria-hidden="true">{workspace.name.trim().charAt(0).toUpperCase()}</span>
-                <span className="sidebar-name">{workspace.name}</span>
-                {count > 0 && <span className="sidebar-count">{count}<span className="sr-only"> open</span></span>}
-            </NavLink>
-            {!collapsed && (
-                <button ref={setActivatorNodeRef} type="button" className="sidebar-grip" {...attributes} {...listeners} aria-label={`Move ${workspace.name}`}>
-                    <GripIcon />
-                </button>
-            )}
-        </li>
-    )
-}
-
-function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetry, onReorder, onChanged, onClose }: SidebarProps) {
+function Sidebar({ desktop, open, tree, current, openTasks, me, onSearch, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
+    const [addingCategory, setAddingCategory] = useState(false)
     const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
-    const [orderError, setOrderError] = useState('')
     const [menu, setMenu] = useState<MenuAt | null>(null)
     const [ask, setAsk] = useState<WorkspaceAsk | null>(null)
     const navigate = useNavigate()
-    const sensors = useSortSensors()
     const reduce = useReducedMotion()
     const collapsed = desktop && collapsedPref
+    const list = tree.list
 
     function toggleCollapsed() {
         store(COLLAPSED_KEY, collapsedPref ? '0' : '1')
         setCollapsedPref(c => !c)
     }
-    async function handleReorder(next: WorkspaceSummary[]) {
-        setOrderError('')
-        if (!await onReorder(next)) setOrderError('Couldn’t save the new order. Check your connection and try again.')
+
+    function retry() {
+        tree.setList({ status: 'loading' })
+        tree.load()
     }
 
-    function workspaceMenu(e: React.MouseEvent, workspace: WorkspaceSummary) {
-        const own = workspace.owner_id === me
-        const items: MenuItem[] = own
+    function actionsFor(workspace: WorkspaceSummary): MenuItem[] {
+        return workspace.owner_id === me
             ? [
                 { label: 'Rename', onSelect: () => setAsk({ kind: 'rename', workspace }) },
                 { label: 'Invite members', onSelect: () => navigate(`/dashboard/workspace/${workspace.id}/team`) },
                 { label: 'Delete workspace', danger: true, separated: true, onSelect: () => setAsk({ kind: 'delete', workspace }) },
             ]
             : [{ label: 'Leave workspace', danger: true, onSelect: () => setAsk({ kind: 'leave', workspace }) }]
-        setMenu(menuFor(e, `${workspace.name} options`, items))
     }
 
     const visible = desktop || open
     const closeOnMobile = desktop ? undefined : onClose
+    const countOf = (id: string) => openTasks.filter(t => t.workspace_id === id).length
     const mine = openTasks.filter(t => t.assignee_id === me)
     const personal = [
         { to: '/dashboard/my-tasks', label: 'My tasks', count: mine.length, icon: <path d="M3.5 8.5l3 3 6-7" /> },
@@ -198,7 +157,17 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
                     <section className="sidebar-section is-spaced" aria-labelledby="sidebar-workspaces">
                         <div className="sidebar-section-head">
                             <h2 className="sidebar-label" id="sidebar-workspaces">Workspaces</h2>
-                            <button type="button" className="sidebar-icon-btn is-small" aria-label="New workspace" title="New workspace" onClick={() => setShowModal(true)}>
+                            <button
+                                type="button"
+                                className="sidebar-icon-btn is-small"
+                                aria-label="Add a workspace or category"
+                                aria-haspopup="menu"
+                                title="Add"
+                                onClick={e => setMenu(menuFor(e, 'Add', [
+                                    { label: 'New workspace', onSelect: () => setShowModal(true) },
+                                    { label: 'New category', onSelect: () => setAddingCategory(true) },
+                                ]))}
+                            >
                                 <PlusIcon />
                             </button>
                         </div>
@@ -214,50 +183,44 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
                             <div className="sidebar-error" role="alert">
                                 <p>Couldn't load your workspaces.</p>
                                 {collapsed ? (
-                                    <button type="button" className="sidebar-icon-btn is-error" aria-label="Couldn't load your workspaces. Try again" title="Couldn't load your workspaces. Try again" onClick={onRetry}>
+                                    <button type="button" className="sidebar-icon-btn is-error" aria-label="Couldn't load your workspaces. Try again" title="Couldn't load your workspaces. Try again" onClick={retry}>
                                         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                             <path d="M13 8a5 5 0 1 1-1.5-3.5M13 2.5v3h-3" />
                                         </svg>
                                     </button>
                                 ) : (
-                                    <button type="button" className="btn btn-quiet btn-small" onClick={onRetry}>Try again</button>
+                                    <button type="button" className="btn btn-quiet btn-small" onClick={retry}>Try again</button>
                                 )}
                             </div>
                         )}
 
-                        {list.status === 'ready' && list.workspaces.length === 0 && (
+                        {list.status === 'ready' && list.workspaces.length === 0 && list.categories.length === 0 && (
                             <p className="sidebar-empty">No workspaces yet.</p>
                         )}
 
-                        {list.status === 'ready' && list.workspaces.length > 0 && (
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                accessibility={{ announcements: sortAnnouncements(id => list.workspaces.find(w => w.id === id)?.name ?? 'workspace') }}
-                                onDragEnd={({ active, over }) => {
-                                    if (!over || active.id === over.id) return
-                                    const ids = list.workspaces.map(w => w.id)
-                                    handleReorder(arrayMove(list.workspaces, ids.indexOf(String(active.id)), ids.indexOf(String(over.id))))
-                                }}
-                            >
-                                <SortableContext items={list.workspaces} strategy={verticalListSortingStrategy}>
-                                    <ul className="sidebar-list">
-                                        {list.workspaces.map(workspace => (
-                                            <WorkspaceRow
-                                                key={workspace.id}
-                                                workspace={workspace}
-                                                count={openTasks.filter(t => t.workspace_id === workspace.id).length}
-                                                collapsed={collapsed}
-                                                onNavigate={closeOnMobile}
-                                                onMenu={e => workspaceMenu(e, workspace)}
-                                            />
-                                        ))}
-                                    </ul>
-                                </SortableContext>
-                            </DndContext>
+                        {list.status === 'ready' && collapsed && (
+                            <ul className="sidebar-list">
+                                {inOrder(list.workspaces, list.categories).map(workspace => (
+                                    <li key={workspace.id}>
+                                        <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} title={workspace.name}>
+                                            <span className="sidebar-initial" aria-hidden="true">{workspace.name.trim().charAt(0).toUpperCase()}</span>
+                                            <span className="sidebar-name">{workspace.name}</span>
+                                        </NavLink>
+                                    </li>
+                                ))}
+                            </ul>
                         )}
 
-                        {orderError && <p className="sidebar-error" role="alert">{orderError}</p>}
+                        {list.status === 'ready' && !collapsed && (
+                            <WorkspaceTree
+                                tree={tree}
+                                workspaces={list.workspaces}
+                                categories={list.categories}
+                                countOf={countOf}
+                                actionsFor={actionsFor}
+                                onNavigate={closeOnMobile}
+                            />
+                        )}
                     </section>
                 </div>
 
@@ -266,9 +229,12 @@ function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetr
                 </div>
             </motion.nav>
 
-            {showModal && <NewWorkspaceModal onClose={() => setShowModal(false)} onCreated={onChanged} />}
+            {showModal && <NewWorkspaceModal onClose={() => setShowModal(false)} onCreated={tree.load} />}
+            {addingCategory && (
+                <NameDialog title="New category" label="Category name" submitLabel="Create category" maxLength={60} onSubmit={tree.addCategory} onClose={() => setAddingCategory(false)} />
+            )}
             {menu && <ActionMenu key={menu.label} at={menu} onClose={() => setMenu(null)} />}
-            {ask && <WorkspaceDialogs ask={ask} me={me} current={current?.id} onChanged={onChanged} onClose={() => setAsk(null)} />}
+            {ask && <WorkspaceDialogs ask={ask} me={me} current={current?.id} onChanged={tree.load} onClose={() => setAsk(null)} />}
         </>
     )
 }
