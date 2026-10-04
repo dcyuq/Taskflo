@@ -4,13 +4,13 @@ import TopNav from '../components/TopNav'
 import JumpDialog from '../components/JumpDialog'
 import Sidebar, { type ListState } from '../components/Sidebar'
 import { useMediaQuery } from '../hooks/useMediaQuery'
-import { getWorkspaces } from '../services/workspace'
+import { getWorkspaces, type WorkspaceSummary } from '../services/workspace'
 import { listOpenTasks, type Task } from '../services/tasks'
 import { supabase } from '../supabaseClient'
 import './Dashboard.css'
 
 export interface DashboardContext {
-    workspaces: { id: string, name: string }[]
+    workspaces: WorkspaceSummary[]
     openTasks: Task[]
     me: string
     reloadOpen: () => void
@@ -55,18 +55,19 @@ function Dashboard() {
     }, [])
 
     const workspaces = list.status === 'ready' ? list.workspaces : []
-    const current = workspaces.find(w => w.id === match?.params.id)?.name
+    const current = workspaces.find(w => w.id === match?.params.id)
     const context: DashboardContext = { workspaces, openTasks, me, reloadOpen }
 
     return (
         <div className={`app${desktop ? ' is-desktop' : ''}`}>
             <a className="skip-link" href="#app-main">Skip to content</a>
-            {!desktop && <TopNav title={current} menuOpen={drawerOpen} onMenu={() => setDrawerOpen(o => !o)} onSearch={() => setSearching(true)} />}
+            {!desktop && <TopNav title={current?.name} menuOpen={drawerOpen} onMenu={() => setDrawerOpen(o => !o)} onSearch={() => setSearching(true)} />}
             <div className="app-body">
                 <Sidebar
                     desktop={desktop}
                     open={drawerOpen}
                     list={list}
+                    current={current}
                     openTasks={openTasks}
                     me={me}
                     onSearch={() => { setDrawerOpen(false); setSearching(true) }}

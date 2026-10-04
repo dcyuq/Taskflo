@@ -3,8 +3,10 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import NewWorkspaceModal from './NewWorkspaceModal'
+import WorkspacePanel from './WorkspacePanel'
 import ProfileMenu from './ProfileMenu'
 import type { Task } from '../services/tasks'
+import type { WorkspaceSummary } from '../services/workspace'
 import { isDueSoon } from '../utils/summary'
 import wordmark from '../assets/taskflo-wordmark.svg?raw'
 import { duration, ease } from '../utils/motion'
@@ -15,12 +17,13 @@ const COLLAPSED_KEY = 'taskflo:sidebar-collapsed'
 export type ListState =
     | { status: 'loading' }
     | { status: 'error' }
-    | { status: 'ready', workspaces: { id: string, name: string }[] }
+    | { status: 'ready', workspaces: WorkspaceSummary[] }
 
 interface SidebarProps {
     desktop: boolean
     open: boolean
     list: ListState
+    current?: WorkspaceSummary
     openTasks: Task[]
     me: string
     onSearch: () => void
@@ -39,7 +42,7 @@ function PlusIcon() {
     )
 }
 
-function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCreated, onClose }: SidebarProps) {
+function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetry, onCreated, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
     const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
     const reduce = useReducedMotion()
@@ -182,6 +185,8 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                             </ul>
                         )}
                     </section>
+
+                    {current && !collapsed && <WorkspacePanel key={current.id} workspace={current} me={me} />}
                 </div>
 
                 <div className="sidebar-footer">
