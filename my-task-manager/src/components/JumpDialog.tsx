@@ -28,7 +28,7 @@ function JumpDialog({ workspaces, tasks, onClose }: JumpDialogProps) {
             kind: 'task' as const,
             label: t.title,
             detail: nameOf(t.workspace_id),
-            to: `/dashboard/workspace/${t.workspace_id}?board=${t.board_id}&task=${t.id}`,
+            to: `/dashboard/workspace/${t.workspace_id}?task=${t.id}`,
         })),
     ]
     const current = Math.min(active, Math.max(results.length - 1, 0))

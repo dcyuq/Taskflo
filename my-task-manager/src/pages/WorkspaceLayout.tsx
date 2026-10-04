@@ -28,7 +28,7 @@ async function fetchWorkspace(id: string): Promise<Loaded> {
 
 function WorkspaceLayout({ id }: { id: string }) {
     const reduce = useReducedMotion()
-    const { workspaces, board } = useOutletContext<DashboardContext>()
+    const { workspaces } = useOutletContext<DashboardContext>()
     const [status, setStatus] = useState<Status>('loading')
     const [workspace, setWorkspace] = useState<WorkspaceContext['workspace'] | null>(null)
     const [members, setMembers] = useState<Member[]>([])
@@ -95,7 +95,6 @@ function WorkspaceLayout({ id }: { id: string }) {
         workspace,
         members,
         tasks,
-        board,
         setTasks,
         me,
         isOwner: workspace.owner_id === me,

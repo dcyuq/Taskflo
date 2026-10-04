@@ -50,7 +50,7 @@ function WorkspaceDialogs({ ask, me, current, onChanged, onClose }: WorkspaceDia
         return (
             <ConfirmDialog
                 title={`Delete ${workspace.name}?`}
-                message="This deletes every board, category and task in it and removes everyone from it. It can’t be undone."
+                message="This deletes every task in it and removes everyone from it. It can’t be undone."
                 confirmLabel="Delete workspace"
                 requireText={workspace.name}
                 onConfirm={async () => {

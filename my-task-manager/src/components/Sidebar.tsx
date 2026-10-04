@@ -3,10 +3,8 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import NewWorkspaceModal from './NewWorkspaceModal'
-import WorkspacePanel from './WorkspacePanel'
 import WorkspaceDialogs, { type WorkspaceAsk } from './WorkspaceDialogs'
 import ActionMenu from './ActionMenu'
-import type { BoardsApi } from '../hooks/useBoards'
 import { menuFor, type MenuAt, type MenuItem } from '../utils/menu'
 import GripIcon from './GripIcon'
 import { DndContext, closestCenter } from '@dnd-kit/core'
@@ -32,8 +30,6 @@ interface SidebarProps {
     open: boolean
     list: ListState
     current?: WorkspaceSummary
-    boards: BoardsApi
-    selectedBoard?: string
     openTasks: Task[]
     me: string
     onSearch: () => void
@@ -85,7 +81,7 @@ function WorkspaceRow({ workspace, count, collapsed, onNavigate, onMenu }: Works
     )
 }
 
-function Sidebar({ desktop, open, list, current, boards, selectedBoard, openTasks, me, onSearch, onRetry, onReorder, onChanged, onClose }: SidebarProps) {
+function Sidebar({ desktop, open, list, current, openTasks, me, onSearch, onRetry, onReorder, onChanged, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
     const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
     const [orderError, setOrderError] = useState('')
@@ -263,18 +259,6 @@ function Sidebar({ desktop, open, list, current, boards, selectedBoard, openTask
 
                         {orderError && <p className="sidebar-error" role="alert">{orderError}</p>}
                     </section>
-
-                    {current && !collapsed && (
-                        <WorkspacePanel
-                            key={current.id}
-                            workspace={current}
-                            me={me}
-                            api={boards}
-                            selectedId={selectedBoard}
-                            onOptions={e => workspaceMenu(e, current)}
-                            onNavigate={closeOnMobile}
-                        />
-                    )}
                 </div>
 
                 <div className="sidebar-footer">

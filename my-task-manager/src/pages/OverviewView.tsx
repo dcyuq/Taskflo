@@ -108,7 +108,7 @@ function OverviewView() {
                                 return (
                                     <li key={task.id} className="today-row">
                                         <button type="button" className="task-check" aria-label={`Mark ${task.title} as done`} onClick={() => complete(task)} />
-                                        <Link className="today-title" to={{ pathname: '..', search: `?board=${task.board_id}&task=${task.id}` }} relative="path">{task.title}</Link>
+                                        <Link className="today-title" to={{ pathname: '..', search: `?task=${task.id}` }} relative="path">{task.title}</Link>
                                         <DueChip task={task} />
                                         <Assignee name={who} />
                                     </li>

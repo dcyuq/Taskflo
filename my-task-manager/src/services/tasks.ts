@@ -5,7 +5,6 @@ export type TaskStatus = 'todo' | 'doing' | 'done'
 export interface Task {
     id: string
     workspace_id: string
-    board_id: string
     title: string
     status: TaskStatus
     assignee_id: string | null
@@ -17,7 +16,7 @@ export interface Task {
 
 export type TaskPatch = Partial<Pick<Task, 'title' | 'status' | 'assignee_id' | 'due_date'>>
 
-const columns = 'id, workspace_id, board_id, title, status, assignee_id, due_date, created_by, created_at, updated_at'
+const columns = 'id, workspace_id, title, status, assignee_id, due_date, created_by, created_at, updated_at'
 
 export const statuses: { id: TaskStatus, label: string }[] = [
     { id: 'todo', label: 'To do' },
@@ -34,10 +33,10 @@ export async function listTasks(workspaceId: string) {
     return { data: data as Task[] | null, error }
 }
 
-export async function createTask(workspaceId: string, boardId: string, input: TaskPatch & { title: string }) {
+export async function createTask(workspaceId: string, input: TaskPatch & { title: string }) {
     const { data, error } = await supabase
         .from('tasks')
-        .insert({ workspace_id: workspaceId, board_id: boardId, ...input })
+        .insert({ workspace_id: workspaceId, ...input })
         .select(columns)
         .single()
     return { data: data as Task | null, error }
