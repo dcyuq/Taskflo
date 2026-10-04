@@ -1,11 +1,12 @@
 import { KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors, type Announcements, type UniqueIdentifier } from '@dnd-kit/core'
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 
-export function useSortSensors() {
+export function useSortSensors(keyboard = true) {
+    const keys = useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     return useSensors(
-        useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
-        useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 6 } }),
-        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+        useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+        useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+        keyboard ? keys : null,
     )
 }
 
