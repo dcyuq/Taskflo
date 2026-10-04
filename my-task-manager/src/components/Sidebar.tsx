@@ -125,7 +125,7 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                                         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
                                     </span>
                                     <span className="sidebar-name">{item.label}</span>
-                                    {item.count > 0 && <span className="sidebar-count" aria-label={`${item.count} open`}>{item.count}</span>}
+                                    {item.count > 0 && <span className="sidebar-count">{item.count}<span className="sr-only"> open</span></span>}
                                 </NavLink>
                             </li>
                         ))}
@@ -174,7 +174,7 @@ function Sidebar({ desktop, open, list, openTasks, me, onSearch, onRetry, onCrea
                                             <NavLink className="sidebar-item" to={`/dashboard/workspace/${workspace.id}`} onClick={closeOnMobile} title={collapsed ? workspace.name : undefined}>
                                                 <span className="sidebar-initial" aria-hidden="true">{workspace.name.trim().charAt(0).toUpperCase()}</span>
                                                 <span className="sidebar-name">{workspace.name}</span>
-                                                {count > 0 && <span className="sidebar-count" aria-label={`${count} open`}>{count}</span>}
+                                                {count > 0 && <span className="sidebar-count">{count}<span className="sr-only"> open</span></span>}
                                             </NavLink>
                                         </li>
                                     )
