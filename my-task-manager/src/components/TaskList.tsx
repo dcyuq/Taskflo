@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import Assignee from './Assignee'
 import DueChip from './DueChip'
 import { statuses, type Task, type TaskPatch } from '../services/tasks'
 import { ease, rise } from '../utils/motion'
+import { groupOf } from '../utils/summary'
 
 interface TaskListProps {
     tasks: Task[]
@@ -21,6 +23,7 @@ function CheckIcon() {
 
 function TaskList({ tasks, nameOf, onEdit, onPatch }: TaskListProps) {
     const reduce = useReducedMotion()
+    const [showDone, setShowDone] = useState(false)
     const item = {
         initial: reduce ? false : { opacity: 0, y: 8 },
         animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease } },
@@ -28,15 +31,23 @@ function TaskList({ tasks, nameOf, onEdit, onPatch }: TaskListProps) {
     } as const
 
     return statuses.map(status => {
-        const group = tasks.filter(t => t.status === status.id)
+        const group = groupOf(tasks, status.id)
+        const foldable = status.id === 'done' && group.length > 0
         return (
             <motion.section key={status.id} className="task-group" aria-labelledby={`group-${status.id}`} variants={rise}>
-                <h2 className="task-group-title" id={`group-${status.id}`}>
-                    {status.label}
-                    <span className="task-group-count">{group.length}</span>
-                </h2>
-                {group.length === 0 && <p className="task-group-empty">Nothing here.</p>}
-                <ul className="task-list">
+                <div className="task-group-head">
+                    <h2 className="task-group-title" id={`group-${status.id}`}>
+                        {status.label}
+                        <span className="task-group-count">{group.length}</span>
+                    </h2>
+                    {foldable && (
+                        <button type="button" className="task-group-toggle" aria-expanded={showDone} aria-controls="task-list-done" onClick={() => setShowDone(s => !s)}>
+                            {showDone ? 'Hide done' : `Show ${group.length} done`}
+                        </button>
+                    )}
+                </div>
+                {group.length === 0 && <p className="task-group-empty">No tasks</p>}
+                <ul className="task-list" id={`task-list-${status.id}`} hidden={foldable && !showDone}>
                     <AnimatePresence initial={false}>
                         {group.map(task => {
                             const done = task.status === 'done'
