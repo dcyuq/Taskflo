@@ -29,6 +29,8 @@ export interface WorkspaceSummary {
     id: string;
     name: string;
     owner_id: string | null;
+    category_id: string | null;
+    position: number;
 }
 
 export async function getWorkspaces() {
@@ -37,12 +39,12 @@ export async function getWorkspaces() {
 
     const {data, error} = await supabase
         .from('workspace_members')
-        .select('workspaces(id, name, owner_id)')
+        .select('category_id, workspaces(id, name, owner_id)')
         .eq('user_id', session.user.id)
         .order('position', {ascending: true, nullsFirst: false})
         .order('joined_at', {ascending: true});
 
-    return {data: data?.map(row => row.workspaces as unknown as WorkspaceSummary) ?? null, error};
+    return {data: data?.map((row, position) => ({...(row.workspaces as unknown as WorkspaceSummary), category_id: row.category_id, position})) ?? null, error};
 }
 
 export async function deleteWorkspace(id: string) {
@@ -103,17 +105,19 @@ export async function sendInvites(workspaceId: string, emails: string[]) {
     return {error};
 }
 
-export async function orderWorkspaces(ids: string[]) {
+export async function placeWorkspaces(rows: {id: string; position: number; category_id: string | null}[]) {
     const {data : {session}} = await supabase.auth.getSession();
     if (!session) return {error : 'Not logged in'};
 
-    const results = await Promise.all(ids.map((id, position) => supabase
+    const results = await Promise.all(rows.map(({id, position, category_id}) => supabase
         .from('workspace_members')
-        .update({position})
+        .update({position, category_id})
         .eq('workspace_id', id)
-        .eq('user_id', session.user.id)));
+        .eq('user_id', session.user.id)
+        .select('workspace_id')));
 
-    return {error: results.find(r => r.error)?.error ?? null};
+    const failed = results.find(r => r.error || !r.data?.length);
+    return {error: failed ? failed.error ?? new Error('Not allowed') : null};
 }
 
 export async function renameWorkspace(id: string, name: string) {
