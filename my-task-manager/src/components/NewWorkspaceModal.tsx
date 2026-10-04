@@ -1,4 +1,4 @@
-import './NewWorkspaceModal.css';
+import './TaskDialog.css';
 import { createWorkspace } from '../services/workspace';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,26 +44,42 @@ function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
     return (
         <dialog
             ref={dialogRef}
-            className="modal"
+            className="task-dialog confirm-dialog"
             aria-labelledby="new-workspace-title"
             onClose={onClose}
             onClick={(e) => e.target === dialogRef.current && onClose()}
         >
             <form onSubmit={handleCreate} noValidate>
-                <div className="modal-header">
-                    <h2 id="new-workspace-title" className='modal-title'>New workspace</h2>
-                    <button type="button" className="modal-close" aria-label="Close" onClick={onClose}>✕</button>
+                <div className="task-dialog-head">
+                    <h2 id="new-workspace-title">New workspace</h2>
+                    <button type="button" className="task-dialog-close" aria-label="Close" onClick={onClose}>
+                        <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                            <path d="M4 4l8 8M12 4l-8 8" />
+                        </svg>
+                    </button>
                 </div>
 
-                <div className="modal-body">
-                    <label className="modal-label" htmlFor="new-workspace-name">Workspace name</label>
-                    <input id="new-workspace-name" className='modal-input' type="text" placeholder="e.g. Marketing team" autoComplete="off" maxLength={80} value={name} onChange={(e) => setName(e.target.value)}/>
-                    {error && <div className="form-error" role="alert">{error}</div>}
+                <div className="task-field">
+                    <label htmlFor="new-workspace-name">Workspace name</label>
+                    <input
+                        id="new-workspace-name"
+                        type="text"
+                        placeholder="e.g. Marketing team"
+                        autoComplete="off"
+                        maxLength={80}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        aria-invalid={!!error && !name.trim()}
+                        aria-describedby={error ? 'new-workspace-error' : undefined}
+                    />
+                    {error && <p className="field-error" id="new-workspace-error" role="alert">{error}</p>}
                 </div>
 
-                <div className="modal-footer">
-                    <button type="submit" className="modal-create" disabled={loading}>{loading ? 'Creating…' : 'Create workspace'}</button>
-                    <button type="button" className="modal-cancel" onClick={onClose}>Cancel</button>
+                <div className="task-dialog-actions">
+                    <div className="task-dialog-save">
+                        <button type="button" className="btn btn-quiet" onClick={onClose}>Cancel</button>
+                        <button type="submit" className="btn btn-primary" disabled={loading} aria-busy={loading}>{loading ? 'Creating…' : 'Create workspace'}</button>
+                    </div>
                 </div>
             </form>
         </dialog>
