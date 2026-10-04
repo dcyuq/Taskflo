@@ -12,7 +12,9 @@ export function useTaskActions() {
         setError('')
         const { data, error } = await createTask(workspace.id, input)
         if (error || !data) {
-            setError('Couldn’t add that task. Check your connection and try again.')
+            setError(error?.code === '42501'
+                ? 'Couldn’t add that task. You’re no longer a member of this workspace.'
+                : 'Couldn’t add that task. Check your connection and try again.')
             return null
         }
         setTasks(ts => [...ts, data])
@@ -25,7 +27,9 @@ export function useTaskActions() {
         const { data, error } = await updateTask(task.id, change)
         if (error || !data) {
             setTasks(ts => ts.map(t => (t.id === task.id ? task : t)))
-            setError('Couldn’t save that change. Check your connection and try again.')
+            setError(error?.code === 'PGRST116'
+                ? 'Couldn’t save that change. The task was deleted, or you’re no longer in this workspace. Reload to see the latest.'
+                : 'Couldn’t save that change. Check your connection and try again.')
             return false
         }
         setTasks(ts => ts.map(t => (t.id === data.id ? data : t)))
