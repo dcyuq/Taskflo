@@ -1,14 +1,30 @@
-import { useEffect, useRef } from 'react'
+import { Fragment, useEffect, useEffectEvent, useLayoutEffect, useRef } from 'react'
 import type { MenuAt } from '../utils/menu'
 
 function ActionMenu({ at, onClose }: { at: MenuAt, onClose: () => void }) {
     const ref = useRef<HTMLDivElement>(null)
+    const close = useEffectEvent(onClose)
+
+    useLayoutEffect(() => {
+        const menu = ref.current
+        if (!menu) return
+        const opener = document.activeElement as HTMLElement | null
+        if (!menu.matches(':popover-open')) menu.showPopover()
+        const { width, height } = menu.getBoundingClientRect()
+        menu.style.left = `${Math.max(8, at.x + width > innerWidth - 8 ? at.x - width : at.x)}px`
+        menu.style.top = `${Math.max(8, at.y + height > innerHeight - 8 ? at.above - height : at.y)}px`
+        menu.querySelector('button')?.focus()
+        return () => opener?.focus()
+    }, [at])
 
     useEffect(() => {
-        const opener = document.activeElement as HTMLElement | null
-        ref.current?.showPopover()
-        ref.current?.querySelector('button')?.focus()
-        return () => opener?.focus()
+        const onScroll = (e: Event) => !ref.current?.contains(e.target as Node) && close()
+        window.addEventListener('scroll', onScroll, true)
+        window.addEventListener('resize', close)
+        return () => {
+            window.removeEventListener('scroll', onScroll, true)
+            window.removeEventListener('resize', close)
+        }
     }, [])
 
     function onKeyDown(e: React.KeyboardEvent) {
@@ -27,23 +43,24 @@ function ActionMenu({ at, onClose }: { at: MenuAt, onClose: () => void }) {
             role="menu"
             aria-label={at.label}
             className="profile-menu action-menu"
-            style={{ top: Math.min(at.y, window.innerHeight - 56 * at.items.length - 24), left: Math.min(at.x, window.innerWidth - 216) }}
             onToggle={e => e.newState === 'closed' && onClose()}
             onKeyDown={onKeyDown}
         >
             {at.items.map(item => (
-                <button
-                    key={item.label}
-                    type="button"
-                    role="menuitem"
-                    className={`profile-menu-item${item.danger ? ' is-danger' : ''}`}
-                    onClick={() => {
-                        onClose()
-                        item.onSelect()
-                    }}
-                >
-                    {item.label}
-                </button>
+                <Fragment key={item.label}>
+                    {item.separated && <div role="separator" className="action-menu-separator" />}
+                    <button
+                        type="button"
+                        role="menuitem"
+                        className={`profile-menu-item${item.danger ? ' is-danger' : ''}`}
+                        onClick={() => {
+                            onClose()
+                            item.onSelect()
+                        }}
+                    >
+                        {item.label}
+                    </button>
+                </Fragment>
             ))}
         </div>
     )

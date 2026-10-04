@@ -1,12 +1,14 @@
 export interface MenuItem {
     label: string
     danger?: boolean
+    separated?: boolean
     onSelect: () => void
 }
 
 export interface MenuAt {
     x: number
     y: number
+    above: number
     label: string
     items: MenuItem[]
 }
@@ -15,6 +17,6 @@ export function menuFor(e: React.MouseEvent, label: string, items: MenuItem[]): 
     e.preventDefault()
     const rect = e.currentTarget.getBoundingClientRect()
     return e.type === 'contextmenu'
-        ? { x: e.clientX, y: e.clientY, label, items }
-        : { x: rect.left, y: rect.bottom + 4, label, items }
+        ? { x: e.clientX, y: e.clientY, above: e.clientY, label, items }
+        : { x: rect.left, y: rect.bottom + 4, above: rect.top - 4, label, items }
 }
