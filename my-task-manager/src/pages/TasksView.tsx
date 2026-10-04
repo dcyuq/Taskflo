@@ -24,6 +24,7 @@ function TasksView() {
     const [params, setParams] = useSearchParams()
     const [quick, setQuick] = useState('')
     const [adding, setAdding] = useState(false)
+    const [allPeople, setAllPeople] = useState(false)
     const [editing, setEditing] = useState<Editing>(null)
     const linkedId = params.get('task')
     const [seenLink, setSeenLink] = useState<string | null>(null)
@@ -51,38 +52,68 @@ function TasksView() {
         const title = quick.trim()
         if (!title || adding) return
         setAdding(true)
-        const created = await create({ title })
+        const created = await create(quickFor ? { title, assignee_id: quickFor.id } : { title })
         setAdding(false)
         if (created) setQuick('')
     }
 
+    function setFilter(id: string | null) {
+        setParams(p => {
+            if (id) p.set('assignee', id)
+            else p.delete('assignee')
+            return p
+        }, { replace: true })
+    }
+
     const editTask = editing && 'task' in editing ? editing.task : null
     const { open, overdue, dueToday } = summarize(tasks)
+    const ownerOf = (t: Task) => t.assignee_id ?? 'none'
+    const people = [...members.map(m => ({ id: m.id, name: m.name })), { id: 'none', name: 'Unassigned' }]
+        .map(p => ({ ...p, open: open.filter(t => ownerOf(t) === p.id).length, late: overdue.filter(t => ownerOf(t) === p.id).length }))
+        .filter(p => p.id !== 'none' || p.open > 0)
+        .sort((a, b) => b.late - a.late || b.open - a.open)
+    const filterId = params.get('assignee')
+    const filtered = people.find(p => p.id === filterId)
+    const chips = allPeople ? people : people.filter((p, i) => i < 5 || p.id === filterId)
+    const shown = filtered ? tasks.filter(t => ownerOf(t) === filtered.id) : tasks
+    const quickFor = filtered && filtered.id !== 'none' ? filtered : null
 
     return (
         <motion.div className="tasks" initial={reduce ? false : 'hidden'} animate="show" variants={staggered}>
             {tasks.length > 0 && (
-                <motion.div className="glance" role="group" aria-label="At a glance" variants={rise}>
+                <motion.div className="glance" variants={rise}>
                     <span className={`glance-stat${overdue.length ? ' is-alert' : ''}`}><strong>{overdue.length}</strong> overdue</span>
                     <span className="glance-stat"><strong>{dueToday.length}</strong> due today</span>
-                    <span className="glance-people">
-                        {members.map(member => {
-                            const count = open.filter(t => t.assignee_id === member.id).length
-                            return (
-                                <span key={member.id} className="glance-person" title={`${member.name}: ${count} open`}>
-                                    <span aria-hidden="true">{member.name.split(' ')[0]}</span>
-                                    <strong aria-hidden="true">{count}</strong>
-                                    <span className="sr-only">{count} open for {member.name}</span>
-                                </span>
-                            )
-                        })}
+                    <span className="glance-people" role="group" aria-label="Show tasks for one person">
+                        {chips.map(p => (
+                            <button
+                                key={p.id}
+                                type="button"
+                                className={`glance-person${p.late ? ' is-late' : ''}`}
+                                aria-pressed={p.id === filterId}
+                                title={`${p.name}: ${p.open} open${p.late ? `, ${p.late} overdue` : ''}`}
+                                onClick={() => setFilter(p.id === filterId ? null : p.id)}
+                            >
+                                <span aria-hidden="true">{p.id === 'none' ? p.name : p.name.split(' ')[0]}</span>
+                                <strong aria-hidden="true">{p.open}</strong>
+                                <span className="sr-only">{p.name}, {p.open} open{p.late ? `, ${p.late} overdue` : ''}</span>
+                            </button>
+                        ))}
+                        {chips.length < people.length && (
+                            <button type="button" className="glance-more" onClick={() => setAllPeople(true)}>
+                                +{people.length - chips.length} more
+                            </button>
+                        )}
+                        {filtered && (
+                            <button type="button" className="glance-more" onClick={() => setFilter(null)}>Show everyone</button>
+                        )}
                     </span>
                 </motion.div>
             )}
 
             <motion.div className="tasks-toolbar" variants={rise}>
                 <form className="quick-add" onSubmit={handleQuickAdd}>
-                    <label htmlFor="quick-add" className="sr-only">Add a task</label>
+                    <label htmlFor="quick-add" className="sr-only">{quickFor ? `Add a task for ${quickFor.name}` : 'Add a task'}</label>
                     <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                         <path d="M8 3v10M3 8h10" />
                     </svg>
@@ -91,7 +122,7 @@ function TasksView() {
                         type="text"
                         maxLength={200}
                         autoComplete="off"
-                        placeholder="Add a task"
+                        placeholder={quickFor ? `Add a task for ${quickFor.name}` : 'Add a task'}
                         value={quick}
                         onChange={e => setQuick(e.target.value)}
                     />
@@ -120,9 +151,9 @@ function TasksView() {
                     No tasks yet. Type the first one above and press Enter.
                 </motion.p>
             ) : view === 'list' ? (
-                <TaskList tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onPatch={(task, change) => change.status === 'done' ? complete(task) : patch(task, change)} />
+                <TaskList tasks={shown} nameOf={nameOf} onEdit={task => setEditing({ task })} onPatch={(task, change) => change.status === 'done' ? complete(task) : patch(task, change)} />
             ) : (
-                <TaskBoard tasks={tasks} nameOf={nameOf} onEdit={task => setEditing({ task })} onAdd={status => setEditing({ status })} onPatch={patch} />
+                <TaskBoard tasks={shown} nameOf={nameOf} onEdit={task => setEditing({ task })} onAdd={status => setEditing({ status })} onPatch={patch} />
             )}
 
             {editing && (

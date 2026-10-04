@@ -862,12 +862,13 @@
   margin-left: auto;
 }
 
-.glance-person {
+.glance-person,
+.glance-more {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   min-height: 28px;
-  padding: 2px 4px 2px 12px;
   border: 1px solid var(--line);
   border-radius: 99px;
   background: var(--surface);
@@ -875,6 +876,32 @@
   font-weight: 500;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: border-color 160ms ease-out, background-color 160ms ease-out, color 160ms ease-out;
+}
+
+.glance-person {
+  padding: 2px 4px 2px 12px;
+}
+
+.glance-more {
+  padding: 2px 12px;
+  border-style: dashed;
+  border-color: var(--line-strong);
+  color: var(--muted);
+}
+
+.glance-person::before,
+.glance-more::before {
+  content: '';
+  position: absolute;
+  inset: -8px -3px;
+}
+
+.glance-person:hover,
+.glance-more:hover {
+  border-color: var(--ink);
+  color: var(--ink);
 }
 
 .glance-person strong {
@@ -885,6 +912,22 @@
   color: var(--paper);
   font-size: 12px;
   text-align: center;
+}
+
+.glance-person.is-late strong {
+  background: var(--error);
+  color: var(--surface);
+}
+
+.glance-person[aria-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.glance-person[aria-pressed='true'] strong {
+  background: var(--paper);
+  color: var(--ink);
 }
 
 @media (max-width: 639px) {
