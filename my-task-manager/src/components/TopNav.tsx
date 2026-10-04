@@ -6,9 +6,10 @@ interface TopNavProps {
     title?: string
     menuOpen: boolean
     onMenu: () => void
+    onSearch: () => void
 }
 
-function TopNav({ title, menuOpen, onMenu }: TopNavProps) {
+function TopNav({ title, menuOpen, onMenu, onSearch }: TopNavProps) {
     return (
         <header className="topnav">
             <button type="button" className="topnav-menu" aria-label="Open navigation" aria-expanded={menuOpen} onClick={onMenu}>
@@ -23,6 +24,11 @@ function TopNav({ title, menuOpen, onMenu }: TopNavProps) {
                     <span className="brand-wordmark" aria-hidden="true" dangerouslySetInnerHTML={{ __html: wordmark }} />
                 </Link>
             )}
+            <button type="button" className="topnav-menu" aria-label="Search workspaces and tasks" onClick={onSearch}>
+                <svg viewBox="0 0 16 16" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                    <circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" />
+                </svg>
+            </button>
         </header>
     )
 }

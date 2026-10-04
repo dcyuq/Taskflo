@@ -61,7 +61,7 @@ function Dashboard() {
     return (
         <div className={`app${desktop ? ' is-desktop' : ''}`}>
             <a className="skip-link" href="#app-main">Skip to content</a>
-            {!desktop && <TopNav title={current} menuOpen={drawerOpen} onMenu={() => setDrawerOpen(o => !o)} />}
+            {!desktop && <TopNav title={current} menuOpen={drawerOpen} onMenu={() => setDrawerOpen(o => !o)} onSearch={() => setSearching(true)} />}
             <div className="app-body">
                 <Sidebar
                     desktop={desktop}
