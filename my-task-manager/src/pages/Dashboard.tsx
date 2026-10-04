@@ -43,7 +43,7 @@ function Dashboard() {
         const onKey = (e: KeyboardEvent) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
                 e.preventDefault()
-                setSearching(s => !s)
+                if (!document.querySelector('dialog[open]:not(.jump)')) setSearching(s => !s)
             }
         }
         window.addEventListener('keydown', onKey)
