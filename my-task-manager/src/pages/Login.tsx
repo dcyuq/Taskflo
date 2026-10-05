@@ -1,16 +1,18 @@
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
 import SignInDemo from '../components/SignInDemo'
 import { friendlyError } from '../utils/errors'
+import { safeNext } from '../utils/next'
 import { useThrottle, waitMessage } from '../hooks/useThrottle'
 
 type Errors = { email?: string, password?: string, form?: string }
 
 function Login() {
     const navigate = useNavigate()
+    const { search } = useLocation()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
@@ -39,7 +41,7 @@ function Login() {
             setLoading(false)
             return
         }
-        navigate('/dashboard')
+        navigate(safeNext(new URLSearchParams(search).get('next')))
     }
 
     return (
@@ -71,7 +73,7 @@ function Login() {
                     {loading ? 'Signing in…' : 'Sign in'}
                 </button>
 
-                <p className="auth-switch">No account? <Link to="/register">Sign up</Link></p>
+                <p className="auth-switch">No account? <Link to={`/register${search}`}>Sign up</Link></p>
             </form>
         </AuthLayout>
     )

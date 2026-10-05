@@ -1,4 +1,4 @@
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useEffect, useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
@@ -7,6 +7,7 @@ import SignUpDemo from '../components/SignUpDemo'
 import StrengthMeter from '../components/StrengthMeter'
 import { includesPersonal, passwordRules, personalParts } from '../utils/passwordRules'
 import { friendlyError } from '../utils/errors'
+import { safeNext } from '../utils/next'
 import { useThrottle, waitMessage } from '../hooks/useThrottle'
 
 type Errors = { first?: string, last?: string, email?: string, password?: string, confirm?: string, code?: string, form?: string }
@@ -24,6 +25,7 @@ const invalid = (id: string, msg?: string) => ({
 
 function Register() {
     const navigate = useNavigate()
+    const { search } = useLocation()
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
@@ -129,7 +131,7 @@ function Register() {
             setLoading(false)
             return
         }
-        navigate('/dashboard')
+        navigate(safeNext(new URLSearchParams(search).get('next')))
     }
 
     async function handleResend() {
@@ -188,7 +190,7 @@ function Register() {
                         {loading ? 'Creating account…' : 'Create account'}
                     </button>
                     {!ready && <p className="auth-hint" id="reg-ready">Fill in every field and meet each password check to continue.</p>}
-                    <p className="auth-switch">Already have an account? <Link to="/login">Sign in</Link></p>
+                    <p className="auth-switch">Already have an account? <Link to={`/login${search}`}>Sign in</Link></p>
                 </form>
             ) : (
                 <form key="code" onSubmit={handleVerify} noValidate>
