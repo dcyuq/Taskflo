@@ -12,6 +12,7 @@ function QuickInviteDialog({ workspace, onClose }: { workspace: { id: string, na
 
     useEffect(() => {
         dialogRef.current?.showModal()
+        dialogRef.current?.querySelector('input')?.focus()
     }, [])
 
     async function copyLink() {
