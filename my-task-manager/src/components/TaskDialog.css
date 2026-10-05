@@ -165,3 +165,30 @@
   line-height: 1.6;
   color: var(--muted);
 }
+
+.quick-invite .task-dialog-head h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.quick-invite-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.quick-invite-link p {
+  flex: 1;
+  min-width: 180px;
+}
+
+.quick-invite .field-error {
+  margin-top: 12px;
+}

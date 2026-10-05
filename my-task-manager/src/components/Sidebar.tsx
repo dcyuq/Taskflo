@@ -1,9 +1,10 @@
 import './Sidebar.css'
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import NewWorkspaceModal from './NewWorkspaceModal'
 import WorkspaceDialogs, { type WorkspaceAsk } from './WorkspaceDialogs'
+import QuickInviteDialog from './QuickInviteDialog'
 import ActionMenu from './ActionMenu'
 import NameDialog from './NameDialog'
 import WorkspaceTree from './WorkspaceTree'
@@ -47,7 +48,7 @@ function Sidebar({ desktop, open, tree, current, openTasks, inviteCount, me, onS
     const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
     const [menu, setMenu] = useState<MenuAt | null>(null)
     const [ask, setAsk] = useState<WorkspaceAsk | null>(null)
-    const navigate = useNavigate()
+    const [inviting, setInviting] = useState<WorkspaceSummary | null>(null)
     const reduce = useReducedMotion()
     const collapsed = desktop && collapsedPref
     const list = tree.list
@@ -66,7 +67,7 @@ function Sidebar({ desktop, open, tree, current, openTasks, inviteCount, me, onS
         return workspace.owner_id === me
             ? [
                 { label: 'Rename', onSelect: () => setAsk({ kind: 'rename', workspace }) },
-                { label: 'Invite members', onSelect: () => navigate(`/dashboard/workspace/${workspace.id}/team`) },
+                { label: 'Invite members', onSelect: () => setInviting(workspace) },
                 { label: 'Delete workspace', danger: true, separated: true, onSelect: () => setAsk({ kind: 'delete', workspace }) },
             ]
             : [{ label: 'Leave workspace', danger: true, onSelect: () => setAsk({ kind: 'leave', workspace }) }]
@@ -239,6 +240,7 @@ function Sidebar({ desktop, open, tree, current, openTasks, inviteCount, me, onS
             )}
             {menu && <ActionMenu key={menu.label} at={menu} onClose={() => setMenu(null)} />}
             {ask && <WorkspaceDialogs ask={ask} me={me} current={current?.id} onChanged={tree.load} onClose={() => setAsk(null)} />}
+            {inviting && <QuickInviteDialog workspace={inviting} onClose={() => setInviting(null)} />}
         </>
     )
 }
