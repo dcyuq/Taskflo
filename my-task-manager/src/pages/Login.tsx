@@ -5,6 +5,7 @@ import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
 import SignInDemo from '../components/SignInDemo'
 import { friendlyError } from '../utils/errors'
+import { useThrottle, waitMessage } from '../hooks/useThrottle'
 
 type Errors = { email?: string, password?: string, form?: string }
 
@@ -14,6 +15,7 @@ function Login() {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState<Errors>({})
+    const throttle = useThrottle(5)
 
     const handleLogin = async (e: React.SyntheticEvent) => {
         e.preventDefault()
@@ -24,6 +26,11 @@ function Login() {
         if (!password) next.password = 'Enter your password.'
         setErrors(next)
         if (next.email || next.password) return
+        const wait = throttle()
+        if (wait) {
+            setErrors({ form: waitMessage(wait) })
+            return
+        }
 
         setLoading(true)
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })

@@ -9,6 +9,7 @@ import { listWorkspaceInvites, removeMember, revokeInvite, type Member, type Wor
 import { sendInvites } from '../services/workspace'
 import { rise, staggered } from '../utils/motion'
 import { friendlyError } from '../utils/errors'
+import { useThrottle, waitMessage } from '../hooks/useThrottle'
 
 type InviteState = { status: 'loading' } | { status: 'error' } | { status: 'ready', invites: WorkspaceInvite[] }
 
@@ -25,6 +26,7 @@ function TeamView() {
     const [sending, setSending] = useState(false)
     const [sentNotice, setSentNotice] = useState('')
     const [inviteError, setInviteError] = useState('')
+    const throttle = useThrottle(5)
     const pendingEmails = invites.status === 'ready' ? invites.invites.map(i => i.email) : []
     const chips = useEmailChips(
         [...members.map(m => m.email), ...pendingEmails].filter(Boolean),
@@ -50,6 +52,11 @@ function TeamView() {
         if (all.length === 0) {
             chips.setError('Add at least one email address.')
             chips.inputRef.current?.focus()
+            return
+        }
+        const wait = throttle()
+        if (wait) {
+            chips.setError(waitMessage(wait))
             return
         }
         setSending(true)

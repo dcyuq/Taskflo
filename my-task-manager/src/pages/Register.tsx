@@ -7,6 +7,7 @@ import SignUpDemo from '../components/SignUpDemo'
 import StrengthMeter from '../components/StrengthMeter'
 import { includesPersonal, passwordRules, personalParts } from '../utils/passwordRules'
 import { friendlyError } from '../utils/errors'
+import { useThrottle, waitMessage } from '../hooks/useThrottle'
 
 type Errors = { first?: string, last?: string, email?: string, password?: string, confirm?: string, code?: string, form?: string }
 
@@ -32,6 +33,8 @@ function Register() {
     const [code, setCode] = useState('')
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState<Errors>({})
+    const throttleSignUp = useThrottle(3)
+    const throttleVerify = useThrottle(5)
     const [notice, setNotice] = useState('')
     const [cooldown, setCooldown] = useState(0)
     const [rated, setRated] = useState<{ password: string, score: number } | null>(null)
@@ -78,6 +81,11 @@ function Register() {
         else if (password !== confirmPassword) next.confirm = 'The passwords don’t match.'
         setErrors(next)
         if (Object.keys(next).length) return
+        const wait = throttleSignUp()
+        if (wait) {
+            setErrors({ form: waitMessage(wait) })
+            return
+        }
 
         setLoading(true)
         const { data, error } = await supabase.auth.signUp({
@@ -106,6 +114,11 @@ function Register() {
         if (loading) return
         if (code.length !== 6) {
             setErrors({ code: 'Enter the 6-digit code from the email.' })
+            return
+        }
+        const wait = throttleVerify()
+        if (wait) {
+            setErrors({ code: waitMessage(wait) })
             return
         }
         setLoading(true)

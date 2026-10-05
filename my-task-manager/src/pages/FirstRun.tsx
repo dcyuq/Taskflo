@@ -12,6 +12,7 @@ import {
     type PendingInvite,
 } from '../services/workspace';
 import { friendlyError } from '../utils/errors';
+import { useThrottle, waitMessage } from '../hooks/useThrottle';
 
 
 interface FirstRunProps {
@@ -194,6 +195,7 @@ function InviteStep({ workspace }: { workspace: { id: string; name: string } }) 
     const navigate = useNavigate();
     const [ownEmail, setOwnEmail] = useState('');
     const [sending, setSending] = useState(false);
+    const throttle = useThrottle(5);
     const chips = useEmailChips([ownEmail], "You're already in this workspace, so your own email was left out.");
 
     useEffect(() => {
@@ -213,6 +215,11 @@ function InviteStep({ workspace }: { workspace: { id: string; name: string } }) 
         if (all.length === 0) {
             chips.setError('Add at least one email, or skip this step.');
             chips.inputRef.current?.focus();
+            return;
+        }
+        const wait = throttle();
+        if (wait) {
+            chips.setError(waitMessage(wait));
             return;
         }
 
