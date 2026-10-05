@@ -617,3 +617,35 @@
     right: 0;
   }
 }
+
+.sidebar-badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 99px;
+  background: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--paper);
+  font-variant-numeric: tabular-nums;
+}
+
+.sidebar.is-collapsed .sidebar-item:has(.sidebar-badge) {
+  position: relative;
+}
+
+.sidebar.is-collapsed .sidebar-badge {
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  min-width: 0;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  overflow: hidden;
+  font-size: 0;
+  box-shadow: 0 0 0 2px var(--surface);
+}

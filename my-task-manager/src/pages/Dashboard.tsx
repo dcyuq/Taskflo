@@ -3,10 +3,9 @@ import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import TopNav from '../components/TopNav'
 import JumpDialog from '../components/JumpDialog'
 import Sidebar from '../components/Sidebar'
-import InviteBanner from '../components/InviteBanner'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { inOrder, useSidebarTree } from '../hooks/useSidebarTree'
-import type { WorkspaceSummary } from '../services/workspace'
+import { getPendingInvites, type PendingInvite, type WorkspaceSummary } from '../services/workspace'
 import { listOpenTasks, type Task } from '../services/tasks'
 import { supabase } from '../supabaseClient'
 import { useRealtime } from '../hooks/useRealtime'
@@ -18,6 +17,9 @@ export interface DashboardContext {
     me: string
     reloadOpen: () => void
     liveKey: number
+    invites: PendingInvite[]
+    reloadInvites: () => void
+    reloadWorkspaces: () => void
 }
 
 function Dashboard() {
@@ -25,6 +27,7 @@ function Dashboard() {
     const tree = useSidebarTree()
     const { list, load } = tree
     const [openTasks, setOpenTasks] = useState<Task[]>([])
+    const [invites, setInvites] = useState<PendingInvite[]>([])
     const [me, setMe] = useState('')
     const [searching, setSearching] = useState(false)
     const desktop = useMediaQuery('(min-width: 1024px)')
@@ -42,7 +45,12 @@ function Dashboard() {
         listOpenTasks().then(({ data }) => data && setOpenTasks(data))
     }, [])
 
+    const reloadInvites = useCallback(() => {
+        getPendingInvites().then(({ data }) => data && setInvites(data))
+    }, [])
+
     useEffect(load, [load, pathname])
+    useEffect(reloadInvites, [reloadInvites])
     useEffect(reloadOpen, [reloadOpen, pathname])
 
     useEffect(() => {
@@ -63,12 +71,13 @@ function Dashboard() {
     useRealtime(me ? `user:${me}` : null, () => {
         load()
         reloadOpen()
+        reloadInvites()
         setLiveKey(k => k + 1)
     })
 
     const workspaces = list.status === 'ready' ? inOrder(list.workspaces, list.categories) : []
     const current = workspaces.find(w => w.id === match?.params.id)
-    const context: DashboardContext = { workspaces, openTasks, me, reloadOpen, liveKey }
+    const context: DashboardContext = { workspaces, openTasks, me, reloadOpen, liveKey, invites, reloadInvites, reloadWorkspaces: load }
 
     return (
         <div className={`app${desktop ? ' is-desktop' : ''}`}>
@@ -81,12 +90,12 @@ function Dashboard() {
                     tree={tree}
                     current={current}
                     openTasks={openTasks}
+                    inviteCount={invites.length}
                     me={me}
                     onSearch={() => { setDrawerOpen(false); setSearching(true) }}
                     onClose={() => setDrawerOpen(false)}
                 />
                 <main className="app-main dot-grid" id="app-main" tabIndex={-1}>
-                    {workspaces.length > 0 && <InviteBanner liveKey={liveKey} />}
                     <Outlet context={context} />
                 </main>
             </div>

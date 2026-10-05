@@ -25,6 +25,7 @@ interface SidebarProps {
     tree: SidebarTree
     current?: WorkspaceSummary
     openTasks: Task[]
+    inviteCount: number
     me: string
     onSearch: () => void
     onClose: () => void
@@ -40,7 +41,7 @@ function PlusIcon() {
     )
 }
 
-function Sidebar({ desktop, open, tree, current, openTasks, me, onSearch, onClose }: SidebarProps) {
+function Sidebar({ desktop, open, tree, current, openTasks, inviteCount, me, onSearch, onClose }: SidebarProps) {
     const [showModal, setShowModal] = useState(false)
     const [addingCategory, setAddingCategory] = useState(false)
     const [collapsedPref, setCollapsedPref] = useState(() => readStored(COLLAPSED_KEY) === '1')
@@ -78,6 +79,7 @@ function Sidebar({ desktop, open, tree, current, openTasks, me, onSearch, onClos
     const personal = [
         { to: '/dashboard/my-tasks', label: 'My tasks', count: mine.length, icon: <path d="M3.5 8.5l3 3 6-7" /> },
         { to: '/dashboard/due-soon', label: 'Due soon', count: mine.filter(isDueSoon).length, icon: <><circle cx="8" cy="8" r="5.5" /><path d="M8 5v3l2 1.5" /></> },
+        { to: '/dashboard/invites', label: 'Invites', count: inviteCount, badge: true, icon: <><rect x="2" y="3.5" width="12" height="9" rx="1.5" /><path d="M2.5 4.5L8 9l5.5-4.5" /></> },
     ]
 
     useEffect(() => {
@@ -148,7 +150,9 @@ function Sidebar({ desktop, open, tree, current, openTasks, me, onSearch, onClos
                                         <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">{item.icon}</svg>
                                     </span>
                                     <span className="sidebar-name">{item.label}</span>
-                                    {item.count > 0 && <span className="sidebar-count">{item.count}<span className="sr-only"> open</span></span>}
+                                    {item.count > 0 && (item.badge
+                                        ? <span className="sidebar-badge">{item.count}<span className="sr-only"> pending</span></span>
+                                        : <span className="sidebar-count">{item.count}<span className="sr-only"> open</span></span>)}
                                 </NavLink>
                             </li>
                         ))}
