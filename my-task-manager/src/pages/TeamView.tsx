@@ -25,7 +25,7 @@ const statusLabel = (invite: WorkspaceInvite) =>
             : invite.status === 'declined' ? 'Declined' : 'Expired'
 
 function TeamView() {
-    const { workspace, members, tasks, me, isOwner, reload } = useWorkspace()
+    const { workspace, members, tasks, me, isOwner, reload, liveKey } = useWorkspace()
     const reduce = useReducedMotion()
     const [invites, setInvites] = useState<InviteState>({ status: 'loading' })
     const [removing, setRemoving] = useState<Member | null>(null)
@@ -48,7 +48,7 @@ function TeamView() {
 
     useEffect(() => {
         loadInvites()
-    }, [loadInvites])
+    }, [loadInvites, liveKey])
 
     async function handleSend(e: React.SyntheticEvent) {
         e.preventDefault()
@@ -185,7 +185,7 @@ function TeamView() {
                 </motion.section>
             )}
 
-            {isOwner && <InviteLinks workspaceId={workspace.id} />}
+            {isOwner && <InviteLinks workspaceId={workspace.id} liveKey={liveKey} />}
 
             {removing && (
                 <ConfirmDialog

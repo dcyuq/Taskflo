@@ -19,7 +19,7 @@ function linkStatus(link: InviteLink) {
     return `${expires} · ${uses}`
 }
 
-function InviteLinks({ workspaceId }: { workspaceId: string }) {
+function InviteLinks({ workspaceId, liveKey }: { workspaceId: string, liveKey: number }) {
     const [links, setLinks] = useState<InviteLink[] | null>(null)
     const [loadFailed, setLoadFailed] = useState(false)
     const [expiry, setExpiry] = useState('7')
@@ -40,7 +40,7 @@ function InviteLinks({ workspaceId }: { workspaceId: string }) {
 
     useEffect(() => {
         load()
-    }, [load])
+    }, [load, liveKey])
 
     async function handleCreate(e: React.SyntheticEvent) {
         e.preventDefault()
