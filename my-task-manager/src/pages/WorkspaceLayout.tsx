@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { NavLink, Outlet, useOutletContext, useParams } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { NavLink, Outlet, useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { supabase } from '../supabaseClient'
 import { getWorkspace } from '../services/workspace'
@@ -11,6 +11,7 @@ import type { DashboardContext } from './Dashboard'
 import { store } from '../utils/storage'
 import NotFound from './NotFound'
 import { friendlyError } from '../utils/errors'
+import { useRealtime } from '../hooks/useRealtime'
 
 const isUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
 import './Workspace.css'
@@ -41,8 +42,15 @@ function WorkspaceLayout({ id }: { id: string }) {
     const [members, setMembers] = useState<Member[]>([])
     const [tasks, setTasks] = useState<Task[]>([])
     const [me, setMe] = useState('')
+    const [liveKey, setLiveKey] = useState(0)
+    const navigate = useNavigate()
+    const wasReady = useRef(false)
 
     const apply = useCallback((result: Loaded, quiet = false) => {
+        if (quiet && wasReady.current && result.status === 'missing') {
+            navigate('/dashboard', { replace: true, state: { notice: 'That workspace was deleted, or you no longer have access to it.' } })
+            return
+        }
         if (result.status !== 'ready') {
             if (!quiet || result.status === 'missing') setStatus(result.status)
             return
@@ -52,8 +60,9 @@ function WorkspaceLayout({ id }: { id: string }) {
         setTasks(result.tasks)
         setMe(result.me)
         setStatus('ready')
+        wasReady.current = true
         store(LAST_WORKSPACE_KEY, id)
-    }, [id])
+    }, [id, navigate])
 
     const load = useCallback((quiet = false) => fetchWorkspace(id).then(result => apply(result, quiet)), [id, apply])
 
@@ -66,6 +75,11 @@ function WorkspaceLayout({ id }: { id: string }) {
         document.addEventListener('visibilitychange', onVisible)
         return () => document.removeEventListener('visibilitychange', onVisible)
     }, [load])
+
+    useRealtime(status === 'ready' ? `workspace:${id}` : null, () => {
+        load(true)
+        setLiveKey(k => k + 1)
+    })
 
     if (status === 'loading') {
         return (
@@ -99,6 +113,7 @@ function WorkspaceLayout({ id }: { id: string }) {
         me,
         isOwner: workspace.owner_id === me,
         reload: () => load(true),
+        liveKey,
     }
 
     return (

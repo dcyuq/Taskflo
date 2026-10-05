@@ -11,6 +11,7 @@ export interface WorkspaceContext {
     me: string
     isOwner: boolean
     reload: () => Promise<void>
+    liveKey: number
 }
 
 export const LAST_WORKSPACE_KEY = 'taskflo:last-workspace'
