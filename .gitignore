@@ -40,3 +40,4 @@ CLAUDE.local.md
 .playwright-mcp/
 PRODUCT.md
 DESIGN.md
+supabase/migrations/
