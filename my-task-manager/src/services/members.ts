@@ -92,8 +92,23 @@ export async function listInviteLinks(workspaceId: string) {
 }
 
 export async function createInviteLink(workspaceId: string, expiresAt: string | null, maxUses: number | null) {
-    const { error } = await supabase.from('invite_links').insert({ workspace_id: workspaceId, expires_at: expiresAt, max_uses: maxUses })
-    return { error }
+    const { data, error } = await supabase
+        .from('invite_links')
+        .insert({ workspace_id: workspaceId, expires_at: expiresAt, max_uses: maxUses })
+        .select('token')
+        .single()
+    return { token: (data?.token as string | undefined) ?? null, error }
+}
+
+export const isLinkActive = (link: InviteLink) =>
+    (!link.expiresAt || new Date(link.expiresAt).getTime() > Date.now()) && (link.maxUses === null || link.uses < link.maxUses)
+
+export async function activeInviteLink(workspaceId: string) {
+    const { data, error } = await listInviteLinks(workspaceId)
+    if (error || !data) return { token: null, error }
+    const active = data.find(isLinkActive)
+    if (active) return { token: active.token, error: null }
+    return createInviteLink(workspaceId, new Date(Date.now() + 7 * 864e5).toISOString(), null)
 }
 
 export async function revokeInviteLink(id: string) {
