@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+    const { pathname, search } = useLocation();
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => setAuthenticated(!!session));
@@ -14,5 +15,5 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     }, []);
 
     if (authenticated === null) return <div className="firstrun-loading" role="status">Loading…</div>;
-    return authenticated ? <>{children}</> : <Navigate to="/login" replace />;
+    return authenticated ? <>{children}</> : <Navigate to={`/login?next=${encodeURIComponent(pathname + search)}`} replace />;
 }
