@@ -74,7 +74,10 @@ function InviteLinks({ workspaceId }: { workspaceId: string }) {
 
     function handleCopy(link: InviteLink, url: string) {
         navigator.clipboard.writeText(url).then(
-            () => setCopied(link.id),
+            () => {
+                setError('')
+                setCopied(link.id)
+            },
             () => setError('Couldn’t copy the link. Select it and copy it yourself.'),
         )
     }
