@@ -11,6 +11,7 @@ import PersonalTasks from './pages/PersonalTasks'
 import DashboardHome from './pages/DashboardHome'
 import NotFound from './pages/NotFound'
 import InvitePage from './pages/InvitePage'
+import InvitesView from './pages/InvitesView'
 
 import {Routes, Route} from 'react-router-dom'
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
           <Route index element={<DashboardHome />} />
           <Route path="my-tasks" element={<PersonalTasks key="mine" mode="mine" />} />
+          <Route path="invites" element={<InvitesView />} />
           <Route path="due-soon" element={<PersonalTasks key="soon" mode="soon" />} />
           <Route path="workspace/:id" element={<WorkspaceLayout />}>
             <Route index element={<TasksView />} />

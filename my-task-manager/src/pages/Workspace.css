@@ -1017,3 +1017,145 @@ a.task-row-title {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+.invites {
+  max-width: 760px;
+  gap: 24px;
+}
+
+.invites .personal-head {
+  margin-bottom: 0;
+}
+
+.invites-note:empty {
+  display: none;
+}
+
+.invites-joined {
+  font-size: 14px;
+  color: var(--ok);
+}
+
+.invites-joined a {
+  margin-left: 4px;
+  font-weight: 600;
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+
+.invites-heading {
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.invites-form {
+  display: flex;
+  gap: 8px;
+}
+
+.invites-input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.invites-input:focus {
+  border-color: var(--ink);
+  box-shadow: var(--ring);
+}
+
+.invites-input[aria-invalid='true'] {
+  border-color: var(--error);
+}
+
+.invite-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+
+.invite-card-body {
+  flex: 1;
+  min-width: 180px;
+}
+
+.invite-card-name,
+.invite-row-name {
+  font-size: 15px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.invite-meta {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.invite-badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.invite-badge.is-large {
+  width: 44px;
+  height: 44px;
+  border-color: var(--ink);
+  background: var(--ink);
+  font-size: 17px;
+  color: var(--paper);
+}
+
+.invite-actions {
+  display: flex;
+  flex: none;
+  gap: 4px;
+}
+
+.invite-list {
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.invite-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-height: 64px;
+  padding: 10px 12px;
+}
+
+.invite-row + .invite-row {
+  border-top: 1px solid var(--line);
+}
+
+.invite-row-who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 160px;
+}
