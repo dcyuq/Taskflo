@@ -91,18 +91,16 @@ export async function declineInvite(token: string) {
 }
 
 export async function sendInvites(workspaceId: string, emails: string[]) {
-    const {data : {session}} = await supabase.auth.getSession();
-    if (!session) return {error : 'Not logged in'};
+    const {data, error} = await supabase.functions.invoke('send-invites', {body: {workspaceId, emails}});
+    if (!error) return {data: data as {invited: number; emailed: number}, error: null};
+    const body = await error.context?.json?.().catch(() => null);
+    return {data: null, error: body?.error ? {code: String(body.error)} : error};
+}
 
-    const {error} = await supabase
-        .from('invites')
-        .insert(emails.map(email => ({
-            workspace_id: workspaceId,
-            email,
-            invited_by: session.user.id,
-        })));
-
-    return {error};
+export async function previewInvite(token: string) {
+    const {data, error} = await supabase.rpc('invite_preview', {invite_token: token});
+    const row = (data as {kind: 'email' | 'link'; workspace_name: string}[] | null)?.[0] ?? null;
+    return {data: row, error};
 }
 
 export async function placeWorkspaces(rows: {id: string; position: number; category_id: string | null}[]) {
