@@ -2,7 +2,7 @@
     min-height: calc(100dvh - var(--app-bar-h));
     background: var(--paper);
     padding: clamp(40px, 12vh, 120px) 16px 64px;
-    font-family: "Sora", sans-serif;
+    font-family: "Sora Variable", sans-serif;
     color: var(--ink);
     caret-color: var(--ink);
 }
@@ -355,7 +355,7 @@
     min-height: calc(100dvh - var(--app-bar-h));
     display: grid;
     place-items: center;
-    font-family: "Sora", sans-serif;
+    font-family: "Sora Variable", sans-serif;
     font-size: 13px;
     color: var(--muted);
     background: var(--paper);
