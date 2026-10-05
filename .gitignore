@@ -31,13 +31,4 @@ desktop.ini
 *.njsproj
 *.sln
 *.sw?
-.ai/
-.claude/
-.agents/
-CLAUDE.md
-CLAUDE.local.md
-.impeccable/
-.playwright-mcp/
-PRODUCT.md
-DESIGN.md
 supabase/migrations/
