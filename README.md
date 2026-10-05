@@ -43,7 +43,6 @@ Taskflo is a task manager for small teams that does less on purpose. Give work a
 
 - Node.js 20.19+ or 22.12+ and npm
 - A Supabase project
-- The Supabase CLI, if you want to apply migrations from the terminal
 
 ### Install
 
@@ -86,16 +85,7 @@ node server.js
 
 ## Database
 
-Schema changes live in `supabase/migrations/` and run in filename order. To apply them with the Supabase CLI:
-
-```sh
-supabase link --project-ref <your-project-ref>
-supabase db push
-```
-
-You can also paste each file into the Supabase SQL editor, oldest first.
-
-The migrations build on a base schema (`Users`, `workspaces`, `workspace_members` and the `handle_new_user` sign-up trigger) that isn't in the repo yet. Until a baseline migration is added, they won't set up a brand-new project on their own.
+The app runs on Supabase (Postgres, Auth and row-level security). The database schema isn't published in this repo.
 
 Every table uses row-level security. Policies limit each user to their own data and the workspaces they belong to.
 
@@ -113,8 +103,6 @@ taskflo/
 │       ├── services/       Supabase data access
 │       └── utils/          Motion tokens, password rules
 ├── backend/                Minimal Express server
-├── supabase/
-│   └── migrations/         SQL migrations
 └── docs/
     └── screenshots/        Images used in this README
 ```
@@ -129,7 +117,6 @@ taskflo/
 ## Roadmap
 
 - [ ] Task screens: create, assign, set due dates and check off tasks
-- [ ] Baseline migration for the full schema
 - [ ] Password reset flow
 - [ ] AI workload assistant
 - [ ] Tests for auth and workspace flows
