@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { createInviteLink, listInviteLinks, revokeInviteLink, type InviteLink } from '../services/members'
+import { createInviteLink, isLinkActive, listInviteLinks, revokeInviteLink, type InviteLink } from '../services/members'
 import { friendlyError } from '../utils/errors'
 import './TaskDialog.css'
 
@@ -114,18 +114,21 @@ function InviteLinks({ workspaceId, liveKey }: { workspaceId: string, liveKey: n
                 <ul className="member-list invite-links">
                     {links.map(link => {
                         const url = `${window.location.origin}/invite/${link.token}`
+                        const active = isLinkActive(link)
                         return (
-                            <li key={link.id} className="member-row">
+                            <li key={link.id} className={`member-row${active ? '' : ' is-inactive'}`}>
                                 <span className="member-who">
                                     <label className="sr-only" htmlFor={`link-${link.id}`}>Invite link</label>
                                     <input id={`link-${link.id}`} className="invite-link-url" readOnly value={url} onFocus={e => e.target.select()} />
                                     <span className="member-email">{linkStatus(link)}</span>
                                 </span>
-                                <button type="button" className="btn btn-outline member-remove" onClick={() => handleCopy(link, url)}>
-                                    {copied === link.id ? 'Copied' : 'Copy'}<span className="sr-only"> invite link</span>
-                                </button>
+                                {active && (
+                                    <button type="button" className="btn btn-outline member-remove" onClick={() => handleCopy(link, url)}>
+                                        {copied === link.id ? 'Copied' : 'Copy'}<span className="sr-only"> invite link</span>
+                                    </button>
+                                )}
                                 <button type="button" className="btn btn-quiet member-remove" onClick={() => handleRevoke(link)}>
-                                    Revoke<span className="sr-only"> invite link</span>
+                                    {active ? 'Revoke' : 'Remove'}<span className="sr-only"> invite link</span>
                                 </button>
                             </li>
                         )

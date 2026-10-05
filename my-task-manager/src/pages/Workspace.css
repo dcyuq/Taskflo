@@ -541,6 +541,10 @@
   .team-col.is-main {
     flex: 7;
   }
+
+  .team .team-card {
+    order: 0;
+  }
 }
 
 .team-card {
@@ -1037,6 +1041,20 @@ a.task-row-title {
 
 .invite-links {
   margin-top: 16px;
+}
+
+.invite-links .member-row {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+.invite-links .member-who {
+  min-width: min(100%, 240px);
+}
+
+.invite-links .is-inactive .invite-link-url {
+  font-weight: 500;
+  color: var(--muted);
 }
 
 .invite-link-url {
