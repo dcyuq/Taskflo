@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import Avatar from '../components/Avatar'
 import ConfirmDialog from '../components/ConfirmDialog'
+import InviteLinks from '../components/InviteLinks'
 import EmailChipField from '../components/EmailChipField'
 import { useWorkspace } from '../hooks/useWorkspace'
 import { useEmailChips } from '../hooks/useEmailChips'
@@ -15,8 +16,13 @@ type InviteState = { status: 'loading' } | { status: 'error' } | { status: 'read
 
 function expiresIn(iso: string) {
     const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 864e5)
-    return days <= 1 ? 'Expires within a day' : `Expires in ${days} days`
+    return days <= 1 ? 'Pending, expires within a day' : `Pending, expires in ${days} days`
 }
+
+const statusLabel = (invite: WorkspaceInvite) =>
+    invite.status === 'pending' ? expiresIn(invite.expiresAt)
+        : invite.status === 'accepted' ? 'Accepted'
+            : invite.status === 'declined' ? 'Declined' : 'Expired'
 
 function TeamView() {
     const { workspace, members, tasks, me, isOwner, reload } = useWorkspace()
@@ -27,7 +33,7 @@ function TeamView() {
     const [sentNotice, setSentNotice] = useState('')
     const [inviteError, setInviteError] = useState('')
     const throttle = useThrottle(5)
-    const pendingEmails = invites.status === 'ready' ? invites.invites.map(i => i.email) : []
+    const pendingEmails = invites.status === 'ready' ? invites.invites.filter(i => i.status === 'pending').map(i => i.email) : []
     const chips = useEmailChips(
         [...members.map(m => m.email), ...pendingEmails].filter(Boolean),
         'Some addresses are already members or invited, so they were left out.',
@@ -60,14 +66,18 @@ function TeamView() {
             return
         }
         setSending(true)
-        const { error } = await sendInvites(workspace.id, all)
+        const { data, error } = await sendInvites(workspace.id, all)
         setSending(false)
-        if (error) {
+        if (error || !data) {
             chips.setError(friendlyError(error, 'Couldn’t send the invites. Check your connection and try again.'))
             return
         }
         chips.reset()
-        setSentNotice(all.length === 1 ? `Invite sent to ${all[0]}.` : `${all.length} invites sent.`)
+        setSentNotice(data.invited === 0
+            ? 'Everyone you added is already a member or invited.'
+            : data.emailed < data.invited
+                ? 'Invites saved, but some emails couldn’t be sent. They’ll still see the invite when they sign in.'
+                : data.invited === 1 && all.length === 1 ? `Invite sent to ${all[0]}.` : `${data.invited} invites sent.`)
         loadInvites()
     }
 
@@ -75,7 +85,7 @@ function TeamView() {
         setInviteError('')
         const { error } = await revokeInvite(invite.id)
         if (error) {
-            setInviteError(friendlyError(error, `Couldn’t revoke the invite to ${invite.email}. Try again.`))
+            setInviteError(friendlyError(error, `Couldn’t cancel the invite to ${invite.email}. Try again.`))
             return
         }
         setInvites(s => s.status === 'ready' ? { status: 'ready', invites: s.invites.filter(i => i.id !== invite.id) } : s)
@@ -118,7 +128,7 @@ function TeamView() {
                     <div className="team-card-head">
                         <h2 id="invite-title">Invite people</h2>
                     </div>
-                    <p className="team-lede">They’ll see the invite when they sign in to Taskflo with that email. Invites last 7 days.</p>
+                    <p className="team-lede">They’ll get an email with a link to join, and see the invite when they sign in with that email. Invites last 7 days.</p>
                     <form onSubmit={handleSend} noValidate>
                         <label htmlFor="team-emails" className="firstrun-label">Email addresses</label>
                         <EmailChipField id="team-emails" chips={chips} />
@@ -135,8 +145,8 @@ function TeamView() {
             {isOwner && (
                 <motion.section className="team-card" aria-labelledby="pending-title" variants={rise}>
                     <div className="team-card-head">
-                        <h2 id="pending-title">Pending invites</h2>
-                        {invites.status === 'ready' && <span className="task-group-count">{invites.invites.length}</span>}
+                        <h2 id="pending-title">Sent invites</h2>
+                        {invites.status === 'ready' && <span className="task-group-count">{pendingEmails.length} pending</span>}
                     </div>
                     {invites.status === 'loading' && (
                         <div role="status">
@@ -146,12 +156,12 @@ function TeamView() {
                     )}
                     {invites.status === 'error' && (
                         <div className="team-error" role="alert">
-                            <span>Couldn’t load pending invites.</span>
+                            <span>Couldn’t load sent invites.</span>
                             <button type="button" className="btn btn-quiet btn-small" onClick={() => { setInvites({ status: 'loading' }); loadInvites() }}>Try again</button>
                         </div>
                     )}
                     {invites.status === 'ready' && invites.invites.length === 0 && (
-                        <p className="team-empty">No pending invites.</p>
+                        <p className="team-empty">No invites sent yet.</p>
                     )}
                     {invites.status === 'ready' && invites.invites.length > 0 && (
                         <ul className="member-list">
@@ -160,11 +170,13 @@ function TeamView() {
                                     <Avatar size={36} />
                                     <span className="member-who">
                                         <span className="member-name">{invite.email}</span>
-                                        <span className="member-email">{expiresIn(invite.expiresAt)}</span>
+                                        <span className="member-email">{statusLabel(invite)}</span>
                                     </span>
-                                    <button type="button" className="btn btn-quiet btn-small member-remove" onClick={() => handleRevoke(invite)}>
-                                        Revoke<span className="sr-only"> invite to {invite.email}</span>
-                                    </button>
+                                    {invite.status === 'pending' && (
+                                        <button type="button" className="btn btn-quiet member-remove" onClick={() => handleRevoke(invite)}>
+                                            Cancel<span className="sr-only"> invite to {invite.email}</span>
+                                        </button>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -172,6 +184,8 @@ function TeamView() {
                     {inviteError && <p className="field-error" role="alert">{inviteError}</p>}
                 </motion.section>
             )}
+
+            {isOwner && <InviteLinks workspaceId={workspace.id} />}
 
             {removing && (
                 <ConfirmDialog

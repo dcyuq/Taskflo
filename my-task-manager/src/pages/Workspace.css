@@ -996,3 +996,24 @@ a.task-row-title {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+.invite-links {
+  margin-top: 16px;
+}
+
+.invite-link-url {
+  width: 100%;
+  min-width: 0;
+  padding: 2px 0;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+
+.invite-link-url:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
