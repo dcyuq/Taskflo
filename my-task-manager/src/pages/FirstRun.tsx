@@ -11,6 +11,7 @@ import {
     sendInvites,
     type PendingInvite,
 } from '../services/workspace';
+import { friendlyError } from '../utils/errors';
 
 
 interface FirstRunProps {
@@ -63,7 +64,7 @@ function WorkspaceStep({
         setInviteError('');
         const { workspaceId, error } = await acceptInvite(invite.token);
         if (error || !workspaceId) {
-            setInviteError(`Couldn't join ${invite.workspaceName}. The invite may have expired. Ask the person who invited you to send a new one.`);
+            setInviteError(friendlyError(error, `Couldn't join ${invite.workspaceName}. The invite may have expired. Ask the person who invited you to send a new one.`));
             setBusyInvite(null);
             return;
         }
@@ -76,7 +77,7 @@ function WorkspaceStep({
         const { error } = await declineInvite(invite.token);
         setBusyInvite(null);
         if (error) {
-            setInviteError(`Couldn't decline the invite to ${invite.workspaceName}. Try again.`);
+            setInviteError(friendlyError(error, `Couldn't decline the invite to ${invite.workspaceName}. Try again.`));
             return;
         }
         setInvites((list) => list.filter((i) => i.id !== invite.id));
@@ -98,7 +99,7 @@ function WorkspaceStep({
         setNameError('');
         const { data, error } = await createWorkspace(trimmed);
         if (error || !data) {
-            setNameError("Couldn't create the workspace. Check your connection and try again.");
+            setNameError(friendlyError(error, "Couldn't create the workspace. Check your connection and try again."));
             setCreating(false);
             return;
         }
@@ -219,7 +220,7 @@ function InviteStep({ workspace }: { workspace: { id: string; name: string } }) 
         chips.setError('');
         const { error: sendError } = await sendInvites(workspace.id, all);
         if (sendError) {
-            chips.setError("Couldn't send the invites. Check your connection and try again.");
+            chips.setError(friendlyError(sendError, "Couldn't send the invites. Check your connection and try again."));
             setSending(false);
             return;
         }

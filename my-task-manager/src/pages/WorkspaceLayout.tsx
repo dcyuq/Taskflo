@@ -10,6 +10,7 @@ import { rise } from '../utils/motion'
 import type { DashboardContext } from './Dashboard'
 import { store } from '../utils/storage'
 import NotFound from './NotFound'
+import { friendlyError } from '../utils/errors'
 
 const isUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
 import './Workspace.css'
@@ -23,7 +24,10 @@ type Loaded =
 async function fetchWorkspace(id: string): Promise<Loaded> {
     const { data: { session } } = await supabase.auth.getSession()
     const [ws, mem, list] = await Promise.all([getWorkspace(id), listMembers(id), listTasks(id)])
-    if (ws.error || mem.error || list.error) return { status: 'error' }
+    if (ws.error || mem.error || list.error) {
+        friendlyError(ws.error ?? mem.error ?? list.error)
+        return { status: 'error' }
+    }
     const me = session?.user.id ?? ''
     if (!ws.data || !mem.data?.some(m => m.id === me)) return { status: 'missing' }
     return { status: 'ready', workspace: ws.data, members: mem.data, tasks: list.data ?? [], me }

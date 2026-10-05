@@ -4,6 +4,7 @@ import { useState } from 'react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
 import SignInDemo from '../components/SignInDemo'
+import { friendlyError } from '../utils/errors'
 
 type Errors = { email?: string, password?: string, form?: string }
 
@@ -27,11 +28,7 @@ function Login() {
         setLoading(true)
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
         if (error) {
-            setErrors({
-                form: error.code === 'invalid_credentials'
-                    ? 'That email and password don’t match. Check them and try again.'
-                    : 'Couldn’t sign in. Check your connection and try again.',
-            })
+            setErrors({ form: friendlyError(error, 'Couldn’t sign in. Check your connection and try again.') })
             setLoading(false)
             return
         }

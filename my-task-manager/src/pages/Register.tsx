@@ -6,6 +6,7 @@ import PasswordField from '../components/PasswordField'
 import SignUpDemo from '../components/SignUpDemo'
 import StrengthMeter from '../components/StrengthMeter'
 import { includesPersonal, passwordRules, personalParts } from '../utils/passwordRules'
+import { friendlyError } from '../utils/errors'
 
 type Errors = { first?: string, last?: string, email?: string, password?: string, confirm?: string, code?: string, form?: string }
 
@@ -86,9 +87,8 @@ function Register() {
         })
         setLoading(false)
         if (error) {
-            if (error.code === 'weak_password') setErrors({ password: 'That password isn’t strong enough. Try a longer phrase or a few unrelated words.' })
-            else if (error.code === 'over_email_send_rate_limit') setErrors({ form: 'Too many attempts. Wait a minute and try again.' })
-            else setErrors({ form: 'Couldn’t create your account. Check your connection and try again.' })
+            const msg = friendlyError(error, 'Couldn’t create your account. Check your connection and try again.')
+            setErrors(error.code === 'weak_password' ? { password: msg } : { form: msg })
             return
         }
         if (data.user?.identities?.length === 0) {
@@ -112,7 +112,7 @@ function Register() {
         setErrors({})
         const { error } = await supabase.auth.verifyOtp({ email: email.trim(), token: code, type: 'email' })
         if (error) {
-            setErrors({ code: 'That code didn’t work. It may have expired. Check it, or send a new one.' })
+            setErrors({ code: friendlyError(error, 'That code didn’t work. It may have expired. Check it, or send a new one.') })
             setLoading(false)
             return
         }
@@ -126,7 +126,7 @@ function Register() {
         setCooldown(COOLDOWN)
         const { error } = await supabase.auth.resend({ type: 'signup', email: email.trim() })
         if (error) {
-            setErrors({ form: 'Couldn’t send a new code. Wait a minute and try again.' })
+            setErrors({ form: friendlyError(error, 'Couldn’t send a new code. Wait a minute and try again.') })
             return
         }
         setNotice(`A new code is on its way to ${email.trim()}.`)

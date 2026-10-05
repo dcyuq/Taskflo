@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useWorkspace } from './useWorkspace'
 import { useJustDone } from './useJustDone'
 import { createTask, deleteTask, updateTask, type Task, type TaskPatch } from '../services/tasks'
+import { friendlyError } from '../utils/errors'
 
 export function useTaskActions() {
     const { workspace, setTasks, me, isOwner } = useWorkspace()
@@ -14,9 +15,7 @@ export function useTaskActions() {
         setError('')
         const { data, error } = await createTask(workspace.id, input)
         if (error || !data) {
-            setError(error?.code === '42501'
-                ? 'Couldn’t add that task. You’re no longer a member of this workspace.'
-                : 'Couldn’t add that task. Check your connection and try again.')
+            setError(friendlyError(error, 'Couldn’t add that task. Check your connection and try again.'))
             return null
         }
         setTasks(ts => [...ts, data])
@@ -29,9 +28,7 @@ export function useTaskActions() {
         const { data, error } = await updateTask(task.id, change)
         if (error || !data) {
             setTasks(ts => ts.map(t => (t.id === task.id ? task : t)))
-            setError(error?.code === 'PGRST116'
-                ? 'Couldn’t save that change. The task was deleted, or you’re no longer in this workspace. Reload to see the latest.'
-                : 'Couldn’t save that change. Check your connection and try again.')
+            setError(friendlyError(error, 'Couldn’t save that change. Check your connection and try again.'))
             return false
         }
         setTasks(ts => ts.map(t => (t.id === data.id ? data : t)))
@@ -53,7 +50,7 @@ export function useTaskActions() {
         setError('')
         const { error } = await deleteTask(task.id)
         if (error) {
-            setError('Couldn’t delete that task. Only its creator or the workspace owner can delete it.')
+            setError(friendlyError(error, 'Couldn’t delete that task. Only its creator or the workspace owner can delete it.'))
             return false
         }
         setTasks(ts => ts.filter(t => t.id !== task.id))

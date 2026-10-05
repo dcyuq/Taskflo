@@ -3,6 +3,7 @@ import ConfirmDialog from './ConfirmDialog'
 import NameDialog from './NameDialog'
 import { deleteWorkspace, renameWorkspace, type WorkspaceSummary } from '../services/workspace'
 import { removeMember } from '../services/members'
+import { friendlyError } from '../utils/errors'
 
 export interface WorkspaceAsk {
     kind: 'rename' | 'delete' | 'leave'
@@ -37,7 +38,7 @@ function WorkspaceDialogs({ ask, me, current, onChanged, onClose }: WorkspaceDia
                 maxLength={80}
                 onSubmit={async name => {
                     const { error } = await renameWorkspace(workspace.id, name)
-                    if (error) return 'Couldn’t rename this workspace. Only its owner can.'
+                    if (error) return friendlyError(error, 'Couldn’t rename this workspace. Only its owner can.')
                     onChanged()
                     return null
                 }}
@@ -55,7 +56,7 @@ function WorkspaceDialogs({ ask, me, current, onChanged, onClose }: WorkspaceDia
                 requireText={workspace.name}
                 onConfirm={async () => {
                     const { error } = await deleteWorkspace(workspace.id)
-                    return error ? 'Couldn’t delete this workspace. Only its owner can, so check you still own it and try again.' : gone()
+                    return error ? friendlyError(error, 'Couldn’t delete this workspace. Only its owner can, so check you still own it and try again.') : gone()
                 }}
                 onClose={onClose}
             />
@@ -69,7 +70,7 @@ function WorkspaceDialogs({ ask, me, current, onChanged, onClose }: WorkspaceDia
             confirmLabel="Leave workspace"
             onConfirm={async () => {
                 const { error } = await removeMember(workspace.id, me)
-                return error ? 'Couldn’t leave this workspace. Check your connection and try again.' : gone()
+                return error ? friendlyError(error, 'Couldn’t leave this workspace. Check your connection and try again.') : gone()
             }}
             onClose={onClose}
         />

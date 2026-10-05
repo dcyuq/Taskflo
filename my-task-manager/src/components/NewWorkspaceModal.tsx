@@ -2,6 +2,7 @@ import './TaskDialog.css';
 import { createWorkspace } from '../services/workspace';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { friendlyError } from '../utils/errors';
 
 interface NewWorkspaceModalProps {
     onClose: () => void;
@@ -32,7 +33,7 @@ function NewWorkspaceModal({onClose, onCreated} : NewWorkspaceModalProps) {
         const {data, error} = await createWorkspace(name.trim());
 
         if (error || !data) {
-            setError("Couldn't create the workspace. Check your connection and try again.");
+            setError(friendlyError(error, "Couldn't create the workspace. Check your connection and try again."));
             setLoading(false);
             return;
         }

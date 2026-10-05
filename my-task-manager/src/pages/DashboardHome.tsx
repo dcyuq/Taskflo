@@ -5,6 +5,7 @@ import { getPendingInvites, getWorkspaces, type PendingInvite } from '../service
 import './FirstRun.css';
 import { LAST_WORKSPACE_KEY } from '../hooks/useWorkspace';
 import { readStored } from '../utils/storage';
+import { friendlyError } from '../utils/errors';
 
 type HomeState =
     | { status: 'loading' }
@@ -24,6 +25,7 @@ function DashboardHome() {
             if (cancelled) return;
 
             if (workspaces.error || !workspaces.data) {
+                friendlyError(workspaces.error);
                 setState({ status: 'error' });
             } else if (workspaces.data.length > 0) {
                 const last = readStored(LAST_WORKSPACE_KEY);

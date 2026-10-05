@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { getWorkspaces, placeWorkspaces, type WorkspaceSummary } from '../services/workspace'
 import { createCategory, deleteCategory, listCategories, orderCategories, renameCategory, type Category } from '../services/categories'
+import { friendlyError } from '../utils/errors'
 
 export type ListState =
     | { status: 'loading' }
@@ -22,7 +23,10 @@ export function useSidebarTree() {
 
     const load = useCallback(() => {
         Promise.all([getWorkspaces(), listCategories()]).then(([ws, cats]) => {
-            if (ws.error || !ws.data || cats.error || !cats.data) setList({ status: 'error' })
+            if (ws.error || !ws.data || cats.error || !cats.data) {
+                friendlyError(ws.error ?? cats.error)
+                setList({ status: 'error' })
+            }
             else setList({ status: 'ready', workspaces: ws.data, categories: cats.data.map((c, position) => ({ ...c, position })) })
         })
     }, [])
@@ -42,9 +46,10 @@ export function useSidebarTree() {
             movedWorkspaces.length ? placeWorkspaces(movedWorkspaces.map(({ id, position, category_id }) => ({ id, position, category_id }))) : { error: null },
             movedCategories.length ? orderCategories(movedCategories.map(({ id, position }) => ({ id, position }))) : { error: null },
         ])
-        if (results.some(r => r.error)) {
+        const failed = results.find(r => r.error)
+        if (failed) {
             setList(ready)
-            setError('Couldn’t save the new order. Check your connection and try again.')
+            setError(friendlyError(failed.error, 'Couldn’t save the new order. Check your connection and try again.'))
             load()
         }
     }
@@ -52,21 +57,21 @@ export function useSidebarTree() {
     async function addCategory(name: string) {
         if (!ready) return 'Not ready'
         const { data, error } = await createCategory(name, ready.categories.length)
-        if (error || !data) return 'Couldn’t create that category. Check your connection and try again.'
+        if (error || !data) return friendlyError(error, 'Couldn’t create that category. Check your connection and try again.')
         setList(l => l.status === 'ready' ? { ...l, categories: [...l.categories, data] } : l)
         return null
     }
 
     async function rename(id: string, name: string) {
         const { error } = await renameCategory(id, name)
-        if (error) return 'Couldn’t rename that category. Check your connection and try again.'
+        if (error) return friendlyError(error, 'Couldn’t rename that category. Check your connection and try again.')
         setList(l => l.status === 'ready' ? { ...l, categories: l.categories.map(c => c.id === id ? { ...c, name } : c) } : l)
         return null
     }
 
     async function remove(id: string) {
         const { error } = await deleteCategory(id)
-        if (error) return 'Couldn’t delete that category. Check your connection and try again.'
+        if (error) return friendlyError(error, 'Couldn’t delete that category. Check your connection and try again.')
         if (ready) {
             const after = Math.max(-1, ...ready.workspaces.map(w => w.position)) + 1
             await placeWorkspaces(inCategory(ready.workspaces, id).map((w, i) => ({ id: w.id, position: after + i, category_id: null })))

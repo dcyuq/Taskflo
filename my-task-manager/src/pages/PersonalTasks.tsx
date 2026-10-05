@@ -7,6 +7,7 @@ import { useJustDone } from '../hooks/useJustDone'
 import { updateTask, type Task } from '../services/tasks'
 import { isDueSoon } from '../utils/summary'
 import { rise, staggered } from '../utils/motion'
+import { friendlyError } from '../utils/errors'
 import type { DashboardContext } from './Dashboard'
 import './Workspace.css'
 
@@ -30,7 +31,7 @@ function PersonalTasks({ mode }: { mode: 'mine' | 'soon' }) {
         if (error) {
             setDoneIds(ids => ids.filter(x => x !== task.id))
             showDone(null)
-            setError('Couldn’t mark that task as done. Check your connection and try again.')
+            setError(friendlyError(error, 'Couldn’t mark that task as done. Check your connection and try again.'))
             return
         }
         reloadOpen()
@@ -42,7 +43,7 @@ function PersonalTasks({ mode }: { mode: 'mine' | 'soon' }) {
         showDone(null)
         const { error } = await updateTask(task.id, { status: task.status })
         if (error) {
-            setError('Couldn’t undo that. Open the task’s workspace to change it back.')
+            setError(friendlyError(error, 'Couldn’t undo that. Open the task’s workspace to change it back.'))
             return
         }
         setDoneIds(ids => ids.filter(x => x !== task.id))

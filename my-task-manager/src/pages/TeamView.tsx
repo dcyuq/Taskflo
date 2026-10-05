@@ -8,6 +8,7 @@ import { useEmailChips } from '../hooks/useEmailChips'
 import { listWorkspaceInvites, removeMember, revokeInvite, type Member, type WorkspaceInvite } from '../services/members'
 import { sendInvites } from '../services/workspace'
 import { rise, staggered } from '../utils/motion'
+import { friendlyError } from '../utils/errors'
 
 type InviteState = { status: 'loading' } | { status: 'error' } | { status: 'ready', invites: WorkspaceInvite[] }
 
@@ -55,7 +56,7 @@ function TeamView() {
         const { error } = await sendInvites(workspace.id, all)
         setSending(false)
         if (error) {
-            chips.setError('Couldn’t send the invites. Check your connection and try again.')
+            chips.setError(friendlyError(error, 'Couldn’t send the invites. Check your connection and try again.'))
             return
         }
         chips.reset()
@@ -67,7 +68,7 @@ function TeamView() {
         setInviteError('')
         const { error } = await revokeInvite(invite.id)
         if (error) {
-            setInviteError(`Couldn’t revoke the invite to ${invite.email}. Try again.`)
+            setInviteError(friendlyError(error, `Couldn’t revoke the invite to ${invite.email}. Try again.`))
             return
         }
         setInvites(s => s.status === 'ready' ? { status: 'ready', invites: s.invites.filter(i => i.id !== invite.id) } : s)
@@ -172,7 +173,7 @@ function TeamView() {
                     confirmLabel="Remove"
                     onConfirm={async () => {
                         const { error } = await removeMember(workspace.id, removing.id)
-                        if (error) return 'Couldn’t remove them. Only the workspace owner can remove members.'
+                        if (error) return friendlyError(error, 'Couldn’t remove them. Only the workspace owner can remove members.')
                         await reload()
                         return null
                     }}
