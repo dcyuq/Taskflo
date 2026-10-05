@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useOutletContext, useParams } from 'react-router-dom'
+import { NavLink, Outlet, useOutletContext, useParams } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { supabase } from '../supabaseClient'
 import { getWorkspace } from '../services/workspace'
@@ -9,6 +9,9 @@ import { LAST_WORKSPACE_KEY, type WorkspaceContext } from '../hooks/useWorkspace
 import { rise } from '../utils/motion'
 import type { DashboardContext } from './Dashboard'
 import { store } from '../utils/storage'
+import NotFound from './NotFound'
+
+const isUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
 import './Workspace.css'
 
 type Status = 'loading' | 'error' | 'missing' | 'ready'
@@ -81,15 +84,8 @@ function WorkspaceLayout({ id }: { id: string }) {
         )
     }
 
-    if (status === 'missing' || !workspace) {
-        return (
-            <div className="ws ws-state">
-                <h1 className="ws-state-title">Workspace not found</h1>
-                <p className="ws-state-text">It may have been deleted, or you're not a member.</p>
-                <Link className="btn btn-outline" to="/dashboard">Go to your workspaces</Link>
-            </div>
-        )
-    }
+    if (status === 'missing' || !workspace) return <NotFound />
+
 
     const context: WorkspaceContext = {
         workspace,
@@ -118,6 +114,7 @@ function WorkspaceLayout({ id }: { id: string }) {
 
 function WorkspaceRoute() {
     const { id = '' } = useParams()
+    if (!isUuid(id)) return <NotFound />
     return <WorkspaceLayout key={id} id={id} />
 }
 
