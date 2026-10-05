@@ -6,117 +6,90 @@
 
 Taskflo is a task manager for small teams that does less on purpose. Give work an owner and a deadline, see where it stands, and get on with it.
 
-![Landing page hero](docs/screenshots/hero.png)
-
-## Screenshots
-
-| Features | How it works |
-| --- | --- |
-| ![Features section](docs/screenshots/features.png) | ![How it works section](docs/screenshots/how-it-works.png) |
-
-| Sign up | First-run dashboard |
-| --- | --- |
-| ![Sign up page](docs/screenshots/sign-up.png) | ![First-run dashboard](docs/screenshots/first-run.png) |
-
 ## Features
 
-**Works now**
-
-- **Workspaces.** One workspace per team, created during a short first-run setup.
-- **Invites by email.** Add teammates by email. Invites last 7 days, can be used once, and wait for the invitee when they sign in with that address.
-- **Tasks with owners and due dates.** The tasks table and its access rules are in place. The task screens are next on the roadmap.
-- **Secure auth.** Email sign-up with a 6-digit verification code, a live password checklist, a strength meter, and a block on passwords that include your name or email.
-
-**Planned**
-
-- **AI workload assistant** (coming soon). Suggested priorities and assignments based on each person's workload.
+- **Workspaces.** One per team, listed in a sidebar with your own categories. Drag workspaces and categories to reorder them, and right-click for rename, invite, leave or delete.
+- **Tasks.** List and board views, owners, due dates, quick add, filter by person, undo on mark done, and keyboard-friendly drag and drop on the board.
+- **Overview and Team tabs.** See what's late and due today, who is on the team, and manage invites in one place.
+- **Personal views.** My tasks and Due soon across every workspace, plus Ctrl+K search.
+- **Invites.** Send email invites, or create invite links with an expiry and an optional use limit. Anyone can join by pasting a link or code, and pending invites wait in their own Invites view.
+- **Live updates.** Task, member, workspace and invite changes show up for everyone without a refresh.
+- **Accounts.** Email sign-up with a 6-digit code, a password checklist and a strength meter.
 
 ## Tech stack
 
-- **Frontend:** React, TypeScript, Vite, Motion, React Router
-- **Backend:** Supabase (Postgres, Auth, row-level security), plus a minimal Express server
+- **Frontend:** React 19, TypeScript, Vite, React Router, Motion, dnd-kit, plain CSS with design tokens, self-hosted Sora font
+- **Backend:** Supabase (Postgres, Auth, row-level security, Realtime, Edge Functions)
+- **Email:** Resend, called from a Supabase Edge Function
 - **Password strength:** zxcvbn-ts, loaded only when someone types a password
+- **Express server:** an optional stub in `backend/`, not used by the app yet
 
 ## Getting started
 
-### Prerequisites
-
-- Node.js 20.19+ or 22.12+ and npm
-- A Supabase project
-
-### Install
+You need Node.js 20.19+ or 22.12+ and a Supabase project.
 
 ```sh
 git clone <repo-url> taskflo
 cd taskflo/my-task-manager
 npm install
-```
-
-### Environment
-
-Copy the example file and fill in the values from your Supabase project (Project settings, API):
-
-```sh
 cp .env.example .env
+npm run dev
 ```
+
+Fill in `.env` from your Supabase project (Project settings, API), then open http://localhost:5173.
 
 | Variable | What it is |
 | --- | --- |
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Your project's anon (public) key |
 
-Only use the anon key here. Never put the service role key in the frontend or commit `.env`.
+Only the anon key belongs in the frontend. Never commit `.env`.
 
-### Run
+### Invite emails
 
-```sh
-npm run dev
-```
+The `send-invites` Edge Function sends invite emails. Set these secrets in Supabase (Edge Functions, Secrets):
 
-The app runs at http://localhost:5173.
+| Secret | What it is |
+| --- | --- |
+| `RESEND_API_KEY` | Your Resend API key |
+| `SITE_URL` | Where the app runs, used to build join links |
 
-The Express server in `backend/` is optional for now:
-
-```sh
-cd ../backend
-npm install
-node server.js
-```
+Without them, invites are still saved and show up in the app when people sign in.
 
 ## Database
 
-The app runs on Supabase (Postgres, Auth and row-level security). The database schema isn't published in this repo.
-
-Every table uses row-level security. Policies limit each user to their own data and the workspaces they belong to.
+The app runs on Supabase. The database schema is managed separately and isn't part of this repo. Every table has row-level security, and policies limit each user to their own data and the workspaces they belong to.
 
 ## Project structure
 
 ```
 taskflo/
-├── my-task-manager/        React app (Vite)
-│   ├── public/
+├── my-task-manager/          React app (Vite)
 │   └── src/
-│       ├── assets/         Wordmark and static assets
-│       ├── components/     Navbar, auth layout, demos, password field
-│       ├── hooks/          Shared hooks
-│       ├── pages/          Landing, sign in, sign up, dashboard
-│       ├── services/       Supabase data access
-│       └── utils/          Motion tokens, password rules
-├── backend/                Minimal Express server
-└── docs/
-    └── screenshots/        Images used in this README
+│       ├── assets/           Wordmark and static assets
+│       ├── components/       Sidebar, dialogs, task list and board, invite forms
+│       ├── hooks/            Workspace context, realtime, task actions, throttling
+│       ├── pages/            Landing, auth, dashboard, workspace tabs, invites, 404
+│       ├── services/         Supabase data access
+│       └── utils/            Errors, dates, motion tokens, password rules
+├── supabase/
+│   └── functions/            Edge Function for invite emails
+└── backend/                  Optional Express server
 ```
 
 ## Security
 
-- **No secrets in the repo.** `.env` files are gitignored, and `.env.example` holds placeholders only.
-- **Row-level security on every table.** Access is checked in Postgres, not trusted from the client.
-- **Password rules in Supabase Auth.** Supabase enforces at least 12 characters with uppercase, lowercase, a number and a symbol. The sign-up form also checks strength and blocks passwords that include your name or email.
-- **Locked-down database functions.** `security definer` functions use an empty `search_path` and aren't executable by `anon` unless they must be.
+- **Row-level security on every table.** Access is checked in Postgres, never trusted from the client. Database functions run with an empty `search_path` and aren't callable by signed-out users.
+- **Invite tokens.** Long random tokens checked on the server. Email invites are single use and only work for the invited address. Link lookups are rate limited, and invalid, expired or revoked invites all show the same message.
+- **Rate limiting.** Server limits on invites and invite lookups, client throttling on sign in, sign up and invites, and helmet plus rate limiting on the Express server.
+- **Generic errors.** Users see plain-language messages, never raw database errors. Unknown pages and workspaces you can't access show the same 404.
+- **Content Security Policy.** Production builds ship a CSP that only allows the app itself and Supabase.
+- **No secrets in the repo.** `.env` is ignored and `.env.example` holds placeholders only.
 
 ## Roadmap
 
-- [ ] Task screens: create, assign, set due dates and check off tasks
-- [ ] Password reset flow
 - [ ] AI workload assistant
-- [ ] Tests for auth and workspace flows
+- [ ] Password reset
+- [ ] Admin role for workspaces
+- [ ] Tests for auth, workspace and invite flows
+- [ ] Deployment
