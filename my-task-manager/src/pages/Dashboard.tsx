@@ -3,6 +3,7 @@ import { Outlet, useLocation, useMatch } from 'react-router-dom'
 import TopNav from '../components/TopNav'
 import JumpDialog from '../components/JumpDialog'
 import Sidebar from '../components/Sidebar'
+import InviteBanner from '../components/InviteBanner'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 import { inOrder, useSidebarTree } from '../hooks/useSidebarTree'
 import type { WorkspaceSummary } from '../services/workspace'
@@ -70,6 +71,7 @@ function Dashboard() {
                     onClose={() => setDrawerOpen(false)}
                 />
                 <main className="app-main dot-grid" id="app-main" tabIndex={-1}>
+                    {workspaces.length > 0 && <InviteBanner />}
                     <Outlet context={context} />
                 </main>
             </div>
