@@ -6,6 +6,7 @@ const messages: Record<string, string> = {
     otp_expired: 'That code didn’t work. It may have expired. Check it, or send a new one.',
     '42501': 'You don’t have access to do that anymore.',
     TF429: 'You’ve sent a lot of invites recently. Wait a bit and try again.',
+    TF430: 'Too many invite lookups. Wait a few minutes and try again.',
     PGRST116: 'That item no longer exists, or you don’t have access to it anymore. Reload to see the latest.',
 }
 

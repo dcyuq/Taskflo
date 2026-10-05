@@ -57,26 +57,24 @@ export interface PendingInvite {
     token: string;
     workspaceId: string;
     workspaceName: string;
+    invitedBy: string | null;
+    createdAt: string;
+}
+
+export interface InvitePreview {
+    kind: 'email' | 'link';
+    workspace_id: string;
+    workspace_name: string;
+    member_count: number;
+    invited_by_name: string | null;
+    expires_at: string | null;
+    already_member: boolean;
 }
 
 export async function getPendingInvites() {
-    const {data : {session}} = await supabase.auth.getSession();
-    if (!session?.user.email) return {data: null, error: 'Not logged in'};
-
-    const {data, error} = await supabase
-        .from('invites')
-        .select('id, token, workspace_id, workspaces(name)')
-        .eq('email', session.user.email.toLowerCase())
-        .is('accepted_at', null)
-        .is('declined_at', null)
-        .gt('expires_at', new Date().toISOString())
-        .order('created_at', {ascending: true});
-
-    const invites: PendingInvite[] | null = data?.map(row => {
-        const ws = row.workspaces as unknown as {name: string} | null;
-        return {id: row.id, token: row.token, workspaceId: row.workspace_id, workspaceName: ws?.name ?? 'A workspace'};
-    }) ?? null;
-
+    const {data, error} = await supabase.rpc('my_invites');
+    const invites: PendingInvite[] | null = (data as {id: string; token: string; workspace_id: string; workspace_name: string; invited_by_name: string | null; created_at: string}[] | null)
+        ?.map(row => ({id: row.id, token: row.token, workspaceId: row.workspace_id, workspaceName: row.workspace_name, invitedBy: row.invited_by_name, createdAt: row.created_at})) ?? null;
     return {data: invites, error};
 }
 
@@ -99,7 +97,7 @@ export async function sendInvites(workspaceId: string, emails: string[]) {
 
 export async function previewInvite(token: string) {
     const {data, error} = await supabase.rpc('invite_preview', {invite_token: token});
-    const row = (data as {kind: 'email' | 'link'; workspace_name: string}[] | null)?.[0] ?? null;
+    const row = (data as InvitePreview[] | null)?.[0] ?? null;
     return {data: row, error};
 }
 

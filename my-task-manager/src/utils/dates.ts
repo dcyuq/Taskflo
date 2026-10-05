@@ -21,3 +21,12 @@ export function dueInfo(due: string | null, done: boolean) {
             : new Date(`${due}T00:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
     return { label, overdue, today: due === today }
 }
+
+const relative = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' })
+
+export function relativeTime(iso: string) {
+    const seconds = (new Date(iso).getTime() - Date.now()) / 1000
+    const units: [Intl.RelativeTimeFormatUnit, number][] = [['day', 86400], ['hour', 3600], ['minute', 60]]
+    const [unit, size] = units.find(([, size]) => Math.abs(seconds) >= size) ?? ['second', 1]
+    return relative.format(Math.round(seconds / size), unit)
+}
