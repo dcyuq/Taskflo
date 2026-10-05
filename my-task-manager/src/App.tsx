@@ -10,6 +10,7 @@ import OverviewView from './pages/OverviewView'
 import PersonalTasks from './pages/PersonalTasks'
 import DashboardHome from './pages/DashboardHome'
 import NotFound from './pages/NotFound'
+import InvitePage from './pages/InvitePage'
 
 import {Routes, Route} from 'react-router-dom'
 
@@ -30,6 +31,7 @@ function App() {
             <Route path="team" element={<TeamView />} />
           </Route>
         </Route>
+        <Route path="/invite/:token" element={<InvitePage />} />
         <Route path="*" element={<main><NotFound /></main>} />
     </Routes>
   )
