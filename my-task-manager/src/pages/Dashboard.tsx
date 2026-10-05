@@ -9,6 +9,7 @@ import { inOrder, useSidebarTree } from '../hooks/useSidebarTree'
 import type { WorkspaceSummary } from '../services/workspace'
 import { listOpenTasks, type Task } from '../services/tasks'
 import { supabase } from '../supabaseClient'
+import { useRealtime } from '../hooks/useRealtime'
 import './Dashboard.css'
 
 export interface DashboardContext {
@@ -16,6 +17,7 @@ export interface DashboardContext {
     openTasks: Task[]
     me: string
     reloadOpen: () => void
+    liveKey: number
 }
 
 function Dashboard() {
@@ -26,7 +28,14 @@ function Dashboard() {
     const [me, setMe] = useState('')
     const [searching, setSearching] = useState(false)
     const desktop = useMediaQuery('(min-width: 1024px)')
-    const { pathname } = useLocation()
+    const { pathname, state } = useLocation()
+    const [liveKey, setLiveKey] = useState(0)
+    const [notice, setNotice] = useState('')
+    const [seenState, setSeenState] = useState<unknown>(null)
+    if (state !== seenState) {
+        setSeenState(state)
+        if (state?.notice) setNotice(state.notice)
+    }
     const match = useMatch('/dashboard/workspace/:id/*')
 
     const reloadOpen = useCallback(() => {
@@ -51,9 +60,15 @@ function Dashboard() {
         supabase.auth.getSession().then(({ data: { session } }) => setMe(session?.user.id ?? ''))
     }, [])
 
+    useRealtime(me ? `user:${me}` : null, () => {
+        load()
+        reloadOpen()
+        setLiveKey(k => k + 1)
+    })
+
     const workspaces = list.status === 'ready' ? inOrder(list.workspaces, list.categories) : []
     const current = workspaces.find(w => w.id === match?.params.id)
-    const context: DashboardContext = { workspaces, openTasks, me, reloadOpen }
+    const context: DashboardContext = { workspaces, openTasks, me, reloadOpen, liveKey }
 
     return (
         <div className={`app${desktop ? ' is-desktop' : ''}`}>
@@ -71,9 +86,17 @@ function Dashboard() {
                     onClose={() => setDrawerOpen(false)}
                 />
                 <main className="app-main dot-grid" id="app-main" tabIndex={-1}>
-                    {workspaces.length > 0 && <InviteBanner />}
+                    {workspaces.length > 0 && <InviteBanner liveKey={liveKey} />}
                     <Outlet context={context} />
                 </main>
+            </div>
+            <div className="undo-region app-notice" role="status">
+                {notice && (
+                    <div className="undo-note">
+                        <span className="undo-text">{notice}</span>
+                        <button type="button" className="undo-btn" onClick={() => setNotice('')}>Dismiss</button>
+                    </div>
+                )}
             </div>
             {searching && <JumpDialog workspaces={workspaces} tasks={openTasks} onClose={() => setSearching(false)} />}
         </div>

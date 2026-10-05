@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useOutletContext } from 'react-router-dom';
 import FirstRun from './FirstRun';
 import { getPendingInvites, getWorkspaces, type PendingInvite } from '../services/workspace';
 import './FirstRun.css';
 import { LAST_WORKSPACE_KEY } from '../hooks/useWorkspace';
 import { readStored } from '../utils/storage';
 import { friendlyError } from '../utils/errors';
+import type { DashboardContext } from './Dashboard';
 
 type HomeState =
     | { status: 'loading' }
@@ -16,6 +17,7 @@ type HomeState =
 function DashboardHome() {
     const [state, setState] = useState<HomeState>({ status: 'loading' });
     const [attempt, setAttempt] = useState(0);
+    const { liveKey } = useOutletContext<DashboardContext>();
 
     useEffect(() => {
         let cancelled = false;
@@ -40,7 +42,7 @@ function DashboardHome() {
         return () => {
             cancelled = true;
         };
-    }, [attempt]);
+    }, [attempt, liveKey]);
 
     if (state.status === 'loading') {
         return <div className="firstrun-loading" role="status">Loading your workspaces…</div>;
@@ -70,7 +72,7 @@ function DashboardHome() {
         return <Navigate to={`workspace/${state.workspaceId}`} replace />;
     }
 
-    return <FirstRun invites={state.invites} />;
+    return <FirstRun key={state.invites.map((i) => i.id).join()} invites={state.invites} />;
 }
 
 export default DashboardHome;

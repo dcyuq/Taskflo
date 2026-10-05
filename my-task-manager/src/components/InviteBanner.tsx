@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { acceptInvite, declineInvite, getPendingInvites, type PendingInvite } from '../services/workspace'
 import { friendlyError } from '../utils/errors'
 
-function InviteBanner() {
+function InviteBanner({ liveKey }: { liveKey: number }) {
     const navigate = useNavigate()
     const [invites, setInvites] = useState<PendingInvite[]>([])
     const [busy, setBusy] = useState<string | null>(null)
@@ -11,7 +11,7 @@ function InviteBanner() {
 
     useEffect(() => {
         getPendingInvites().then(({ data }) => data && setInvites(data))
-    }, [])
+    }, [liveKey])
 
     async function accept(invite: PendingInvite) {
         setBusy(invite.id)

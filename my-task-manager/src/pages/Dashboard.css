@@ -143,3 +143,7 @@
 .invite-banner ul {
   list-style: none;
 }
+
+.app-notice .undo-text {
+  white-space: normal;
+}
