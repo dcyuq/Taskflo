@@ -499,19 +499,47 @@
 }
 
 .team {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  align-items: start;
+}
+
+.team-col {
+  display: contents;
+}
+
+.team .is-invite {
+  order: 1;
+}
+
+.team .is-links {
+  order: 2;
+}
+
+.team .is-members {
+  order: 3;
+}
+
+.team .is-sent {
+  order: 4;
 }
 
 @media (min-width: 1100px) {
   .team {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    flex-direction: row;
+    align-items: flex-start;
   }
 
-  .team > .team-card:first-child {
-    grid-row: span 2;
+  .team-col {
+    display: flex;
+    flex: 5;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .team-col.is-main {
+    flex: 7;
   }
 }
 
@@ -621,6 +649,16 @@
   align-items: center;
   gap: 12px;
   margin-top: 16px;
+}
+
+.team-history {
+  margin-left: auto;
+  margin-right: -8px;
+  font-size: 13px;
+}
+
+.member-row.is-past .member-name {
+  font-weight: 500;
 }
 
 .team-notice {

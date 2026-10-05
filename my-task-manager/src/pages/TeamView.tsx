@@ -3,20 +3,17 @@ import { motion, useReducedMotion } from 'motion/react'
 import Avatar from '../components/Avatar'
 import ConfirmDialog from '../components/ConfirmDialog'
 import InviteLinks from '../components/InviteLinks'
-import EmailChipField from '../components/EmailChipField'
+import InviteForm from '../components/InviteForm'
 import { useWorkspace } from '../hooks/useWorkspace'
-import { useEmailChips } from '../hooks/useEmailChips'
 import { listWorkspaceInvites, removeMember, revokeInvite, type Member, type WorkspaceInvite } from '../services/members'
-import { sendInvites } from '../services/workspace'
 import { rise, staggered } from '../utils/motion'
 import { friendlyError } from '../utils/errors'
-import { useThrottle, waitMessage } from '../hooks/useThrottle'
 
 type InviteState = { status: 'loading' } | { status: 'error' } | { status: 'ready', invites: WorkspaceInvite[] }
 
 function expiresIn(iso: string) {
     const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 864e5)
-    return days <= 1 ? 'Pending, expires within a day' : `Pending, expires in ${days} days`
+    return days <= 1 ? 'Expires within a day' : `Expires in ${days} days`
 }
 
 const statusLabel = (invite: WorkspaceInvite) =>
@@ -29,15 +26,12 @@ function TeamView() {
     const reduce = useReducedMotion()
     const [invites, setInvites] = useState<InviteState>({ status: 'loading' })
     const [removing, setRemoving] = useState<Member | null>(null)
-    const [sending, setSending] = useState(false)
-    const [sentNotice, setSentNotice] = useState('')
     const [inviteError, setInviteError] = useState('')
-    const throttle = useThrottle(5)
-    const pendingEmails = invites.status === 'ready' ? invites.invites.filter(i => i.status === 'pending').map(i => i.email) : []
-    const chips = useEmailChips(
-        [...members.map(m => m.email), ...pendingEmails].filter(Boolean),
-        'Some addresses are already members or invited, so they were left out.',
-    )
+    const [showHistory, setShowHistory] = useState(false)
+    const sent = invites.status === 'ready' ? invites.invites : []
+    const pending = sent.filter(i => i.status === 'pending')
+    const history = sent.filter(i => i.status !== 'pending')
+    const shown = showHistory ? sent : pending
 
     const loadInvites = useCallback(() => {
         if (!isOwner) return Promise.resolve()
@@ -50,38 +44,7 @@ function TeamView() {
         loadInvites()
     }, [loadInvites, liveKey])
 
-    async function handleSend(e: React.SyntheticEvent) {
-        e.preventDefault()
-        setSentNotice('')
-        const all = chips.collect()
-        if (!all) return
-        if (all.length === 0) {
-            chips.setError('Add at least one email address.')
-            chips.inputRef.current?.focus()
-            return
-        }
-        const wait = throttle()
-        if (wait) {
-            chips.setError(waitMessage(wait))
-            return
-        }
-        setSending(true)
-        const { data, error } = await sendInvites(workspace.id, all)
-        setSending(false)
-        if (error || !data) {
-            chips.setError(friendlyError(error, 'Couldn’t send the invites. Check your connection and try again.'))
-            return
-        }
-        chips.reset()
-        setSentNotice(data.invited === 0
-            ? 'Everyone you added is already a member or invited.'
-            : data.emailed < data.invited
-                ? 'Invites saved, but some emails couldn’t be sent. They’ll still see the invite when they sign in.'
-                : data.invited === 1 && all.length === 1 ? `Invite sent to ${all[0]}.` : `${data.invited} invites sent.`)
-        loadInvites()
-    }
-
-    async function handleRevoke(invite: WorkspaceInvite) {
+    async function handleCancel(invite: WorkspaceInvite) {
         setInviteError('')
         const { error } = await revokeInvite(invite.id)
         if (error) {
@@ -95,97 +58,100 @@ function TeamView() {
 
     return (
         <motion.div className="team" initial={reduce ? false : 'hidden'} animate="show" variants={staggered}>
-            <motion.section className="team-card" aria-labelledby="members-title" variants={rise}>
-                <div className="team-card-head">
-                    <h2 id="members-title">Members</h2>
-                    <span className="task-group-count">{members.length}</span>
-                </div>
-                <ul className="member-list">
-                    {members.map(member => (
-                        <li key={member.id} className="member-row">
-                            <Avatar name={member.name} size={36} />
-                            <span className="member-who">
-                                <span className="member-name">
-                                    {member.name}
-                                    {member.id === me && <span className="member-you">You</span>}
+            <div className="team-col is-main">
+                <motion.section className="team-card is-members" aria-labelledby="members-title" variants={rise}>
+                    <div className="team-card-head">
+                        <h2 id="members-title">Members</h2>
+                        <span className="task-group-count">{members.length}</span>
+                    </div>
+                    <ul className="member-list">
+                        {members.map(member => (
+                            <li key={member.id} className="member-row">
+                                <Avatar name={member.name} size={36} />
+                                <span className="member-who">
+                                    <span className="member-name">
+                                        {member.name}
+                                        {member.id === me && <span className="member-you">You</span>}
+                                    </span>
+                                    <span className="member-email">{member.email}</span>
                                 </span>
-                                <span className="member-email">{member.email}</span>
-                            </span>
-                            {member.role === 'owner' && <span className="member-badge">Owner</span>}
-                            {isOwner && member.id !== me && member.role !== 'owner' && (
-                                <button type="button" className="btn btn-quiet btn-small member-remove" onClick={() => setRemoving(member)}>
-                                    Remove<span className="sr-only"> {member.name}</span>
+                                {member.role === 'owner' && <span className="member-badge">Owner</span>}
+                                {isOwner && member.id !== me && member.role !== 'owner' && (
+                                    <button type="button" className="btn btn-quiet member-remove" onClick={() => setRemoving(member)}>
+                                        Remove<span className="sr-only"> {member.name}</span>
+                                    </button>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                    {!isOwner && <p className="team-note">Only the workspace owner can invite or remove people.</p>}
+                </motion.section>
+
+                {isOwner && <InviteLinks workspaceId={workspace.id} liveKey={liveKey} />}
+            </div>
+
+            {isOwner && (
+                <div className="team-col">
+                    <motion.section className="team-card is-invite" aria-labelledby="invite-title" variants={rise}>
+                        <div className="team-card-head">
+                            <h2 id="invite-title">Invite people</h2>
+                        </div>
+                        <p className="team-lede">They’ll get an email with a link to join, and see the invite when they sign in with that email. Invites last 7 days.</p>
+                        <InviteForm
+                            id="team-emails"
+                            workspaceId={workspace.id}
+                            exclude={[...members.map(m => m.email), ...pending.map(i => i.email)].filter(Boolean)}
+                            onSent={loadInvites}
+                        />
+                    </motion.section>
+
+                    <motion.section className="team-card is-sent" aria-labelledby="pending-title" variants={rise}>
+                        <div className="team-card-head">
+                            <h2 id="pending-title">Sent invites</h2>
+                            {invites.status === 'ready' && <span className="task-group-count">{pending.length} pending</span>}
+                            {history.length > 0 && (
+                                <button type="button" className="btn btn-quiet team-history" aria-pressed={showHistory} onClick={() => setShowHistory(s => !s)}>
+                                    {showHistory ? 'Hide history' : 'Show history'}
                                 </button>
                             )}
-                        </li>
-                    ))}
-                </ul>
-                {!isOwner && <p className="team-note">Only the workspace owner can invite or remove people.</p>}
-            </motion.section>
-
-            {isOwner && (
-                <motion.section className="team-card" aria-labelledby="invite-title" variants={rise}>
-                    <div className="team-card-head">
-                        <h2 id="invite-title">Invite people</h2>
-                    </div>
-                    <p className="team-lede">They’ll get an email with a link to join, and see the invite when they sign in with that email. Invites last 7 days.</p>
-                    <form onSubmit={handleSend} noValidate>
-                        <label htmlFor="team-emails" className="firstrun-label">Email addresses</label>
-                        <EmailChipField id="team-emails" chips={chips} />
-                        <div className="team-actions">
-                            <button type="submit" className="btn btn-primary" disabled={sending} onMouseDown={e => e.preventDefault()}>
-                                {sending ? 'Sending…' : chips.emails.length > 1 ? `Send ${chips.emails.length} invites` : 'Send invite'}
-                            </button>
-                            {sentNotice && <p className="form-notice team-notice" role="status">{sentNotice}</p>}
                         </div>
-                    </form>
-                </motion.section>
+                        {invites.status === 'loading' && (
+                            <div role="status">
+                                <span className="sr-only">Loading invites</span>
+                                {[0, 1].map(i => <span key={i} className="skeleton team-skeleton" />)}
+                            </div>
+                        )}
+                        {invites.status === 'error' && (
+                            <div className="team-error" role="alert">
+                                <span>Couldn’t load sent invites.</span>
+                                <button type="button" className="btn btn-quiet" onClick={() => { setInvites({ status: 'loading' }); loadInvites() }}>Try again</button>
+                            </div>
+                        )}
+                        {invites.status === 'ready' && shown.length === 0 && (
+                            <p className="team-empty">No pending invites.</p>
+                        )}
+                        {shown.length > 0 && (
+                            <ul className="member-list">
+                                {shown.map(invite => (
+                                    <li key={invite.id} className={`member-row${invite.status === 'pending' ? '' : ' is-past'}`}>
+                                        <Avatar name={invite.email} size={36} />
+                                        <span className="member-who">
+                                            <span className="member-name">{invite.email}</span>
+                                            <span className="member-email">{statusLabel(invite)}</span>
+                                        </span>
+                                        {invite.status === 'pending' && (
+                                            <button type="button" className="btn btn-quiet member-remove" onClick={() => handleCancel(invite)}>
+                                                Cancel<span className="sr-only"> invite to {invite.email}</span>
+                                            </button>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        {inviteError && <p className="field-error" role="alert">{inviteError}</p>}
+                    </motion.section>
+                </div>
             )}
-
-            {isOwner && (
-                <motion.section className="team-card" aria-labelledby="pending-title" variants={rise}>
-                    <div className="team-card-head">
-                        <h2 id="pending-title">Sent invites</h2>
-                        {invites.status === 'ready' && <span className="task-group-count">{pendingEmails.length} pending</span>}
-                    </div>
-                    {invites.status === 'loading' && (
-                        <div role="status">
-                            <span className="sr-only">Loading invites</span>
-                            {[0, 1].map(i => <span key={i} className="skeleton team-skeleton" />)}
-                        </div>
-                    )}
-                    {invites.status === 'error' && (
-                        <div className="team-error" role="alert">
-                            <span>Couldn’t load sent invites.</span>
-                            <button type="button" className="btn btn-quiet btn-small" onClick={() => { setInvites({ status: 'loading' }); loadInvites() }}>Try again</button>
-                        </div>
-                    )}
-                    {invites.status === 'ready' && invites.invites.length === 0 && (
-                        <p className="team-empty">No invites sent yet.</p>
-                    )}
-                    {invites.status === 'ready' && invites.invites.length > 0 && (
-                        <ul className="member-list">
-                            {invites.invites.map(invite => (
-                                <li key={invite.id} className="member-row">
-                                    <Avatar size={36} />
-                                    <span className="member-who">
-                                        <span className="member-name">{invite.email}</span>
-                                        <span className="member-email">{statusLabel(invite)}</span>
-                                    </span>
-                                    {invite.status === 'pending' && (
-                                        <button type="button" className="btn btn-quiet member-remove" onClick={() => handleRevoke(invite)}>
-                                            Cancel<span className="sr-only"> invite to {invite.email}</span>
-                                        </button>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                    {inviteError && <p className="field-error" role="alert">{inviteError}</p>}
-                </motion.section>
-            )}
-
-            {isOwner && <InviteLinks workspaceId={workspace.id} liveKey={liveKey} />}
 
             {removing && (
                 <ConfirmDialog

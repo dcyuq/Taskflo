@@ -83,7 +83,7 @@ function InviteLinks({ workspaceId, liveKey }: { workspaceId: string, liveKey: n
     }
 
     return (
-        <section className="team-card" aria-labelledby="links-title">
+        <section className="team-card is-links" aria-labelledby="links-title">
             <div className="team-card-head">
                 <h2 id="links-title">Invite links</h2>
             </div>
